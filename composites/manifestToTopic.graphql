@@ -1,0 +1,9 @@
+type Topic @loadModel(id: "") {
+  id: ID!
+}
+
+type Manifest @loadModel(id: "kjzl6hvfrbw6c99mdfpjx1z3fue7sesgua6gsl1vu97229lq56344zu9bawnf96"){
+  id: ID!
+  topicID: StreamID! @documentReference(model: "Topic")
+  topic: Topic @relationDocument(property: "topicID")
+}

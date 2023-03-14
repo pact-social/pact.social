@@ -1,0 +1,7 @@
+type Manifest @loadModel(id: "") {
+  id: ID!
+}
+
+type Topic @loadModel(id: "kjzl6hvfrbw6c99mdfpjx1z3fue7sesgua6gsl1vu97229lq56344zu9bawnf96"){
+  manifests: [Manifest] @relationFrom(model: "Manifest", property: "topicID")
+}
