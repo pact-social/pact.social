@@ -27,10 +27,10 @@
     "did-session": "^1.0.0",
     "dids": "^3.2.0",
     "graphql": "^16.6.0",
-    "next": "^12.0.4",
+    "next": "^13.2.4",
     "ora": "^6.1.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@composedb/types": "^0.3.0",
@@ -38,10 +38,14 @@
     "@glazed/types": "^0.2.0",
     "@types/node": "^17.0.15",
     "@types/react": "^18.0.0",
+    "autoprefixer": "^10.4.14",
+    "daisyui": "^2.51.3",
     "eslint": "^8.3.0",
-    "eslint-config-next": "^12.0.4",
+    "eslint-config-next": "^13.2.4",
     "key-did-provider-ed25519": "^2.0.1",
     "key-did-resolver": "^2.1.3",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.7",
     "typescript": "^4.5.2",
     "uint8arrays": "^4.0.2"
   }
