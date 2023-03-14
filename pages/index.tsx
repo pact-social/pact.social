@@ -39,7 +39,7 @@ const Home: NextPage = () => {
         }
       `);
       
-      setProfile(profile?.data?.viewer?.basicProfile)
+      // setProfile(profile?.data?.viewer?.basicProfile)
       setLoading(false);
     }
   }
