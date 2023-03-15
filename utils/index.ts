@@ -4,18 +4,11 @@ import type { CeramicApi } from "@ceramicnetwork/common"
 import type { ComposeClient } from "@composedb/client";
 import { DID } from "dids";
 
-// If you are relying on an injected provider this must be here otherwise you will have a type error. 
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
-
 /**
  * Checks localStorage for a stored DID Session. If one is found we authenticate it, otherwise we create a new one.
  * @returns Promise<DID-Session> - The User's authenticated sesion.
  */
-export const authenticateCeramic = async (ceramic: CeramicApi, compose: ComposeClient) => {
+export const authenticateCeramic = async (address: any, provider: any, ceramic: CeramicApi, compose: ComposeClient) => {
   const sessionStr = localStorage.getItem('did') // for production you will want a better place than localStorage for your sessions.
   let session
 
@@ -24,18 +17,10 @@ export const authenticateCeramic = async (ceramic: CeramicApi, compose: ComposeC
   }
 
   if(!session || (session.hasSession && session.isExpired)) {
-    if (window.ethereum === null || window.ethereum === undefined) {
-      throw new Error("No injected Ethereum provider found.");
-    }
 
-    // We enable the ethereum provider to get the user's addresses.
-    const ethProvider = window.ethereum;
-    // request ethereum accounts.
-    const addresses = await ethProvider.enable({
-      method: "eth_requestAccounts",
-    });
-    const accountId = await getAccountId(ethProvider, addresses[0])
-    const authMethod = await EthereumWebAuth.getAuthMethod(ethProvider, accountId)
+    const accountId = await getAccountId(provider, address)
+    console.log('accountId', accountId)
+    const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
 
     /**
      * Create DIDSession & provide capabilities that we want to access.

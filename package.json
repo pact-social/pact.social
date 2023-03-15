@@ -23,14 +23,17 @@
     "@composedb/devtools-node": "0.4.0",
     "@didtools/cacao": "2.0.0",
     "@didtools/pkh-ethereum": "0.1.0",
+    "@rainbow-me/rainbowkit": "^0.12.1",
     "chalk": "^5.1.2",
     "did-session": "^1.0.0",
     "dids": "^3.2.0",
+    "ethers": "^5.0.0",
     "graphql": "^16.6.0",
     "next": "^13.2.4",
     "ora": "^6.1.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "wagmi": "^0.12.1"
   },
   "devDependencies": {
     "@composedb/types": "^0.3.0",

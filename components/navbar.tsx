@@ -1,7 +1,9 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BasicProfile } from "@datamodels/identity-profile-basic"
 import { useEffect, useState } from "react"
 import { useCeramicContext } from "../context"
 import { authenticateCeramic, logoutCeramic } from "../utils"
+import { useAccount } from 'wagmi'
 
 export default function NavBar() {
   const clients = useCeramicContext()
@@ -9,21 +11,26 @@ export default function NavBar() {
   const [profile, setProfile] = useState<BasicProfile | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
-  const handleLogin = async () => {
-    await authenticateCeramic(ceramic, composeClient)
-    await getProfile()
-  }
-
-  const handleLogout = async () => {
-    await logoutCeramic(ceramic, composeClient)
-    setProfile(undefined)
-    console.log('logout success', ceramic.did, profile)
-  }
+  const account = useAccount({
+    async onConnect({ address, connector, isReconnected }) {
+      console.log('Connected', { address, connector, isReconnected })
+      const provider = await connector?.getProvider()
+      await authenticateCeramic(address, provider, ceramic, composeClient)
+      // TODO: if user reject siwe message, add a place/button/banner for him to sign again later
+      await getProfile()
+      // console.log('ceramic authenticated', ceramic, composeClient)
+    },
+    async onDisconnect() {
+      console.log('Disconnected')
+      await logoutCeramic(ceramic, composeClient)
+      setProfile(undefined)
+    },
+  });
 
   const getProfile = async () => {
     setLoading(true)
     if(ceramic.did !== undefined) {
-      const profile = await composeClient.executeQuery(`
+      const profileResult = await composeClient.executeQuery(`
         query {
           viewer {
             basicProfile {
@@ -36,7 +43,7 @@ export default function NavBar() {
           }
         }
       `);
-      const ceramicAccount = profile?.data?.viewer as any
+      const ceramicAccount = profileResult?.data?.viewer as any
       setProfile(ceramicAccount?.basicProfile || { name: 'anon' })
       setLoading(false);
     }
@@ -47,11 +54,6 @@ export default function NavBar() {
    * If there is a DID-Session we can immediately authenticate the user.
    * For more details on how we do this check the 'authenticateCeramic function in`../utils`.
    */
-  useEffect(() => {
-    if(localStorage.getItem('did')) {
-      handleLogin()
-    }
-  }, [])
   
   return (
     <div className="navbar bg-primary text-primary-content shadow-xl rounded-box mb-4 sticky top-0 z-10">
@@ -73,44 +75,7 @@ export default function NavBar() {
           </li>
           <li><a>Item 3</a></li>
         </ul>
-        {profile === undefined && ceramic.did === undefined ? (
-          <button
-            onClick={() => {
-              handleLogin();
-            }}
-          >
-            Login
-          </button>
-        ) : (
-          <>
-            <div>{profile?.name}</div>
-            <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                <div className="w-10 rounded-full">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1964&q=80" />
-                </div>
-              </label>
-              <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 text-base-content">
-                <li>
-                  <a className="justify-between">
-                    Profile
-                    <span className="badge">New</span>
-                  </a>
-                </li>
-                <li><a>Settings</a></li>
-                <li>
-                  <a 
-                    onClick={() => {
-                      handleLogout();
-                    }}
-                  >
-                    Logout
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </>
-        )}
+        <ConnectButton/>
       </div>
     </div>
   )
