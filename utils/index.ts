@@ -2,6 +2,7 @@ import { DIDSession } from "did-session";
 import { EthereumWebAuth, getAccountId } from "@didtools/pkh-ethereum";
 import type { CeramicApi } from "@ceramicnetwork/common"
 import type { ComposeClient } from "@composedb/client";
+import { DID } from "dids";
 
 // If you are relying on an injected provider this must be here otherwise you will have a type error. 
 declare global {
@@ -51,4 +52,11 @@ export const authenticateCeramic = async (ceramic: CeramicApi, compose: ComposeC
   compose.setDID(session.did)
   ceramic.did = session.did
   return
+}
+
+export const logoutCeramic = async (ceramic: CeramicApi, compose: ComposeClient) => {
+  localStorage.removeItem('did');
+  const did = new DID()
+  compose.setDID(did)
+  ceramic.did = undefined
 }
