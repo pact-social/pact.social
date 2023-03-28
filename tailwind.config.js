@@ -9,12 +9,22 @@ module.exports = {
     // "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    fontFamily: {
+      // 'sans': ['"M PLUS 2"', 'sans-serif'],
+    },
+    extend: {
+      width: {
+        '128': '32rem',
+      }
+    },
     container: {
       center: true,
     }
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"),
+    require('@tailwindcss/line-clamp'),
+  ],
 
   // daisyUI config (optional)
   daisyui: {

@@ -15,7 +15,6 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
-
 import {CeramicWrapper} from "../context";
 
 const { chains, provider, webSocketProvider } = configureChains(
@@ -30,12 +29,12 @@ const { chains, provider, webSocketProvider } = configureChains(
 );
 
 const { wallets } = getDefaultWallets({
-  appName: 'RainbowKit demo',
+  appName: 'Pact.Social',
   chains,
 });
 
-const demoAppInfo = {
-  appName: 'Rainbowkit Demo',
+const appInfo = {
+  appName: 'Pact.Social',
 };
 
 const connectors = connectorsForWallets([
@@ -60,7 +59,7 @@ const wagmiClient = createClient({
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+      <RainbowKitProvider appInfo={appInfo} chains={chains}>
         <CeramicWrapper>
           <Component {...pageProps} ceramic />
         </CeramicWrapper>

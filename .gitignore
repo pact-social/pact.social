@@ -2,3 +2,5 @@
 node_modules/*
 composedb.config.json
 admin_seed.txt
+.env
+.env.local

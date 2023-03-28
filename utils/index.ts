@@ -19,7 +19,6 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
   if(!session || (session.hasSession && session.isExpired)) {
 
     const accountId = await getAccountId(provider, address)
-    console.log('accountId', accountId)
     const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
 
     /**
@@ -28,7 +27,11 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
      *        This is not done here to allow you to add more datamodels to your application.
      */
     // TODO: update resources to only provide access to our composities
-    session = await DIDSession.authorize(authMethod, {resources: ["ceramic://*"]})
+    session = await DIDSession.authorize(authMethod, {
+      resources: ["http://localhost:3000*", "ceramic://*"],
+      // expiresInSecs: 60*60*24*7
+       
+    })
     // Set the session in localStorage.
     localStorage.setItem('did', session.serialize());
   }

@@ -1,0 +1,9 @@
+
+    type Manifest @loadModel(id:  "kjzl6hvfrbw6c80demq3vjvve97x23uh33xxr5n9kabeqxj462xzh1r34n6zm4p") {
+      id: ID!
+    }
+    
+    type Topic @loadModel(id: "kjzl6hvfrbw6c64flvg8scssg663ortm0eu92kr0fmpa7li6ajgx7t3ytga3o3y"){
+      manifests: [Manifest] @relationFrom(model: "Manifest", property: "topicID")
+    }  
+  

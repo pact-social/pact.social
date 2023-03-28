@@ -1,0 +1,11 @@
+
+    type Topic @loadModel(id: "kjzl6hvfrbw6c6h0icw2cq55qt167d13dsd4a9rj3rwcxff2ybyf36oaxejca4h") {
+      id: ID!
+    }
+    
+    type Manifest @loadModel(id: "kjzl6hvfrbw6c6cfigtz8uti5a26uzngdd94cuz4b03oa4vonva1eiq4y7ex6bq"){
+      id: ID!
+      topicID: StreamID! @documentReference(model: "Topic")
+      topic: Topic @relationDocument(property: "topicID")
+    }
+  
