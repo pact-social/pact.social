@@ -20,6 +20,7 @@ specifiers:
   '@graphql-codegen/typescript-generic-sdk': ^3.1.0
   '@graphql-codegen/typescript-operations': ^3.0.2
   '@headlessui/react': ^1.7.13
+  '@heroicons/react': ^2.0.16
   '@rainbow-me/rainbowkit': ^0.12.1
   '@tailwindcss/line-clamp': ^0.4.2
   '@types/formidable': ^2.0.5
@@ -65,6 +66,7 @@ dependencies:
   '@didtools/pkh-ethereum': registry.npmjs.org/@didtools/pkh-ethereum/0.1.0
   '@graphql-codegen/typescript-operations': registry.npmjs.org/@graphql-codegen/typescript-operations/3.0.2_graphql@16.6.0
   '@headlessui/react': registry.npmjs.org/@headlessui/react/1.7.13_biqbaboplfbrettd7655fr4n2y
+  '@heroicons/react': registry.npmjs.org/@heroicons/react/2.0.16_react@18.2.0
   '@rainbow-me/rainbowkit': registry.npmjs.org/@rainbow-me/rainbowkit/0.12.1_mhfhsvzrty3vkdbekd4gabf77a
   chalk: registry.npmjs.org/chalk/5.2.0
   did-resolver: registry.npmjs.org/did-resolver/4.1.0
@@ -4531,6 +4533,17 @@ packages:
       client-only: registry.npmjs.org/client-only/0.0.1
       react: registry.npmjs.org/react/18.2.0
       react-dom: registry.npmjs.org/react-dom/18.2.0_react@18.2.0
+    dev: false
+
+  registry.npmjs.org/@heroicons/react/2.0.16_react@18.2.0:
+    resolution: {integrity: sha512-x89rFxH3SRdYaA+JCXwfe+RkE1SFTo9GcOkZettHer71Y3T7V+ogKmfw5CjTazgS3d0ClJ7p1NA+SP7VQLQcLw==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@heroicons/react/-/react-2.0.16.tgz}
+    id: registry.npmjs.org/@heroicons/react/2.0.16
+    name: '@heroicons/react'
+    version: 2.0.16
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: registry.npmjs.org/react/18.2.0
     dev: false
 
   registry.npmjs.org/@humanwhocodes/config-array/0.11.8:

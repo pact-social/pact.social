@@ -7,8 +7,7 @@ import { useAccount } from 'wagmi'
 import Link from 'next/link';
 
 export default function NavBar() {
-  const clients = useCeramicContext()
-  const { ceramic, composeClient } = clients
+  const { ceramic, composeClient, dispatch} = useCeramicContext()
   const [profile, setProfile] = useState<BasicProfile | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -16,7 +15,11 @@ export default function NavBar() {
     async onConnect({ address, connector, isReconnected }) {
       console.log('Connected', { address, connector, isReconnected })
       const provider = await connector?.getProvider()
-      await authenticateCeramic(address, provider, ceramic, composeClient)
+      const did = await authenticateCeramic(address, provider, ceramic, composeClient)
+      dispatch({
+        type: 'setDID',
+        payload: { did }
+      })
       // TODO: if user reject siwe message, add a place/button/banner for him to sign again later
       // on mobile, a button is required before triggering a wallet signature. Best way would be to implement rainbowkit custom auth
       await getProfile()
@@ -120,7 +123,13 @@ export default function NavBar() {
                 Start Petition
               </Link>
             </li>
-            <li><a>My Petitions</a></li>
+            <li>
+              <Link
+                href={'/p/my-petitions'}
+              >
+                My Petitions
+              </Link>
+            </li>
             <li><a>Explore</a></li>
             <li>
               <Link
