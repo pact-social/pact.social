@@ -26,6 +26,7 @@
     "@didtools/pkh-ethereum": "0.1.0",
     "@graphql-codegen/typescript-operations": "^3.0.2",
     "@headlessui/react": "^1.7.13",
+    "@heroicons/react": "^2.0.16",
     "@rainbow-me/rainbowkit": "^0.12.1",
     "chalk": "^5.1.2",
     "did-resolver": "^4.1.0",

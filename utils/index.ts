@@ -35,11 +35,11 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
     // Set the session in localStorage.
     localStorage.setItem('did', session.serialize());
   }
-
+  
   // Set our Ceramic DID to be our session DID.
   compose.setDID(session.did)
   ceramic.did = session.did
-  return
+  return session.did;
 }
 
 export const logoutCeramic = async (ceramic: CeramicApi, compose: ComposeClient) => {

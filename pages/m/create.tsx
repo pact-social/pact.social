@@ -10,6 +10,7 @@ import { useCeramicContext } from "../../context";
 import { useRouter } from "next/router";
 import { Mutation, Manifest } from "../../src/gql";
 import TopicSelect from "../../components/form/topicSelect";
+import ConnectButton from "../../components/connect";
 //import "react-quill/dist/quill.bubble.css";
 //import "react-quill/dist/quill.core.css";
 
@@ -186,8 +187,10 @@ return (
           <label htmlFor="topic" className="label cursor-pointer">
              Choose the topic that fit to your petition:
           </label>
-          <TopicSelect topics={topics}></TopicSelect>
-          <select
+          {topics && 
+            <TopicSelect topics={topics}></TopicSelect>
+          }
+          {/* <select
              className="select select-primary w-full max-w-xs"
              {...register('topicID',{required: true})}
              placeholder="placeholder topics"
@@ -198,7 +201,7 @@ return (
                {value.name}
                </option>
              ))}
-           </select>
+           </select> */}
         </div>
 
         <div className="formControl">
@@ -265,7 +268,7 @@ return (
         </div>
 
         <div className="formControl flex justify-center">
-          <button type="submit" className="btn btn-primary">Submit</button>
+          <ConnectButton el={<button type="submit" className="btn btn-primary">Submit</button>} />
         </div>
 
       </form>
