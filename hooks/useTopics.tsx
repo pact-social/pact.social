@@ -1,29 +1,14 @@
-import { ComposeClient } from '@composedb/client';
-// import { graphql } from 'graphql';
 import useSWR from 'swr'
-import { useCeramicContext } from '../context';
 
 
 const fetcher = async () => {
 
   const res = await fetch('/api/topics');
-  console.log(res)
-  // if (errors || !data) {
-  //   console.error('composedb query error', query, errors);
-  //   throw new Error('an error occured')
-  // }
-  
-  // if (data.node && data.node?.__typename !== 'Manifest' && "title" in data?.node ) {
-  //   throw new Error('Result is not a manifest.')
-  // }
-  
-  // return data.node as Manifest;
-  return res.json();
+  const topics = await res.json();
+  return topics.map(topic => topic.node);
 }
 
 export default function useTopics() {
-  const { composeClient } = useCeramicContext();
-
   const { data, error, isLoading, mutate } = useSWR({},
     fetcher,
     // {
