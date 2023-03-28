@@ -1,9 +1,10 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BasicProfile } from "@datamodels/identity-profile-basic"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useCeramicContext } from "../context"
 import { authenticateCeramic, logoutCeramic } from "../utils"
 import { useAccount } from 'wagmi'
+import Link from 'next/link';
 
 export default function NavBar() {
   const clients = useCeramicContext()
@@ -17,8 +18,9 @@ export default function NavBar() {
       const provider = await connector?.getProvider()
       await authenticateCeramic(address, provider, ceramic, composeClient)
       // TODO: if user reject siwe message, add a place/button/banner for him to sign again later
+      // on mobile, a button is required before triggering a wallet signature. Best way would be to implement rainbowkit custom auth
       await getProfile()
-      // console.log('ceramic authenticated', ceramic, composeClient)
+      console.log('ceramic authenticated', ceramic, composeClient)
     },
     async onDisconnect() {
       console.log('Disconnected')
@@ -46,6 +48,49 @@ export default function NavBar() {
       const ceramicAccount = profileResult?.data?.viewer as any
       setProfile(ceramicAccount?.basicProfile || { name: 'anon' })
       setLoading(false);
+
+      // const testTopic = await composeClient.executeQuery(`
+      //   mutation newTopic {
+      //     createTopic(input: {
+      //       content: {
+      //         name: "Free Speech"
+      //       }
+      //     }) {
+      //       document {
+      //         id
+      //       }
+      //     }
+      //   }        
+      // `)
+      // const content = `\
+      // Julian Assange the founder of WikiLeaks, is a publisher and the worl's foremost freedom of speech campaigner.\
+      // Julian stands for informing the public about what their governments do in their name.\
+      // WikiLeaks publications have exposed war crimes and corruption and have been used as evidence in court cases around the world.\
+      // Since April 2019 Julian has been imprisoned in Belmarsh Prison in London, fighting extradition to the United States.\
+      // Assange faces a 175 year prison sentence if extradited to the US merely for receiving and publishing truthful information in the public interest.
+      // Who are we?
+      // AssangeDAO is a multilingual cross-border collective governed by holders of the $JUSTICE token.\
+      // We are united in our mission to Free Julian Assange.\
+      // AssangeDAO has completed it's first objective in raising millions of dollars for Julian Assange's legal campaign and now continues forward with it's mission.\
+      // We will initiate and support projects that can help directly or indirectly bring about Julian Assange's freedom and support causes that he cares about such as Freedom of Speech, Freedom of Information and Whistleblowing.
+      // `;
+      // const testManifest = await composeClient.executeQuery(`
+      //   mutation newManifest {
+      //     createManifest(input: {
+      //       content: {
+      //         scope: global,
+      //         title: "Free Assange",
+      //         content: ${JSON.stringify(content)},
+      //         topicID: "kjzl6kcym7w8y9hpaet3h6eyiojfjvds1hw7m3g1ecci9gkm2mg281dsoriou4l"
+      //       }
+      //     }) {
+      //       document {
+      //         id
+      //       }
+      //     }
+      //   }  
+      // `)
+      // console.log('new manifest created', testManifest)
     }
   }
 
@@ -56,26 +101,40 @@ export default function NavBar() {
    */
   
   return (
-    <div className="navbar bg-primary text-primary-content shadow-xl rounded-box mb-4 sticky top-0 z-10">
-      <div className="flex-1">
-        <a className="btn btn-ghost normal-case text-xl">Pact.Social</a>
-      </div>
-      <div className="flex-none">
-        <ul className="menu menu-horizontal px-1">
-          <li><a>Item 1</a></li>
-          <li tabIndex={0}>
-            <a>
-              Parent
-              <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
-            </a>
-            <ul className="p-2 bg-base-100 text-black">
-              <li><a>Submenu 1</a></li>
-              <li><a>Submenu 2</a></li>
-            </ul>
-          </li>
-          <li><a>Item 3</a></li>
-        </ul>
-        <ConnectButton/>
+    <div className="navbar glass sticky top-0 z-50">
+      <div className="container">
+        <div className="navbar-start">
+          <Link 
+            className="btn btn-ghost normal-case text-xl text-primary"
+            href="/"
+          >
+              Pact.Social
+          </Link>
+        </div>
+        <div className="navbar-center lg:flex">
+          <ul className="menu menu-horizontal px-1">
+            <li>
+              <Link
+                href={'/m/create'}
+              >
+                Start Petition
+              </Link>
+            </li>
+            <li><a>My Petitions</a></li>
+            <li><a>Explore</a></li>
+            <li>
+              <Link
+                href={'/about-us'}
+                className='btn btn-accent'
+              >
+                <span >about us</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div className="navbar-end flex">
+          <ConnectButton/>
+        </div>
       </div>
     </div>
   )

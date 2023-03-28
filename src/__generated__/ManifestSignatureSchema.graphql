@@ -1,0 +1,14 @@
+
+    type Manifest @loadModel(id: "kjzl6hvfrbw6c80demq3vjvve97x23uh33xxr5n9kabeqxj462xzh1r34n6zm4p") {
+      id: ID!
+    }
+    
+    type ManifestSignature @createModel(accountRelation: LIST, description: "A signature document for a manifest") {
+      author: DID! @documentAccount
+      validator: DID!
+      createdAt: DateTime! 
+      jwe: String! @string(minLength: 132, maxLength: 132)
+      manifestID: StreamID! @documentReference(model: "Manifest")
+      manifest: Manifest @relationDocument(property: "manifestID")
+    }
+  

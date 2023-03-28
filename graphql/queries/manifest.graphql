@@ -1,0 +1,14 @@
+query GetManifest($streamID: ID!) {
+  node(id: $streamID) {
+    ... on Manifest {
+      id
+      title
+      content
+      scope
+      picture
+      topic {
+        name
+      }
+    }
+  }
+}

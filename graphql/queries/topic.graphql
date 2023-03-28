@@ -1,0 +1,29 @@
+query GetTopics($limit: Int=10, $offset: String="0") {
+  topicIndex(first: $limit, after: $offset) {
+    edges {
+      node {
+        # manifests(first: 10) {
+        #   edges {
+        #     node {
+        #       id
+        #       title
+        #       picture
+        #       content
+        #       scope
+        #     }
+        #   }
+        #   pageInfo {
+        #     endCursor
+        #     hasNextPage
+        #   }
+        # }
+        id
+        name
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

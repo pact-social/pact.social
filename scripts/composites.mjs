@@ -15,6 +15,7 @@ import { fromString } from "uint8arrays/from-string";
 
 import { manifest } from '../composites/manifest.mjs';
 import { topicToManifest } from '../composites/topicToManifest.mjs';
+import { manifestSignature } from '../composites/signature.mjs';
 
 const ceramic = new CeramicClient("http://localhost:7007");
 
@@ -43,6 +44,13 @@ export const writeComposite = async (spinner) => {
   
   const topicToManifestComposite = await createComposite(ceramic, './src/__generated__/topicToManifestSchema.graphql')
   await writeEncodedComposite(topicToManifestComposite, "./src/__generated__/topicToManifest_definition.json");
+  
+  // console.log('topicToManifestComposite', topicToManifestComposite.modelIDs[0])
+  const manifestSignatureView = manifestSignature(topicToManifestComposite.modelIDs[0]);
+  writeFileSync('./src/__generated__/ManifestSignatureSchema.graphql', manifestSignatureView);
+
+  const manifestSignatureComposite = await createComposite(ceramic, './src/__generated__/ManifestSignatureSchema.graphql')
+  await writeEncodedComposite(manifestSignatureComposite, "./src/__generated__/ManifestSignature_definition.json");
 
   spinner.info('creating composite for runtime usage')
   await mergeEncodedComposites(ceramic, [
@@ -51,6 +59,7 @@ export const writeComposite = async (spinner) => {
     // "./src/__generated__/topic_definition.json",
     "./src/__generated__/manifest_definition.json",
     "./src/__generated__/topicToManifest_definition.json",
+    "./src/__generated__/ManifestSignature_definition.json",
     ],
     "./src/__generated__/definition.json"
   )
