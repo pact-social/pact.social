@@ -29,9 +29,9 @@ interface ImageFile {
 }
 
 enum PetitionScope {
-  local = 'local',
-  national = 'national',
-  global = 'global'
+  local,
+  national,
+  global
 }
 
 type ScopeInput = {
@@ -121,7 +121,7 @@ const PetitionForm = () => {
       if(data.picture === '') {
         delete data.picture;
       }
-      const response = await composeClient.executeQuery<Mutation>(`
+      const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
       mutation newManifest($input: CreateManifestInput!) {
         createManifest(input: $input) {
           document {
@@ -137,9 +137,10 @@ const PetitionForm = () => {
           }
         }
       })
-      console.log('response', response)
-
-      return push(`/m/${response.data?.createManifest?.document.id}`)
+      console.log('response', res, errors)
+      if (!errors) {
+        return push(`/m/${res?.createManifest?.document.id}`)
+      }
     } catch (error) {
       console.log('error', error)
     }
@@ -188,7 +189,7 @@ return (
              Choose the topic that fit to your petition:
           </label>
           {topics && 
-            <TopicSelect topics={topics}></TopicSelect>
+            <TopicSelect topics={topics} register={register}></TopicSelect>
           }
           {/* <select
              className="select select-primary w-full max-w-xs"

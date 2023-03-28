@@ -2,12 +2,14 @@ import { Fragment, useEffect, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { Topic } from '../../src/gql'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { UseFormRegister } from 'react-hook-form';
 
 interface TopicProps {
   topics: Topic[];
+  register: any;
 }
 
-export default function TopicSelect({topics}: TopicProps) {
+export default function TopicSelect({topics, register}: TopicProps) {
   const [selectedTopic, setSelectedTopic] = useState<Topic>(topics?.[0])
   const [query, setQuery] = useState<string>('')
   
@@ -58,6 +60,7 @@ export default function TopicSelect({topics}: TopicProps) {
 
   return (
     <div className="w-72">
+      <input type="hidden" {...register('topicID', {required: true})} value={selectedTopic?.id}/>
       <Combobox value={selectedTopic} onChange={setSelectedTopic}>
         <div className="relative mt-1">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
