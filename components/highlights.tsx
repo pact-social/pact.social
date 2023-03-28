@@ -33,7 +33,7 @@ export default function Highlights() {
     <div className="mx-auto my-12">
       <h3 className="text-2xl">Latest</h3>
       <div className="divider"></div> 
-      <div className="">
+      <div className="flex flex-wrap gap-8">
         {data?.edges?.map(doc => (
           <ManifestCard key={doc.node.id} manifest={doc.node} />
         ))}
