@@ -13,9 +13,10 @@ export default function ManifestHero({ manifest }: ManifestHeroProps) {
         className="hero bg-base-200 min-h-[21rem] content-end sticky top-0 z-30" 
         style={{
           // load manifest image if present
-          background: `linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2) 50%),url("https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80")`,
+          background: `linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2) 50%),url("${manifest.picture ? `http://localhost:9011/ipfs/${manifest.picture}` : "https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80"}")`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
         }}
       >
         {/* <div className="hero-overlay bg-opacity-60"></div> */}

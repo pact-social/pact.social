@@ -73,7 +73,7 @@ async function getTopics(data = [], offset = '') {
 
     const res = topicList.data?.viewer?.topicList;
 
-    console.log('topic list',res);
+    // console.log('topic list',res);
     if (res.pageInfo.hasNextPage) {
       console.log('nextpage')
       return getTopics([...data, ...res.edges], res.pageInfo.endCursor)
@@ -133,7 +133,7 @@ async function addTopic(
       }
     });
 
-    console.log('compose response', testTopic.data)
+    // console.log('compose response', testTopic.data)
     // return either the full doc or the CID
   
     return res.send({topicId: testTopic.data.createTopic.document.id});
@@ -147,13 +147,13 @@ async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log('request body', req.body)
+  // console.log('request body', req.body)
   if (req.method === 'POST') {
     return addTopic(req, res)
   } else if (req.method === 'GET') {
     const topics = await getTopics();
     return res.send(topics)
-    console.log('topics list', topics);
+    // console.log('topics list', topics);
   } else {
     res.setHeader('Allow', ['POST'])
     return res.status(405).end(`Method ${req.method} Not Allowed`)

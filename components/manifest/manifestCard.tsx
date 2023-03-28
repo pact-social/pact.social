@@ -7,7 +7,7 @@ export default function ManifestCard({manifest}: any) {
     <div className="card card-compact bg-base-100 shadow-xl max-w-lg mx-auto">
       <figure className="max-h-32">
         <Image 
-          src="https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80"
+          src={manifest.picture ? `http://localhost:9011/ipfs/${manifest.picture}` : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
           alt={manifest.title}
           height={300}
           width={600}

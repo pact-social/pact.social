@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import formidable from 'formidable';
 import { promises as fs } from 'fs'
 import os from 'os'
-import { create, globSource } from 'kubo-rpc-client'
+import { create } from 'ipfs-http-client'
 
 const ipfsApi = 'http://127.0.0.1:5011'
 const ipfsGateway = 'http://localhost:9011'
@@ -39,11 +39,19 @@ async function uploadfilePOST (
   form.parse(req, async (err, fields, files) => {
     if (err) res.status(500).send(err)
     try {
-      const { cid } = await ipfs.add(globSource(files?.fileInput.filepath,  '**/*'))
+      console.log(files?.fileInput)
+      const content = await fs.readFile(files?.fileInput.filepath)
+      const { cid } = await ipfs.add(
+        content,
+        {
+          progress: (prog) => console.log(`received: ${prog}`)
+        }
+      );
       console.log('ipfs cid', cid.toV1().toString())
       res.status(200).json({ 
         cid: cid.toV1().toString(),
-        url: `${ipfsGateway}/ipfs/${cid.toV1().toString()}`
+        url: `${ipfsGateway}/ipfs/${cid.toString()}`,
+        // url: `http://${cid.toV1().toString()}.ipfs.localhost:9011`
       })
     } catch (error) {
       console.log('cannot publish to ipfs', error)
