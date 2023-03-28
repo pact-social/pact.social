@@ -8,43 +8,43 @@ import { definition } from "../../../src/__generated__/definition.js";
 import { RuntimeCompositeDefinition } from "@composedb/types";
 import { ComposeClient } from "@composedb/client";
 import { NextApiRequest, NextApiResponse } from 'next'
+import { Mutation } from '../../../src/gql.js'
 
 type Data = {
   topic: string;
 }
 
 async function getComposeClient() {
+  // The key must be provided as an environment variable
+  const key = fromString(process.env.TOPICS_DID_KEY, 'base16')
+  // Create and authenticate the DID
 
-// The key must be provided as an environment variable
-const key = fromString(process.env.TOPICS_DID_KEY, 'base16')
-// Create and authenticate the DID
+  const keyDidResolver = KeyDIDResolver.getResolver()
+  // console.log(keyDidResolver)
+  const didResolver = new Resolver(keyDidResolver)
 
-const keyDidResolver = KeyDIDResolver.getResolver()
-// console.log(keyDidResolver)
-const didResolver = new Resolver(keyDidResolver)
+  const did = new DID({
+    provider: new Ed25519Provider(key),
+    resolver: didResolver,
+  })
+  await did.authenticate()
 
-const did = new DID({
-  provider: new Ed25519Provider(key),
-  resolver: didResolver,
-})
-await did.authenticate()
+  // Connect to the local Ceramic node
+  const ceramic = new CeramicClient('http://localhost:7007')
+  ceramic.did = did
 
-// Connect to the local Ceramic node
-const ceramic = new CeramicClient('http://localhost:7007')
-ceramic.did = did
+  const composeClient = new ComposeClient({
+    ceramic: "http://localhost:7007",
+    // cast our definition as a RuntimeCompositeDefinition
+    definition: definition as RuntimeCompositeDefinition,
+  });
 
-const composeClient = new ComposeClient({
-  ceramic: "http://localhost:7007",
-  // cast our definition as a RuntimeCompositeDefinition
-  definition: definition as RuntimeCompositeDefinition,
-});
-
-composeClient.setDID(did)
-return {
-  composeClient,
-  did,
-  ceramic,
-}
+  composeClient.setDID(did)
+  return {
+    composeClient,
+    did,
+    ceramic,
+  }
 }
 
 async function getTopics(data = [], offset = '') {
@@ -106,7 +106,7 @@ async function addTopic(
 
   // check for duplicates of topics
   const testUniq = await ensureUniq(topicName)
-  console.log('request body', req.body, testUniq)
+  // console.log('request body', topicName, req.body, testUniq)
   if (!testUniq) {
     return res.status(409).end();
   }
@@ -117,7 +117,7 @@ async function addTopic(
 
   try {
     
-    const testTopic = await composeClient.executeQuery(`
+    const testTopic = await composeClient.executeQuery<Mutation>(`
       mutation newTopic($input: CreateTopicInput!) {
         createTopic(input: $input) {
           document {
@@ -133,10 +133,10 @@ async function addTopic(
       }
     });
 
-    // console.log('compose response', testTopic.data)
+    // console.log('compose response', testTopic)
     // return either the full doc or the CID
   
-    return res.send({topicId: testTopic.data.createTopic.document.id});
+    return res.send({topicId: testTopic.data?.createTopic?.document.id});
   } catch (error) {
     console.log('compose error', error)
   }

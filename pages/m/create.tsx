@@ -8,6 +8,8 @@ import "react-quill/dist/quill.snow.css";
 import useTopics from "../../hooks/useTopics";
 import { useCeramicContext } from "../../context";
 import { useRouter } from "next/router";
+import { Mutation, Manifest } from "../../src/gql";
+import TopicSelect from "../../components/form/topicSelect";
 //import "react-quill/dist/quill.bubble.css";
 //import "react-quill/dist/quill.core.css";
 
@@ -16,33 +18,14 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 })
 
 interface Topic {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
 
 interface ImageFile {
-    file: File;
-    url: string;
-  }
-
-// const topics: Topic[] = [
-//     { id: "animals", name: "Animals" },
-//     { id: "criminal-justice", name: "Criminal Justice" },
-//     { id: "disability", name: "Disability" },
-//     { id: "economic-justice", name: "Economic Justice" },
-//     { id: "education", name: "Education" },
-//     { id: "entertainment", name: "Entertainment" },
-//     { id: "family", name: "Family" },
-//     { id: "food", name: "Food" },
-//     { id: "health", name: "Health" },
-//     { id: "human-rights", name: "Human Rights" },
-//     { id: "immigration", name: "Immigration" },
-//     { id: "lgbtq-rights", name: "LGBTQ Rights" },
-//     { id: "politics", name: "Politics" },
-//     { id: "technology", name: "Technology" },
-//     { id: "womens-rights", name: "Women\'s rights" },
-//     { id: "other", name: "Other" },
-// ];
+  file: File;
+  url: string;
+}
 
 enum PetitionScope {
   local = 'local',
@@ -115,7 +98,7 @@ const PetitionForm = () => {
       formData.append("fileInput", file);
 
       const res = await fetch(
-        `${'http://localhost:3000'}/api/media/upload`,
+        `/api/media/upload`,
         {
           method: 'POST',
           body: formData
@@ -137,7 +120,7 @@ const PetitionForm = () => {
       if(data.picture === '') {
         delete data.picture;
       }
-      const response = await composeClient.executeQuery(`
+      const response = await composeClient.executeQuery<Mutation>(`
       mutation newManifest($input: CreateManifestInput!) {
         createManifest(input: $input) {
           document {
@@ -155,7 +138,7 @@ const PetitionForm = () => {
       })
       console.log('response', response)
 
-      return push(`/m/${response.data.createManifest.document.id}`)
+      return push(`/m/${response.data?.createManifest?.document.id}`)
     } catch (error) {
       console.log('error', error)
     }
@@ -178,7 +161,7 @@ return (
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-row gap-12">
         <div className=" max-w-fit">
-          <h1 className="text-5xl font-bold">Just fill this form and that's it!!</h1>
+          <h1 className="text-5xl font-bold">Just fill this form and that&apos;s it!!</h1>
 
           <div className="form-control">
               <label htmlFor="scope" className="label cursor-pointer ">
@@ -203,15 +186,16 @@ return (
           <label htmlFor="topic" className="label cursor-pointer">
              Choose the topic that fit to your petition:
           </label>
+          <TopicSelect topics={topics}></TopicSelect>
           <select
              className="select select-primary w-full max-w-xs"
              {...register('topicID',{required: true})}
              placeholder="placeholder topics"
              multiple={false}
            >
-             {topics && topics.map((value: {node: Topic}) =>(
-               <option key={value.node.id} value={value.node.id}>
-               {value.node.name}
+             {topics && topics.map((value: Topic) =>(
+               <option key={value.id} value={value.id}>
+               {value.name}
                </option>
              ))}
            </select>
@@ -282,7 +266,6 @@ return (
 
         <div className="formControl flex justify-center">
           <button type="submit" className="btn btn-primary">Submit</button>
-
         </div>
 
       </form>
