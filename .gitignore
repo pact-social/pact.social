@@ -4,3 +4,4 @@ composedb.config.json
 admin_seed.txt
 .env
 .env.local
+.DS_Store

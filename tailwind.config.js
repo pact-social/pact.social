@@ -1,3 +1,5 @@
+const { fontFamily } = require('tailwindcss/defaultTheme')
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -9,10 +11,12 @@ module.exports = {
     // "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    fontFamily: {
-      // 'sans': ['"M PLUS 2"', 'sans-serif'],
-    },
     extend: {
+    fontFamily: {
+        'sans': ['var(--font-roboto)', ...fontFamily.sans],
+        'title': ['var(--font-chillax)', ...fontFamily.sans],
+        'alt': ['var(--font-array)', ...fontFamily.sans]
+    },
       width: {
         '128': '32rem',
       }
