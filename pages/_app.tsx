@@ -1,6 +1,9 @@
 import '../styles/globals.css'
 import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app';
+import localFont from 'next/font/local'
+import { Roboto } from 'next/font/google'
+
 import {
   RainbowKitProvider,
   getDefaultWallets,
@@ -56,8 +59,36 @@ const wagmiClient = createClient({
   webSocketProvider,
 });
 
+const arrayFont = localFont({
+  src: [
+    {
+      path: '../public/fonts/array/Fonts/WEB/fonts/Array-Wide.woff2',
+      weight: '400',
+      style: 'normal',
+    }
+  ],
+  variable: '--font-array'
+})
+
+const chillaxFont = localFont({
+  src: [
+    {
+      path: '../public/fonts/chillax/Fonts/WEB/fonts/Chillax-Variable.woff2',
+      weight: '200 700',
+      style: 'normal',
+    }
+  ],
+  variable: '--font-chillax'
+})
+const roboto = Roboto({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  variable: '--font-roboto',
+})
+
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
+    <main className={`${roboto.variable} ${arrayFont.variable} ${chillaxFont.variable} font-sans`}>
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider appInfo={appInfo} chains={chains}>
         <CeramicWrapper>
@@ -65,6 +96,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         </CeramicWrapper>
       </RainbowKitProvider>
     </WagmiConfig>
+    </main>
   );
 }
 
