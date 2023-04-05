@@ -1,5 +1,3 @@
-import { useAccount } from "wagmi";
-import { Manifest } from "../../types";
 import { useViewContext } from "../signBox";
 import AnonSign from "./anonSign";
 import PrivateSign from "./privateSign";
@@ -22,16 +20,15 @@ const DescriptionButton = ({
       >
         <div className="">
           <p className="text-sm">{title}</p>
-          <p className="text-sm text-neutral-400 capitalize font-normal">{description}</p>
+          <p className="text-xs text-neutral-400 capitalize font-normal">{description}</p>
         </div>
     </div>
   );
 }
 
 export default function WalletSign() {
-  const { address, status } = useAccount()
   const { setView, previousView } = useViewContext()
-  console.log('wallet sign address', address)
+
   const anonSign = () => {
     // 
     setView(<AnonSign />)
@@ -58,17 +55,17 @@ export default function WalletSign() {
         <DescriptionButton 
           onClick={publicSign}
           title="Public"
-          description="Description public"
+          description="Your signature document is public"
         />
         <DescriptionButton 
           onClick={privateSign}
           title="Private"
-          description="Description private"
+          description="You trust pact.social to hide your identity while verifying your signature"
         />
         <DescriptionButton 
           onClick={anonSign}
           title="Anon"
-          description="Description anon"
+          description="You generate a new random wallet that will only be used once"
         />
       </div>
       <div className="divider"></div>

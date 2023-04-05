@@ -1,12 +1,14 @@
 import { useRouter } from "next/router";
 import useMyManifests from "../../hooks/useMyManifests";
-import { Manifest } from "../../types";
+import { Manifest } from "../../src/gql";
 
 const Row = ({manifest} : { manifest: Manifest }) => {
   const { push } = useRouter()
+  
   function openManifest() {
     push(`/m/${manifest.id}`)
   }
+  
   return (
     <tr className="hover" onClick={openManifest}>
       <td>
@@ -30,9 +32,7 @@ const Row = ({manifest} : { manifest: Manifest }) => {
 
 export default function ManifestsTable() {
   const { data, error } = useMyManifests()
-  console.log('my manifests', data, error)
-  // if (error) return <div>Error loading your Petitions</div>
-  // if (!data) return <div>You have no petitions created</div>
+
   return (
     <table className="table w-full">
       {/* head */}

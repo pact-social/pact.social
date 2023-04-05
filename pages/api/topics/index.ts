@@ -8,7 +8,7 @@ import { definition } from "../../../src/__generated__/definition.js";
 import { RuntimeCompositeDefinition } from "@composedb/types";
 import { ComposeClient } from "@composedb/client";
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Mutation } from '../../../src/gql.js'
+import { Maybe, Mutation, Query, TopicEdge } from '../../../src/gql.js'
 
 type Data = {
   topic: string;
@@ -16,11 +16,11 @@ type Data = {
 
 async function getComposeClient() {
   // The key must be provided as an environment variable
-  const key = fromString(process.env.TOPICS_DID_KEY, 'base16')
+  const pk = process.env.TOPICS_DID_KEY as string
+  const key = fromString(pk, 'base16')
   // Create and authenticate the DID
 
   const keyDidResolver = KeyDIDResolver.getResolver()
-  // console.log(keyDidResolver)
   const didResolver = new Resolver(keyDidResolver)
 
   const did = new DID({
@@ -47,9 +47,10 @@ async function getComposeClient() {
   }
 }
 
-async function getTopics(data = [], offset = '') {
+async function getTopics(data: Maybe<TopicEdge>[]  = [], offset = ''): Promise<Maybe<TopicEdge>[]> {
   const { composeClient, did } = await getComposeClient()
-  const topicList = await composeClient.executeQuery(`
+  
+  const topicList = await composeClient.executeQuery<Query>(`
     query GetTopics($limit: Int=10, $offset: String="") {
       viewer {
         topicList(first: $limit, after: $offset) {
@@ -74,26 +75,27 @@ async function getTopics(data = [], offset = '') {
     const res = topicList.data?.viewer?.topicList;
 
     // console.log('topic list',res);
-    if (res.pageInfo.hasNextPage) {
-      console.log('nextpage')
-      return getTopics([...data, ...res.edges], res.pageInfo.endCursor)
+    if (res?.pageInfo.hasNextPage) {
+      if (Array.isArray(res.edges)) {
+        return getTopics([...data, ...res.edges], res.pageInfo.endCursor as string)
+      }
     }
-    return [...data, ...res.edges]
+    if (res?.edges && Array.isArray(res?.edges)) {
+      return [...data, ...res.edges]
+    }
+    return data;
 }
 
 async function ensureUniq(topicName: string) {
   try {
-    
     const topicList = await getTopics()
-    console.log('topicList', topicList)
   
-    const topicNames = topicList.map(item => item.node.name);
+    const topicNames = topicList.map(item => item?.node?.name);
   
     return topicNames.indexOf(topicName) === -1;
   } catch (error) {
     console.log('error', error)
   }
-  // return false;
 }
 
 async function addTopic(
@@ -106,17 +108,11 @@ async function addTopic(
 
   // check for duplicates of topics
   const testUniq = await ensureUniq(topicName)
-  // console.log('request body', topicName, req.body, testUniq)
   if (!testUniq) {
     return res.status(409).end();
   }
 
-  // composeDB query (or direct psql query)
-  // register valid topic
-
-
   try {
-    
     const testTopic = await composeClient.executeQuery<Mutation>(`
       mutation newTopic($input: CreateTopicInput!) {
         createTopic(input: $input) {
@@ -132,9 +128,6 @@ async function addTopic(
         }
       }
     });
-
-    // console.log('compose response', testTopic)
-    // return either the full doc or the CID
   
     return res.send({topicId: testTopic.data?.createTopic?.document.id});
   } catch (error) {
@@ -147,13 +140,11 @@ async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // console.log('request body', req.body)
   if (req.method === 'POST') {
     return addTopic(req, res)
   } else if (req.method === 'GET') {
     const topics = await getTopics();
     return res.send(topics)
-    // console.log('topics list', topics);
   } else {
     res.setHeader('Allow', ['POST'])
     return res.status(405).end(`Method ${req.method} Not Allowed`)

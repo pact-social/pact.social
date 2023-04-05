@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import formidable from 'formidable';
 import { promises as fs } from 'fs'
-import os from 'os'
 import { create } from 'ipfs-http-client'
 
 const ipfsApi = 'http://127.0.0.1:5011'
@@ -10,8 +9,6 @@ const ipfsGateway = 'http://localhost:9011'
 const ipfs = create({
   url: ipfsApi
 })
-
-console.log('uploading file', os.tmpdir());
 
 // first we need to disable the default body parser
 export const config = {
@@ -30,7 +27,7 @@ async function uploadfilePOST (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  // console.log('uploading file', os.tmpdir());
+
   const form = new formidable.IncomingForm({
     keepExtensions: true,
     // uploadDir: './public/files/'
@@ -39,19 +36,24 @@ async function uploadfilePOST (
   form.parse(req, async (err, fields, files) => {
     if (err) res.status(500).send(err)
     try {
-      console.log(files?.fileInput)
-      const content = await fs.readFile(files?.fileInput.filepath)
+      let filepath;
+
+      if (Array.isArray(files?.fileInput)) {
+        filepath = files?.fileInput[0].filepath
+      } else {
+        filepath = files?.fileInput.filepath
+      }
+      const content = await fs.readFile(filepath)
       const { cid } = await ipfs.add(
         content,
-        {
-          progress: (prog) => console.log(`received: ${prog}`)
-        }
+        // {
+        //   progress: (prog) => console.log(`received: ${prog}`)
+        // }
       );
-      console.log('ipfs cid', cid.toV1().toString())
+
       res.status(200).json({ 
         cid: cid.toV1().toString(),
         url: `${ipfsGateway}/ipfs/${cid.toString()}`,
-        // url: `http://${cid.toV1().toString()}.ipfs.localhost:9011`
       })
     } catch (error) {
       console.log('cannot publish to ipfs', error)
@@ -64,14 +66,10 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  // console.log('media upload api', req.method)
   if (req.method === 'POST') {
     return uploadfilePOST(req, res)
   } else {
     res.setHeader('Allow', ['POST'])
     return res.status(405).end(`Method ${req.method} Not Allowed`)
   }
-
-  
-  // res.status(200).json({ name: 'John Doe' })
 }

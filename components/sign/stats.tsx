@@ -1,18 +1,41 @@
-import { ReactNode, RefObject, useRef } from "react";
-import { useAccount } from "wagmi";
-import { useBoxContext } from "../../context/box";
+import { useEffect, useState } from "react";
+import { useCeramicContext } from "../../context";
 import { useManifestContext } from "../../context/manifest";
-import { SignBoxAttr, useViewContext, ViewContainer } from "../signBox";
+import { getManifestSignature } from "../../lib/getManifestSignature";
+import { useViewContext } from "../signBox";
 import WalletSign from "./wallet";
 
-export default function SignStats() {
-  // const { nextView } = useBoxContext()
-  const { address } = useAccount()
-  const { setView } = useViewContext()
-  // const nextRef = useRef(null);
-  const { manifest } = useManifestContext();
+enum SignedType {
+  NONE,
+  ANON,
+  PRIVATE,
+  PUBLIC
+}
 
-  console.log('stats address', address, manifest);
+export default function SignStats() {
+  const { setView } = useViewContext();
+  const { manifest } = useManifestContext();
+  const { state: { isAuthenticated, did } } = useCeramicContext();
+  const [ signedType, setSignedType ] = useState<SignedType>(SignedType.NONE)
+
+  async function fetchSigningStatus () {
+    if (!manifest || !did) return;
+    // check PUBLIC
+    const res = await getManifestSignature({ streamID: manifest?.id, accountID: did.parent || did.id });
+
+    if (res.signatures.edges && res.signatures.edges.length > 0) {
+      setSignedType(SignedType.PUBLIC)
+    }
+
+    // check Private => query server api
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSigningStatus()
+    }
+  }, [isAuthenticated])
+
   return (
     <div className="stats shadow stats-vertical xl:w-64">
 
@@ -24,19 +47,18 @@ export default function SignStats() {
         <div className="stat-value">31K</div>
         <div className="stat-desc">↗︎ 900 (22%)</div>
         <div className="stat-actions">
-          <button 
-            className="btn btn-sm btn-success btn-block"
-            onClick={() => {
-              // nextRef.current = WalletSign;
-              const comp = (
-                // <ViewContainer name="signBox" ref={parentRef}>
-                  <WalletSign />
-                  // {/* <SignStats parentRef={parentRef} nextView={parentRef.current?.nextView} /> */}
-                // </ViewContainer>
-              );
-              setView(comp)
-            }}
-          >Sign Now</button>
+          {signedType === SignedType.NONE && 
+            <button 
+              className="btn btn-sm btn-success btn-block"
+              onClick={() => {setView(<WalletSign />)}}
+            >
+              Sign Now
+            </button>
+          }
+          
+          {signedType !== SignedType.NONE && 
+            <span className="text-xs">Thank you for your support!</span>
+          }
         </div>
       </div>
       
@@ -64,139 +86,7 @@ export default function SignStats() {
           <button className="btn btn-sm btn-outline btn-block">Chip In $</button>
         </div>
       </div>
-      
-      {/* <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div>
-      
-      <div className="stat">
-        <div className="stat-figure text-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-        </div>
-        <div className="stat-title">Influencers</div>
-        <div className="stat-value">1,200</div>
-        <div className="stat-desc">↘︎ 90 (14%)</div>
-        <div className="stat-actions">
-          <button className="btn btn-sm btn-secondary btn-block">Recommend</button>
-        </div>
-      </div> */}
-      
+
     </div>
   )
 }

@@ -12,22 +12,14 @@ export const ManifestProvider = ({
   children: ReactNode
 }) => {
   const {
-    isLoading,
-    error,
     data,
-    mutate,
-  } = useManifest({ __typename: "Manifest", stream: manifestId })
+  } = useManifest({ stream: manifestId })
+
   return (
     <ManifestContext.Provider value={{manifest: data}}>
       {children}
     </ManifestContext.Provider>
   );
 };
-
-/**
- * Provide access to the Ceramic & Compose clients.
- * @example const { ceramic, compose } = useManifestContext()
- * @returns CeramicClient
- */
 
 export const useManifestContext = () => useContext(ManifestContext);

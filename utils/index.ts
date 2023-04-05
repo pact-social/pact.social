@@ -48,3 +48,66 @@ export const logoutCeramic = async (ceramic: CeramicApi, compose: ComposeClient)
   compose.setDID(did)
   ceramic.did = undefined
 }
+
+
+/** Returns a JSON object with the address and network based on the did */
+export function getAddressFromDid(did: string | undefined) {
+  if(did) {
+    let didParts = did.split(":");
+    if(did.substring(0, 7) == "did:pkh") {
+      /** Explode address to retrieve did */
+      if(didParts.length >= 4) {
+        let address = didParts[4];
+        let network = didParts[2];
+        let chain = didParts[2] + ":" + didParts[3];
+
+        /** Return result */
+        return {
+          address: address,
+          network: network,
+          chain: chain
+        }
+      } else {
+        /** Return null object */
+        return {
+          address: null,
+          network: null,
+          chain: null
+        }
+      }
+    } else if(did.substring(0, 7) == "did:key") {
+      /** Return did object */
+      return {
+        address: didParts[3],
+        network: 'key',
+        chain: 'key'
+      }
+    } else {
+      /** Return null object */
+      return {
+        address: null,
+        network: null,
+        chain: null
+      }
+    }
+  } else {
+    /** Return null object */
+    return {
+      address: null,
+      network: null,
+      chain: null
+    }
+  }
+}
+
+/** Returns a short address */
+export function shortAddress(_address: string | undefined): string {
+  if(!_address) {
+    return "-";
+  }
+
+  const _firstChars = _address.substring(0, 5);
+  const _lastChars = _address.substr(_address.length - 5);
+  return _firstChars.concat('-', _lastChars);
+}
+
