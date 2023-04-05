@@ -7,22 +7,17 @@ import { authenticateCeramic, logoutCeramic } from "../utils"
 import { useAccount } from 'wagmi'
 import Link from 'next/link';
 import { getMySignatures } from '../lib/getMySignature';
+import useAuthCeramic from '../hooks/useAuthCeramic';
 
 export default function NavBar() {
   const { ceramic, composeClient, dispatch} = useCeramicContext()
   const [profile, setProfile] = useState<BasicProfile | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
+  const {connectCeramic} = useAuthCeramic()
 
   const account = useAccount({
     async onConnect({ address, connector, isReconnected }) {
-      const provider = await connector?.getProvider()
-      const did = await authenticateCeramic(address, provider, ceramic, composeClient)
-      dispatch({
-        type: 'setDID',
-        payload: { did }
-      })
-      // TODO: if user reject siwe message, add a place/button/banner for him to sign again later
-      // on mobile, a button is required before triggering a wallet signature. Best way would be to implement rainbowkit custom auth
+      await connectCeramic()
       await getProfile()
     },
     async onDisconnect() {
