@@ -1,14 +1,23 @@
 
-    type Manifest @loadModel(id: "kjzl6hvfrbw6c80demq3vjvve97x23uh33xxr5n9kabeqxj462xzh1r34n6zm4p") {
+    enum VisibilityType {
+      anon
+      private
+      public
+    }
+
+    type Manifest @loadModel(id: "kjzl6hvfrbw6c9qmhjxe6om8jht0drz9qgxxnps4pj6u26626odywthu2440tvc") {
       id: ID!
     }
-    
+
     type ManifestSignature @createModel(accountRelation: LIST, description: "A signature document for a manifest") {
       author: DID! @documentAccount
+      visibility: VisibilityType!
       validator: DID!
-      createdAt: DateTime! 
-      jwe: String! @string(minLength: 132, maxLength: 132)
+      signedAt: DateTime! 
+      jwe: CID!
+      manifestVersion: CommitID!
       manifestID: StreamID! @documentReference(model: "Manifest")
       manifest: Manifest @relationDocument(property: "manifestID")
+      metadata: String @string(maxLength: 10000)
     }
   

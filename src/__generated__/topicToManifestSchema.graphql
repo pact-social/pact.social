@@ -1,5 +1,5 @@
 
-    type Manifest @loadModel(id:  "kjzl6hvfrbw6c80demq3vjvve97x23uh33xxr5n9kabeqxj462xzh1r34n6zm4p") {
+    type Manifest @loadModel(id:  "kjzl6hvfrbw6c9qmhjxe6om8jht0drz9qgxxnps4pj6u26626odywthu2440tvc") {
       id: ID!
     }
     

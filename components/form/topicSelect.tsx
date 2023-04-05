@@ -2,7 +2,6 @@ import { Fragment, useEffect, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { Topic } from '../../src/gql'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { UseFormRegister } from 'react-hook-form';
 
 interface TopicProps {
   topics: Topic[];
@@ -53,7 +52,6 @@ export default function TopicSelect({topics, register}: TopicProps) {
   useEffect(() => {
     if (selectedTopic && !selectedTopic?.id) {
       // create the topic
-      console.log(selectedTopic);
       saveTopic(selectedTopic)
     }
   }, [selectedTopic]);
@@ -89,7 +87,7 @@ export default function TopicSelect({topics, register}: TopicProps) {
                   value={{ id: null, name: query }}
                   className="relative cursor-default select-none py-2 px-4 text-gray-700"
                 >
-                  Create "{query}"
+                  Create &quot;{query}&quot;
                 </Combobox.Option>
               )}
               {filteredTopics?.map((topic: Topic) => (
@@ -123,17 +121,6 @@ export default function TopicSelect({topics, register}: TopicProps) {
                     </>
                   )}
                 </Combobox.Option>
-                // <Combobox.Option 
-                //   key={topic.id} 
-                //   value={topic}
-                //   className={({ active }) =>
-                //     `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                //       active ? 'bg-teal-600 text-white' : 'text-gray-900'
-                //     }`
-                //   }
-                // >
-                //   {topic.name}
-                // </Combobox.Option>
               ))}
             </Combobox.Options>
           </Transition>

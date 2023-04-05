@@ -1,0 +1,10 @@
+
+    type ManifestSignature @loadModel(id: "kjzl6hvfrbw6c5dai8aofbwhn5a5i1chh23kfveqbf6zkhb8c27nuehxodym5m9") {
+      id: ID!
+    }
+
+    type Manifest @loadModel(id: "kjzl6hvfrbw6c9qmhjxe6om8jht0drz9qgxxnps4pj6u26626odywthu2440tvc") {
+      id: ID!
+      signatures: [ManifestSignature] @relationFrom(model: "ManifestSignature", property: "manifestID")
+    }
+  

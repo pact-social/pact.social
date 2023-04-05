@@ -1,11 +1,12 @@
 import useSWR from 'swr'
+import type { TopicEdge } from '../src/gql';
 
 
 const fetcher = async () => {
 
   const res = await fetch('/api/topics');
   const topics = await res.json();
-  return topics.map(topic => topic.node);
+  return topics.map((topic: TopicEdge) => topic.node);
 }
 
 export default function useTopics() {

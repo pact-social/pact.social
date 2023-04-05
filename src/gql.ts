@@ -12,6 +12,8 @@ export type Scalars = {
   Float: number;
   CeramicCommitID: any;
   CeramicStreamID: any;
+  DID: any;
+  DateTime: any;
   InterPlanetaryCID: any;
 };
 
@@ -57,11 +59,20 @@ export type CeramicAccount = Node & {
   /** Whether the Ceramic instance is currently authenticated with this account or not */
   isViewer: Scalars['Boolean'];
   manifestList?: Maybe<ManifestConnection>;
+  manifestSignatureList?: Maybe<ManifestSignatureConnection>;
   topicList?: Maybe<TopicConnection>;
 };
 
 
 export type CeramicAccountManifestListArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CeramicAccountManifestSignatureListArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -116,6 +127,26 @@ export type CreateManifestPayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
+export type CreateManifestSignatureInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: ManifestSignatureInput;
+};
+
+export type CreateManifestSignaturePayload = {
+  __typename?: 'CreateManifestSignaturePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: ManifestSignature;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type CreateManifestSignaturePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
 export type CreateTopicInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
   content: TopicInput;
@@ -143,10 +174,22 @@ export type Manifest = Node & {
   content: Scalars['String'];
   id: Scalars['ID'];
   picture?: Maybe<Scalars['InterPlanetaryCID']>;
-  scope?: Maybe<ManifestRegionScope>;
+  signatures: ManifestSignatureConnection;
   title: Scalars['String'];
   topic?: Maybe<Topic>;
   topicID: Scalars['CeramicStreamID'];
+  type?: Maybe<ManifestPactType>;
+  /** Current version of the document */
+  version: Scalars['CeramicCommitID'];
+};
+
+
+export type ManifestSignaturesArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 /** A connection to a list of items. */
@@ -170,24 +213,75 @@ export type ManifestEdge = {
 export type ManifestInput = {
   content: Scalars['String'];
   picture?: InputMaybe<Scalars['InterPlanetaryCID']>;
-  scope?: InputMaybe<ManifestRegionScope>;
   title: Scalars['String'];
   topicID: Scalars['CeramicStreamID'];
+  type?: InputMaybe<ManifestPactType>;
 };
 
-export enum ManifestRegionScope {
-  Global = 'global',
-  Local = 'local',
-  National = 'national'
+export enum ManifestPactType {
+  Manifesto = 'manifesto',
+  Openletter = 'openletter',
+  Petition = 'petition'
+}
+
+export type ManifestSignature = Node & {
+  __typename?: 'ManifestSignature';
+  /** Account controlling the document */
+  author: CeramicAccount;
+  id: Scalars['ID'];
+  jwe: Scalars['InterPlanetaryCID'];
+  manifest?: Maybe<Manifest>;
+  manifestID: Scalars['CeramicStreamID'];
+  manifestVersion: Scalars['CeramicCommitID'];
+  metadata?: Maybe<Scalars['String']>;
+  signedAt: Scalars['DateTime'];
+  validator: CeramicAccount;
+  visibility?: Maybe<ManifestSignatureVisibilityType>;
+};
+
+/** A connection to a list of items. */
+export type ManifestSignatureConnection = {
+  __typename?: 'ManifestSignatureConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<ManifestSignatureEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type ManifestSignatureEdge = {
+  __typename?: 'ManifestSignatureEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<ManifestSignature>;
+};
+
+export type ManifestSignatureInput = {
+  jwe: Scalars['InterPlanetaryCID'];
+  manifestID: Scalars['CeramicStreamID'];
+  manifestVersion: Scalars['CeramicCommitID'];
+  metadata?: InputMaybe<Scalars['String']>;
+  signedAt: Scalars['DateTime'];
+  validator: Scalars['DID'];
+  visibility?: InputMaybe<ManifestSignatureVisibilityType>;
+};
+
+export enum ManifestSignatureVisibilityType {
+  Anon = 'anon',
+  Private = 'private',
+  Public = 'public'
 }
 
 export type Mutation = {
   __typename?: 'Mutation';
   createBasicProfile?: Maybe<CreateBasicProfilePayload>;
   createManifest?: Maybe<CreateManifestPayload>;
+  createManifestSignature?: Maybe<CreateManifestSignaturePayload>;
   createTopic?: Maybe<CreateTopicPayload>;
   updateBasicProfile?: Maybe<UpdateBasicProfilePayload>;
   updateManifest?: Maybe<UpdateManifestPayload>;
+  updateManifestSignature?: Maybe<UpdateManifestSignaturePayload>;
   updateTopic?: Maybe<UpdateTopicPayload>;
 };
 
@@ -199,6 +293,11 @@ export type MutationCreateBasicProfileArgs = {
 
 export type MutationCreateManifestArgs = {
   input: CreateManifestInput;
+};
+
+
+export type MutationCreateManifestSignatureArgs = {
+  input: CreateManifestSignatureInput;
 };
 
 
@@ -214,6 +313,11 @@ export type MutationUpdateBasicProfileArgs = {
 
 export type MutationUpdateManifestArgs = {
   input: UpdateManifestInput;
+};
+
+
+export type MutationUpdateManifestSignatureArgs = {
+  input: UpdateManifestSignatureInput;
 };
 
 
@@ -250,9 +354,19 @@ export type PartialBasicProfileInput = {
 export type PartialManifestInput = {
   content?: InputMaybe<Scalars['String']>;
   picture?: InputMaybe<Scalars['InterPlanetaryCID']>;
-  scope?: InputMaybe<ManifestRegionScope>;
   title?: InputMaybe<Scalars['String']>;
   topicID?: InputMaybe<Scalars['CeramicStreamID']>;
+  type?: InputMaybe<ManifestPactType>;
+};
+
+export type PartialManifestSignatureInput = {
+  jwe?: InputMaybe<Scalars['InterPlanetaryCID']>;
+  manifestID?: InputMaybe<Scalars['CeramicStreamID']>;
+  manifestVersion?: InputMaybe<Scalars['CeramicCommitID']>;
+  metadata?: InputMaybe<Scalars['String']>;
+  signedAt?: InputMaybe<Scalars['DateTime']>;
+  validator?: InputMaybe<Scalars['DID']>;
+  visibility?: InputMaybe<ManifestSignatureVisibilityType>;
 };
 
 export type PartialTopicInput = {
@@ -263,6 +377,7 @@ export type Query = {
   __typename?: 'Query';
   basicProfileIndex?: Maybe<BasicProfileConnection>;
   manifestIndex?: Maybe<ManifestConnection>;
+  manifestSignatureIndex?: Maybe<ManifestSignatureConnection>;
   /** Fetches an object given its ID */
   node?: Maybe<Node>;
   topicIndex?: Maybe<TopicConnection>;
@@ -287,6 +402,14 @@ export type QueryManifestIndexArgs = {
 };
 
 
+export type QueryManifestSignatureIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryNodeArgs = {
   id: Scalars['ID'];
 };
@@ -301,6 +424,8 @@ export type QueryTopicIndexArgs = {
 
 export type Topic = Node & {
   __typename?: 'Topic';
+  /** Account controlling the document */
+  author: CeramicAccount;
   id: Scalars['ID'];
   manifests: ManifestConnection;
   name: Scalars['String'];
@@ -381,6 +506,28 @@ export type UpdateManifestPayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
+export type UpdateManifestSignatureInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialManifestSignatureInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdateManifestSignaturePayload = {
+  __typename?: 'UpdateManifestSignaturePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: ManifestSignature;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdateManifestSignaturePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
 export type UpdateOptionsInput = {
   /** Fully replace the document contents instead of performing a shallow merge */
   replace?: InputMaybe<Scalars['Boolean']>;
@@ -415,7 +562,7 @@ export type GetManifestQueryVariables = Exact<{
 }>;
 
 
-export type GetManifestQuery = { __typename?: 'Query', node?: { __typename?: 'BasicProfile' } | { __typename?: 'CeramicAccount' } | { __typename?: 'Manifest', id: string, title: string, content: string, scope?: ManifestRegionScope | null, picture?: any | null, topic?: { __typename?: 'Topic', name: string } | null } | { __typename?: 'Topic' } | null };
+export type GetManifestQuery = { __typename?: 'Query', node?: { __typename?: 'BasicProfile' } | { __typename?: 'CeramicAccount' } | { __typename?: 'Manifest', id: string, title: string, content: string, type?: ManifestPactType | null, picture?: any | null, topic?: { __typename?: 'Topic', name: string } | null } | { __typename?: 'ManifestSignature' } | { __typename?: 'Topic' } | null };
 
 export type GetTopicsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;

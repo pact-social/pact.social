@@ -1,6 +1,11 @@
 import Link from 'next/link'
+import { useManifestContext } from '../../context/manifest'
+import useGetUsername from '../../hooks/useGetUsername'
 
 export default function ManifestProfile() {
+  const { manifest } = useManifestContext()
+  const username = useGetUsername(manifest?.author, null, manifest?.author.id)
+
   return (
     <>
     <div>
@@ -16,61 +21,13 @@ export default function ManifestProfile() {
           </div>
         </div>
         <div>
-          <h5 className=" font-extralight">Name</h5>
+          <h5 className=" font-extralight">{ username }</h5>
           <p className=" text-xs">Profile</p>
         </div>
       </div>
     </div>
 
-    <div className="flex flex-col gap-3">  
-      <div className="">
-        <h4 className="font-semibold">Recipient(s)</h4>
-      </div>
-
-      <div className="flex flex-row gap-3">
-
-        <div className="avatar">
-          <div className="w-12 h-fit rounded">
-            <img src="https://images.unsplash.com/photo-1585066699728-a56ef32a992b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1635&q=80" alt="Tailwind-CSS-Avatar-component" />
-          </div>
-        </div>
-        <div>
-          <div>
-            <h5 className=" font-extralight">Name</h5>
-            <p className=" text-xs">Profile</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-row gap-3">
-
-        <div className="avatar">
-          <div className="w-12 h-fit rounded">
-            <img src="https://images.unsplash.com/photo-1585066699728-a56ef32a992b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1635&q=80" alt="Tailwind-CSS-Avatar-component" />
-          </div>
-        </div>
-        <div>
-          <div>
-            <h5 className=" font-extralight">Name</h5>
-            <p className=" text-xs">Profile</p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="flex flex-row gap-3">
-
-        <div className="avatar">
-          <div className="w-12 h-fit rounded">
-            <img src="https://images.unsplash.com/photo-1585066699728-a56ef32a992b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1635&q=80" alt="Tailwind-CSS-Avatar-component" />
-          </div>
-        </div>
-        <div>
-          <div>
-            <h5 className=" font-extralight">Name</h5>
-            <p className=" text-xs">Profile</p>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col gap-3">
 
       <p className="text-xs text-gray-400">Created March 2nd 2023</p>
       <p className="text-xs text-gray-400 italic">Report a policy violation</p>

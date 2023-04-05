@@ -1,137 +1,145 @@
-import type { NextPage } from 'next'
-import Image from 'next/image'
-import useSWR from 'swr'
+import type { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Layout from '../../components/layout';
-import { useCeramicContext } from '../../context';
-import { GetManifestQuery, Manifest } from '../../src/gql';
-// import { Manifest } from '../../types';
 import ManifestHero from '../../components/manifest/manifestHero';
 import SignStats from '../../components/sign/stats';
-import useManifest from '../../hooks/useManifest';
 import ManifestProfile from '../../components/manifest/manifestProfile';
 import SignBox from '../../components/signBox';
+import { SWRConfig, unstable_serialize } from 'swr';
+import ManifestBody from '../../components/manifest/manifestBody';
+import { ManifestProvider } from '../../context/manifest';
+import { ReactNode, useState } from 'react';
+import ManifestComments from '../../components/manifest/manifestComments';
 
+type Tab = {
+  name: string,
+  content: ReactNode
+}
 
-const ManifestPage: NextPage = () => {
-  const router = useRouter();
-  const { streamID } = router.query;
-  
-  const { data, error } = useManifest({
-    __typename: "Manifest",
-    stream: streamID?.[0],
-  })
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
 
-  console.log('manifest streamID', streamID, data);
-
-  if(!streamID) return <></>
-  
-  
-  if (error || !data) {
-    return <></>
+  return {
+      paths: [], //indicates that no page needs be created at build time
+      fallback: 'blocking' //indicates the type of fallback
   }
-    return (
-      <Layout
-        noContainer
-        metas={{
-        title: 'Pact.Social',
-        description: 'decentralized petition and manifest for change and impact'
-        }}
-      >
-        <ManifestHero manifest={data}></ManifestHero>
-        {/* <div className="container relative"> */}
+}
 
-        <div className="bg-neutral-50 sticky top-[21rem] z-10">
-          
-          <div className="container flex max-w-6xl place-content-between min-h-16">
-            <div className="tabs align-bottom">
-              <a className="tab tab-bordered tab-active">Petition Details</a> 
-              <a className="tab tab-bordered">Comments</a> 
-              <a className="tab tab-bordered">Updates</a>
-            </div>
-            <button className="btn self-center btn-primary gap-2">
-              Sign Now
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-            </button>
-          </div>
+export const getStaticProps: GetStaticProps = async (context) => {
+  const { params } = context;
+  if (!params?.streamID) {
+    return {
+      notFound: true,
+    }
+  }
+  const [ streamID ] = params?.streamID as Array<string>;
+  const { getManifest } = await import('../../lib/getManifest')
+  try {
+    const data = await getManifest({streamID})
+    
+    if (!data) {
+      console.log('404', data)
+      return {
+        notFound: true,
+      }
+    }
 
-        </div>
+    return { 
+      props: {
+        fallback: {
+          [unstable_serialize({streamID})]: data
+        }
+      }, 
+      revalidate: 1000
+    }
+  } catch (error) {
+    console.log('404', error)
+    return {
+      notFound: true,
+    }
+  }
+}
 
-        <div className="container flex max-w-6xl justify-center ">
 
-          <div className="flex flex-col lg:fixed lg:left-[max(0px,calc(50%-36rem))] lg:top-[32rem] lg:bottom-0 z-50 gap-5">
+
+const ManifestPage: NextPage<{fallback: Object}> = ({ fallback }) => {
+  const router = useRouter();
+  const [ streamID ]  = router.query.streamID as Array<string>;
+  const tabList: Tab[] = [
+    {
+      name: 'Petition details',
+      content: <ManifestBody />
+    },
+    {
+      name: 'Comments',
+      content: <ManifestComments />
+    },
+    {
+      name: 'Updates',
+      content: <div>updates</div>
+    }
+  ]
+  const [ currentTab, setTab ] = useState<Tab>(tabList[0])
+
+  return (
+    <Layout
+      noContainer
+      metas={{
+      title: 'Pact.Social',
+      description: 'decentralized petition and manifest for change and impact'
+      }}
+    >
+      <SWRConfig value={{ fallback }}>
+        <ManifestProvider manifestId={streamID}>
+
+          <ManifestHero />
+
+          <div className="bg-neutral-50 sticky top-[21rem] z-10">
             
-            <ManifestProfile />
-            
-          </div>
-
-          <div className=" min-h-screen max-w-3xl my-16 px-11">
-            {/* <h1 className="text-4xl font-bold text-center">{data?.title}</h1> */}
-            {/* <div className=" divider"></div> */}
-            <div className="">
-              <div className="">
-                <div className="aspect-w-16 aspect-h-9">
-                  <figure>
-                    {/* <Image 
-                      src="https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80"
-                      alt={data?.title}
-                      height={300}
-                      width={600}
-                      // layout="fill"
-                      // objectFit="cover"
-                      // className=""
-                    /> */}
-                  </figure>
-                </div>
-                <p dangerouslySetInnerHTML={{ __html: data?.content }}></p>
-                {/* <p>{data?.content}</p> */}
+            <div className="container flex max-w-6xl place-content-between min-h-16">
+              <div className="tabs align-bottom">
+                {tabList.map((tab, index) => (
+                  <a
+                    onClick={() => setTab(tab)}
+                    key={`tab-${index}`} 
+                    className={`tab tab-bordered ${tab.name === currentTab.name && 'tab-active'}`}
+                  >
+                    {tab.name}
+                  </a>
+                ))}
               </div>
+              <button className="btn self-center btn-primary gap-2">
+                Sign Now
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+              </button>
             </div>
+
           </div>
 
-          <div className="hidden xl:block  xl:fixed xl:top-[18rem] bottom-20 xl:right-[max(0px,calc(50%-41rem))] xl:z-40 xl:overflow-auto rounded-box">
+          <div className="container flex max-w-6xl justify-center ">
+
+            <div className="flex flex-col lg:fixed lg:left-[max(0px,calc(50%-36rem))] lg:top-[32rem] lg:bottom-0 z-50 gap-5">
+              <ManifestProfile />
+            </div>
+
+            <div className=" min-h-screen max-w-3xl my-16 px-11">
+              {/* <div className=""> */}
+                {currentTab.content}
+              {/* </div> */}
+            </div>
+
+            <div className="hidden xl:block  xl:fixed xl:top-[18rem] bottom-20 xl:right-[max(0px,calc(50%-41rem))] xl:z-40 xl:overflow-auto rounded-box">
               <div className="flex justify-end">
-                <SignBox streamID={data.id}>
+                <SignBox>
                   <SignStats />  
                 </SignBox>
               </div>
-              {/* <div>
-                <div><div className="badge badge-lg">34,354</div> have signed. Let’s get to <div className="badge badge-lg badge-secondary">35,000!</div></div>
-                <progress className="progress w-56"></progress>
-                <div>
-                At 35,000 signatures, this petition becomes one of the top signed on Change.org!
-                </div>
-              </div> */}
-              {/* <div className="divider"></div>  */}
-              {/* <div className="grid gap-4">
-                <h3 className="text-2xl font-bold">Sign this Petition</h3>
-                
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your First Name</span>
-                  </label>
-                  <input type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Last Name</span>
-                  </label>
-                  <input type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Email</span>
-                  </label>
-                  <input type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" />
-                </div>
-
-              </div> */}
             </div>
 
           </div>
-        {/* </div> */}
-      </Layout>
-    );
-  }
+        </ManifestProvider>
+      </SWRConfig>
+    </Layout>
+  );
+}
 
 export default ManifestPage

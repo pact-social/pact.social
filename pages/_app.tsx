@@ -19,6 +19,7 @@ import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 import {CeramicWrapper} from "../context";
+import NavBar from '../components/navbar';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
@@ -87,15 +88,17 @@ const roboto = Roboto({
 })
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+
   return (
     <main className={`${roboto.variable} ${arrayFont.variable} ${chillaxFont.variable} font-sans`}>
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider appInfo={appInfo} chains={chains}>
-        <CeramicWrapper>
-          <Component {...pageProps} ceramic />
-        </CeramicWrapper>
-      </RainbowKitProvider>
-    </WagmiConfig>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider appInfo={appInfo} chains={chains}>
+          <CeramicWrapper>
+            <NavBar />
+            <Component {...pageProps} ceramic />
+          </CeramicWrapper>
+        </RainbowKitProvider>
+      </WagmiConfig>
     </main>
   );
 }

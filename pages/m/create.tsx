@@ -12,7 +12,7 @@ import { Mutation, Manifest } from "../../src/gql";
 import TopicSelect from "../../components/form/topicSelect";
 import ConnectButton from "../../components/connect";
 //import "react-quill/dist/quill.bubble.css";
-//import "react-quill/dist/quill.core.css";
+// import "react-quill/dist/quill.core.css";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -28,30 +28,43 @@ interface ImageFile {
   url: string;
 }
 
-enum PetitionScope {
-  local,
-  national,
-  global
+enum PactType {
+  manifesto,
+  openletter,
+  petition,
 }
 
-type ScopeInput = {
-  id: PetitionScope;
+type PactTypeInput = {
+  id: PactType;
   name: string;
 }
 
-const scopes: ScopeInput[] = [
-  {id: PetitionScope.local, name:"Local"},
-  {id: PetitionScope.national, name:"National"},
-  {id: PetitionScope.global, name:"Global"},
+const pactTypes: PactTypeInput[] = [
+  {id: PactType.manifesto, name:"Manifesto"},
+  {id: PactType.openletter, name:"Open-Letter"},
+  {id: PactType.petition, name:"Petition"},
 ]
 
 type PetitionInputs = {
-  scope: PetitionScope, 
+  type: PactType, 
   title: string,
   topicID: string,
   content: string,
-  picture: string,
+  picture?: string,
 };
+
+const modules = {
+  toolbar: [
+    [{ header: [2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline"],
+    [{ color: [] }, { background: [] }],
+    ["blockquote", "code-block"],
+    [{ list:  "ordered" }, { list:  "bullet" }],
+    [{ indent:  "-1" }, { indent:  "+1" }, { align: [] }],
+    // ["link", "image", "video"],
+  ]
+}
+
 
 const PetitionForm = () => {
   const ref = useRef<HTMLInputElement>(null);
@@ -59,7 +72,7 @@ const PetitionForm = () => {
   
   const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<PetitionInputs>({
     defaultValues: {
-      scope: PetitionScope.local,
+      type: PactType.petition,
       title: ''
     }
   });
@@ -106,16 +119,13 @@ const PetitionForm = () => {
         }
       );
       const { url, cid } = await res.json();
-      console.log('upload result', url, cid)
+
       setCurrentPicture(url)
       setValue("picture", cid);
     }
   };
 
   const onSubmit: SubmitHandler<PetitionInputs> = async (data) => {
-    console.log('form data to submit', data, {
-      scope: PetitionScope[data.scope]
-    })
 
     try {
       if(data.picture === '') {
@@ -133,20 +143,17 @@ const PetitionForm = () => {
         input: {
           content: { 
             ...data,
-            scope: PetitionScope[data.scope]
+            type: PactType[data.type]
           }
         }
       })
-      console.log('response', res, errors)
+
       if (!errors) {
         return push(`/m/${res?.createManifest?.document.id}`)
       }
     } catch (error) {
       console.log('error', error)
     }
-
-      // const jsonData = JSON.stringify(data);
-      // console.log(jsonData); // To send to Composedb
   };
 
   const editorContent = watch("content");
@@ -159,29 +166,30 @@ return (
     imageSrc: ""
   }}>
 
-    <div className="container max-w-md">
+    <div className="container max-w-md my-12">
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-row gap-12">
         <div className=" max-w-fit">
-          <h1 className="text-5xl font-bold">Just fill this form and that&apos;s it!!</h1>
+          <h1 className="text-3xl font-bold">Your first step toward change</h1>
+          <div className="divider"></div>
 
           <div className="form-control">
-              <label htmlFor="scope" className="label cursor-pointer ">
-                Choose the scope of your petition:
-              </label>
-              <select 
-                className="select select-primary w-full max-w-xs"  
-                placeholder="placeholder"
-                multiple={false}
-                {...register('scope', {required: true})}
-              >
-                {scopes.map((value, index) => (
-                  <option key={value.id} value={value.id}>
-                    {value.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <label htmlFor="type" className="label cursor-pointer ">
+              Choose the type of pact:
+            </label>
+            <select 
+              className="select select-primary w-full max-w-xs"  
+              placeholder="placeholder"
+              multiple={false}
+              {...register('type', {required: true})}
+            >
+              {pactTypes.map((value, index) => (
+                <option key={value.id} value={value.id}>
+                  {value.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div>
@@ -191,18 +199,6 @@ return (
           {topics && 
             <TopicSelect topics={topics} register={register}></TopicSelect>
           }
-          {/* <select
-             className="select select-primary w-full max-w-xs"
-             {...register('topicID',{required: true})}
-             placeholder="placeholder topics"
-             multiple={false}
-           >
-             {topics && topics.map((value: Topic) =>(
-               <option key={value.id} value={value.id}>
-               {value.name}
-               </option>
-             ))}
-           </select> */}
         </div>
 
         <div className="formControl">
@@ -230,6 +226,7 @@ return (
             Compose your petition or your manifest here:
           </label>  
               <ReactQuill 
+                modules={modules}
                 theme="snow" 
                 placeholder="Compose here!"
                 value={editorContent}
