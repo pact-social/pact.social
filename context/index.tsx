@@ -1,10 +1,9 @@
 import { createContext, Dispatch, useContext, useReducer } from "react";
 import { CeramicClient } from "@ceramicnetwork/http-client"
-import { ComposeClient } from "@composedb/client";
-
-import { definition } from "../src/__generated__/definition.js";
-import { RuntimeCompositeDefinition } from "@composedb/types";
+import type { ComposeClient } from "@composedb/client";
 import { DID } from "dids";
+
+import { composeClient as composeClientInstance } from "../lib/composeClient";
 
 type State = {
   ceramic: CeramicClient;
@@ -24,11 +23,7 @@ type Action =
  */
 export const ceramic = new CeramicClient(process.env.NEXT_PUBLIC_CERAMIC || "http://localhost:7007");
 
-export const composeClient = new ComposeClient({
-  ceramic: process.env.NEXT_PUBLIC_CERAMIC || "http://localhost:7007",
-  // cast our definition as a RuntimeCompositeDefinition
-  definition: definition as RuntimeCompositeDefinition,
-});
+export const composeClient = composeClientInstance;
 
 
 const initialState = {
@@ -56,7 +51,6 @@ const reducer = (state: State, action: Action) => {
     case 'logout':
       return initialState;
     case "setDID":
-      console.log('did set')
       return { 
         ...state, 
         did: action.payload.did,

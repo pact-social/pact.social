@@ -1,5 +1,5 @@
 import { composeClient } from "../context";
-import { GetManifestQuery, Manifest } from "../src/gql";
+import { Query, Manifest } from "../src/gql";
 
 const query = `
   query GetManifest($streamID: ID!, $accountID: ID!) {
@@ -25,7 +25,7 @@ export type ManifestQueryArgs = {
 }
 
 export const getManifestSignature = async (args: ManifestQueryArgs): Promise<Manifest> => {  
-  const { data, errors } = await composeClient.executeQuery<GetManifestQuery>(query, args);
+  const { data, errors } = await composeClient.executeQuery<Query>(query, args);
 
   if (errors || !data) {
     throw new Error('an error occured')

@@ -6,10 +6,12 @@ export default function Layout({
   children,
   metas,
   noContainer,
+  className = '',
 }: {
   children: ReactNode;
   metas?: MetaProps;
   noContainer?: Boolean;
+  className?: string;
 }) {
   return (
     <>
@@ -18,11 +20,12 @@ export default function Layout({
         <>{children}</>
       }
       {!noContainer &&
-        <div className="container mx-auto min-h-screen">
-          {children}
+        <div className={`container mx-auto ${className}`}>
+          <div className=" min-h-[100dvh]">
+            {children}
+          </div>
         </div>
       }
-      <Footer />
     </>
   )
 }

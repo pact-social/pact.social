@@ -2,7 +2,7 @@ import { ComposeClient } from '@composedb/client';
 import { DID } from 'dids';
 import useSWR from 'swr'
 import { useCeramicContext } from '../context';
-import { CeramicAccount, GetManifestQuery, Manifest } from '../src/gql';
+import {  Query } from '../src/gql';
 
 const query = `
 query GetMyManifests($limit: Int=10, $offset: String="") {
@@ -26,8 +26,7 @@ query GetMyManifests($limit: Int=10, $offset: String="") {
 
 
 const fetch = async ({ composeClient }: {composeClient: ComposeClient;}) => {
-  const { data, errors } = await composeClient.executeQuery<{viewer: CeramicAccount}>(query, {});
-  console.log('results', data)
+  const { data, errors } = await composeClient.executeQuery<Query>(query, {});
   if (errors || !data) {
     // console.error('composedb query error', query, errors);
     throw new Error('an error occured')

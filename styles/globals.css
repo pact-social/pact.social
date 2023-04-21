@@ -1,3 +1,253 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* [data-theme="pacttheme"] .btn {
+  border-width: 2px;
+  border-color: black;
+} */
+
+/* Card component */
+[data-theme="pacttheme"] .card {
+  @apply shadow-none rounded-none;
+}
+
+[data-theme="pacttheme"] .card figure {
+  @apply mb-5 aspect-[4/3]
+}
+
+[data-theme="pacttheme"] .card figure:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 30%;
+  width: 30%;
+  background-image: url('/overlay-dots-top-corner.svg');
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-size: contain;
+}
+
+
+/* Custom Label by pact type */
+.label-dot {
+  content: "";
+  height: 100%;
+  /* min-height: 1.25rem; */
+  vertical-align: bottom;
+  border-radius: 100%;
+  /* display: inline-flex; */
+  margin-right: 0.75rem;
+  aspect-ratio: 1/1;
+}
+
+[data-theme="pacttheme"] .label-petition {
+  @apply text-petition font-light text-sm inline-flex;
+}
+
+[data-theme="pacttheme"] .label-petition:before {
+  @apply bg-petition label-dot;
+}
+
+[data-theme="pacttheme"] .label-manifesto {
+  @apply text-manifesto font-light text-sm inline-flex;
+}
+
+[data-theme="pacttheme"] .label-manifesto:before {
+  @apply bg-manifesto label-dot;
+}
+
+[data-theme="pacttheme"] .label-openletter {
+  @apply text-openletter font-light text-sm inline-flex;
+}
+
+[data-theme="pacttheme"] .label-openletter:before {
+  @apply bg-openletter label-dot;
+}
+
+/* Table */
+[data-theme="pacttheme"] .table {
+  @apply font-light text-sm;
+}
+[data-theme="pacttheme"] .table thead th {
+  @apply font-light font-alt text-xl lowercase;
+}
+[data-theme="pacttheme"] .table td {
+  @apply font-light text-sm text-right;
+}
+[data-theme="pacttheme"] .table :where(th, td) {
+  @apply max-w-[8rem] text-right;
+}
+[data-theme="pacttheme"] .table :where(tbody th, tbody td, thead th) {
+  @apply bg-white md:bg-inherit;
+}
+[data-theme="pacttheme"] .table :where(thead th:first-child, tbody th:first-child)  {
+  @apply w-24 md:w-44 md:pl-12 text-left;
+}
+[data-theme="pacttheme"] .table :where(th:nth-child(2), td:nth-child(2))  {
+  @apply text-left md:min-w-[12rem];
+}
+[data-theme="pacttheme"] .table :where(th:last-child, td:last-child)  {
+  @apply md:pr-12;
+}
+[data-theme="pacttheme"] .table tbody tr, tbody th  {
+  @apply cursor-pointer;
+}
+[data-theme="pacttheme"] .table-zebra tbody tr:nth-child(even) th, .table-zebra tbody tr:nth-child(even) td {
+  background-color: rgba(251, 251, 251, 0.8);
+  /* @apply md:pr-12; */
+}
+[data-theme="pacttheme"] .table tr.hover:hover th, .table tr.hover:hover td, .table tr.hover:nth-child(even):hover th, .table tr.hover:nth-child(even):hover td {
+  @apply bg-openletter-light;
+}
+
+/* Image classes */
+[data-theme="pacttheme"] .picture-frame {
+  @apply border-[0.75rem] lg:border-[1.25rem] border-black;
+}
+
+/* Hero classes */
+[data-theme="pacttheme"] .hero-split {
+  @apply w-full p-0 justify-items-stretch font-title;
+}
+[data-theme="pacttheme"] .hero-split .hero-content {
+  @apply flex flex-col lg:flex-row p-0 w-full min-w-full gap-0 sm:gap-4 lg:gap-8 lg:max-h-full;
+}
+
+[data-theme="pacttheme"] .hero-split .hero-img {
+  overflow: hidden;
+  @apply relative flex-1;
+}
+
+[data-theme="pacttheme"] .hero-split .hero-img img {
+  @apply aspect-[1/1] object-cover;
+}
+
+[data-theme="pacttheme"] .hero-split .hero-img:before {
+  content: '';
+  display: block;
+  background-image: url('/mask-header.svg');
+  height: 100%;
+  width: 140px;
+  background-position: top right;
+  @apply absolute top-0 -right-[1px] max-w-[20%] bg-no-repeat bg-contain;
+}
+
+[data-theme="pacttheme"] .hero-split .hero-details {
+  @apply flex-1 grid mx-5 sm:mx-0;
+}
+
+[data-theme="pacttheme"] .prose {
+  @apply lg:max-w-2xl xl:max-w-3xl;
+}
+
+
+/* rotating text */
+.message {
+  /* color: #fff; */
+  display: block;
+  font-weight: 900;
+  overflow: hidden;
+  position: absolute;
+  /* padding-left: 0.5rem; */
+  /* left: 0; */
+  /* top: 0; */
+  /* line-height: 1; */
+  animation: openclose 7s ease-in-out infinite;
+  @apply w-72 border-l-8 border-secondary whitespace-nowrap;
+  /* @apply h-20; */
+}
+.word-petition, .word-manifesto, .word-openletter {
+  @apply text-5xl h-16 pl-4;
+  line-height: 4rem;
+}
+.word-petition {
+  @apply bg-petition-light;
+}
+.word-manifesto {
+  @apply bg-manifesto-light;
+}
+.word-openletter {
+  @apply bg-openletter-light;
+}
+
+@keyframes openclose {
+  0% {
+    top: 0;
+    width: 0;
+    @apply border-manifesto;
+  }
+  5% {
+    top: 0;
+    width: 0;
+    @apply border-manifesto;
+  }
+  15% {
+    @apply border-manifesto;
+    @apply w-[20rem];
+  }
+  30% {
+    @apply border-manifesto;
+    /* top: 0.2rem; */
+    @apply w-[20rem];
+  }
+  33% {
+    top: 0;
+    width: 0;
+    @apply border-manifesto;
+  }
+  35% {
+    top: 0;
+    width: 0;
+    @apply border-petition;
+  }
+  38% {
+    top: -4rem;
+    @apply border-petition;
+  }
+  48% {
+    top: -4rem;
+    @apply w-64;
+    @apply border-petition;
+  }
+  62% {
+    top: -4rem;
+    @apply w-64;
+    @apply border-petition;
+  }
+  66% {
+    top: -4rem;
+    width: 0;
+    text-indent: 0;
+    @apply border-openletter;
+  }
+  71% {
+    top: -8rem;
+    width: 0;
+    @apply border-openletter;
+    /* text-indent: 5px; */
+  }
+  86% {
+    top: -8rem;
+    @apply w-[22rem];
+    @apply border-openletter;
+  }
+  95% {
+    top: -8rem;
+    @apply w-[22rem];
+    @apply border-openletter;
+  }
+  98% {
+    top: -8rem;
+    width: 0;
+    @apply border-openletter;
+    /* text-indent: 5px; */
+  }
+  100% {
+    top: 0;
+    width: 0;
+    @apply border-manifesto;
+    /* text-indent: 0; */
+  }
+}

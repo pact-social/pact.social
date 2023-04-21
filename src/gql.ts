@@ -556,18 +556,3 @@ export type UpdateTopicPayload = {
 export type UpdateTopicPayloadNodeArgs = {
   id: Scalars['ID'];
 };
-
-export type GetManifestQueryVariables = Exact<{
-  streamID: Scalars['ID'];
-}>;
-
-
-export type GetManifestQuery = { __typename?: 'Query', node?: { __typename?: 'BasicProfile' } | { __typename?: 'CeramicAccount' } | { __typename?: 'Manifest', id: string, title: string, content: string, type?: ManifestPactType | null, picture?: any | null, topic?: { __typename?: 'Topic', name: string } | null } | { __typename?: 'ManifestSignature' } | { __typename?: 'Topic' } | null };
-
-export type GetTopicsQueryVariables = Exact<{
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetTopicsQuery = { __typename?: 'Query', topicIndex?: { __typename?: 'TopicConnection', edges?: Array<{ __typename?: 'TopicEdge', node?: { __typename?: 'Topic', id: string, name: string } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };

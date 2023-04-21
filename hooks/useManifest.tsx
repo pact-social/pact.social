@@ -8,7 +8,7 @@ interface useStreamProps {
 
 export default function useManifest({stream}: useStreamProps) {
   const args: ManifestQueryArgs = { streamID: stream || '' };
-  
+
   const { data, error, isLoading, mutate } = useSWR(args,
     getManifest,
     {

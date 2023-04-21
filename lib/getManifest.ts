@@ -1,5 +1,5 @@
 import { composeClient } from "../context";
-import { GetManifestQuery, Manifest } from "../src/gql";
+import { Query, Manifest } from "../src/gql";
 
 const query = `
   query GetManifest($streamID: ID!) {
@@ -32,15 +32,16 @@ export type ManifestQueryArgs = {
 
 export const getManifest = async (args: ManifestQueryArgs) => {
   
-  const { data, errors } = await composeClient.executeQuery<GetManifestQuery>(query, args);
+  const { data, errors } = await composeClient.executeQuery<Query>(query, args);
 
   if (errors || !data) {
+    console.log('error', errors, data, args)
     throw new Error('an error occured')
   }
   
-  if (data.node && data.node?.__typename !== 'Manifest' && "title" in data?.node ) {
-    throw new Error('Result is not a manifest.')
-  }
+  // if (data.node && data.node?.__typename !== 'Manifest' && "title" in data?.node ) {
+  //   throw new Error('Result is not a manifest.')
+  // }
   
   return data.node as Manifest;
 }

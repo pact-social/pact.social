@@ -34,6 +34,55 @@ export interface Database {
   }
   public: {
     Tables: {
+      ceramic_config: {
+        Row: {
+          created_at: string
+          option: string
+          updated_at: string
+          updated_by: string | null
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          option: string
+          updated_at?: string
+          updated_by?: string | null
+          value: string
+        }
+        Update: {
+          created_at?: string
+          option?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string
+        }
+      }
+      ceramic_models: {
+        Row: {
+          created_at: string
+          enable_historical_sync: boolean
+          is_indexed: boolean
+          model: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          enable_historical_sync?: boolean
+          is_indexed?: boolean
+          model: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          created_at?: string
+          enable_historical_sync?: boolean
+          is_indexed?: boolean
+          model?: string
+          updated_at?: string
+          updated_by?: string
+        }
+      }
       compose_indexer: {
         Row: {
           created_at: string | null
@@ -52,6 +101,140 @@ export interface Database {
           cursor?: string | null
           key?: string
           last_indexed?: string | null
+        }
+      }
+      kjzl6hvfrbw6c5dai8aofbwhn5a5i1chh23kfveqbf6zkhb8c27nuehxodym5m9: {
+        Row: {
+          controller_did: string
+          created_at: string
+          custom_manifestID: string
+          first_anchored_at: string | null
+          last_anchored_at: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at: string
+        }
+        Insert: {
+          controller_did: string
+          created_at?: string
+          custom_manifestID: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at?: string
+        }
+        Update: {
+          controller_did?: string
+          created_at?: string
+          custom_manifestID?: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content?: Json
+          stream_id?: string
+          tip?: string
+          updated_at?: string
+        }
+      }
+      kjzl6hvfrbw6c64flvg8scssg663ortm0eu92kr0fmpa7li6ajgx7t3ytga3o3y: {
+        Row: {
+          controller_did: string
+          created_at: string
+          first_anchored_at: string | null
+          last_anchored_at: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at: string
+        }
+        Insert: {
+          controller_did: string
+          created_at?: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at?: string
+        }
+        Update: {
+          controller_did?: string
+          created_at?: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content?: Json
+          stream_id?: string
+          tip?: string
+          updated_at?: string
+        }
+      }
+      kjzl6hvfrbw6c890xjb0alh5kzxc5ebaxvhzcvo03w1npo8s8uqa0muigwn15a0: {
+        Row: {
+          controller_did: string
+          created_at: string
+          first_anchored_at: string | null
+          last_anchored_at: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at: string
+        }
+        Insert: {
+          controller_did: string
+          created_at?: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at?: string
+        }
+        Update: {
+          controller_did?: string
+          created_at?: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content?: Json
+          stream_id?: string
+          tip?: string
+          updated_at?: string
+        }
+      }
+      kjzl6hvfrbw6c9qmhjxe6om8jht0drz9qgxxnps4pj6u26626odywthu2440tvc: {
+        Row: {
+          controller_did: string
+          created_at: string
+          custom_topicID: string
+          first_anchored_at: string | null
+          last_anchored_at: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at: string
+        }
+        Insert: {
+          controller_did: string
+          created_at?: string
+          custom_topicID: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content: Json
+          stream_id: string
+          tip: string
+          updated_at?: string
+        }
+        Update: {
+          controller_did?: string
+          created_at?: string
+          custom_topicID?: string
+          first_anchored_at?: string | null
+          last_anchored_at?: string | null
+          stream_content?: Json
+          stream_id?: string
+          tip?: string
+          updated_at?: string
         }
       }
       pact_indexer_logs: {
@@ -271,6 +454,7 @@ export interface Database {
           owner: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          version: string | null
         }
         Insert: {
           bucket_id?: string | null
@@ -282,6 +466,7 @@ export interface Database {
           owner?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          version?: string | null
         }
         Update: {
           bucket_id?: string | null
@@ -293,6 +478,7 @@ export interface Database {
           owner?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          version?: string | null
         }
       }
     }
@@ -300,6 +486,15 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      can_insert_object: {
+        Args: {
+          bucketid: string
+          name: string
+          owner: string
+          metadata: Json
+        }
+        Returns: undefined
+      }
       extension: {
         Args: {
           name: string

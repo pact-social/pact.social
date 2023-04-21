@@ -3,38 +3,42 @@ import { useRouter } from 'next/router'
 import Layout from '../../components/layout';
 import ManifestHero from '../../components/manifest/manifestHero';
 import SignStats from '../../components/sign/stats';
-import ManifestProfile from '../../components/manifest/manifestProfile';
 import SignBox from '../../components/signBox';
 import { SWRConfig, unstable_serialize } from 'swr';
 import ManifestBody from '../../components/manifest/manifestBody';
 import { ManifestProvider } from '../../context/manifest';
 import { ReactNode, useState } from 'react';
 import ManifestComments from '../../components/manifest/manifestComments';
+import Highlights from '../../components/highlights';
+import Portal from '../../components/portal';
+import WalletSign from '../../components/sign/wallet';
 
 type Tab = {
   name: string,
   content: ReactNode
 }
 
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-
+export const getStaticPaths: GetStaticPaths<{ streamID: string }> = async () => {
   return {
-      paths: [], //indicates that no page needs be created at build time
-      fallback: 'blocking' //indicates the type of fallback
+    paths: [], //indicates that no page needs be created at build time
+    fallback: 'blocking' //indicates the type of fallback
   }
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { params } = context;
-  if (!params?.streamID) {
+
+  if (!params?.streamID || params?.streamID.length === 0) {
     return {
       notFound: true,
     }
   }
   const [ streamID ] = params?.streamID as Array<string>;
   const { getManifest } = await import('../../lib/getManifest')
+  
   try {
-    const data = await getManifest({streamID})
+
+    const data = await getManifest({ streamID })
     
     if (!data) {
       console.log('404', data)
@@ -46,7 +50,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return { 
       props: {
         fallback: {
-          [unstable_serialize({streamID})]: data
+          [unstable_serialize({ streamID })]: data
         }
       }, 
       revalidate: 1000
@@ -82,7 +86,7 @@ const ManifestPage: NextPage<{fallback: Object}> = ({ fallback }) => {
 
   return (
     <Layout
-      noContainer
+      // noContainer
       metas={{
       title: 'Pact.Social',
       description: 'decentralized petition and manifest for change and impact'
@@ -93,9 +97,9 @@ const ManifestPage: NextPage<{fallback: Object}> = ({ fallback }) => {
 
           <ManifestHero />
 
-          <div className="bg-neutral-50 sticky top-[21rem] z-10">
+          <div className="bg-neutral-50 sticky top-[5rem] z-10">
             
-            <div className="container flex max-w-6xl place-content-between min-h-16">
+            <div className="container flex place-content-between min-h-16">
               <div className="tabs align-bottom">
                 {tabList.map((tab, index) => (
                   <a
@@ -107,37 +111,69 @@ const ManifestPage: NextPage<{fallback: Object}> = ({ fallback }) => {
                   </a>
                 ))}
               </div>
-              <button className="btn self-center btn-primary gap-2">
+              {/* <button className="btn self-center btn-primary gap-2">
                 Sign Now
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-              </button>
+              </button> */}
             </div>
 
           </div>
+          <div className=" flex items-start justify-center gap-4 lg:gap-8">
+              <div className="md:max-w-lg lg:max-w-2xl xl:max-w-3xl my-16 px-7">
+                  {currentTab.content}
+              </div>
 
-          <div className="container flex max-w-6xl justify-center ">
 
-            <div className="flex flex-col lg:fixed lg:left-[max(0px,calc(50%-36rem))] lg:top-[32rem] lg:bottom-0 z-50 gap-5">
-              <ManifestProfile />
-            </div>
+            {/* </div> */}
 
-            <div className=" min-h-screen max-w-3xl my-16 px-11">
-              {/* <div className=""> */}
-                {currentTab.content}
-              {/* </div> */}
-            </div>
-
-            <div className="hidden xl:block  xl:fixed xl:top-[18rem] bottom-20 xl:right-[max(0px,calc(50%-41rem))] xl:z-40 xl:overflow-auto rounded-box">
-              <div className="flex justify-end">
-                <SignBox>
+            <div className="hidden md:block right-0 top-28 w-56 lg:w-64 md:sticky">
+              <div className="flex justify-end my-16 ">
+                <SignBox className="stats shadow-xl stats-vertical w-full min-h-[18rem]">
                   <SignStats />  
                 </SignBox>
               </div>
             </div>
-
+          </div>
+          <div className="md:hidden">
+            <div className="btm-nav z-10 px-8 gap-8 border-t-2">
+            {/* <div className="btn-group btn-group-horizontal gap-0"> */}
+              <label htmlFor="sign-modal" className="btn btn-secondary flex-auto">
+                  Sign
+                  <Portal>
+                    <input type="checkbox" id="sign-modal" className="modal-toggle" />
+                    <div className="modal modal-bottom">
+                      <div className="modal-box">
+                        <SignBox>
+                          <WalletSign />  
+                        </SignBox>
+                        <div className="modal-action">
+                          <label htmlFor="sign-modal" className="btn">Yay!</label>
+                        </div>
+                      </div>
+                    </div>
+                  </Portal>
+              </label>
+              <button className="btn btn-success flex-auto">
+                Share
+              </button>
+              <button className="btn btn-outline flex-auto">
+                Chip in $
+              </button>
+              {/* </div> */}
+              {/* <button>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+              </button>
+              <button className="active">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </button>
+              <button>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+              </button> */}
+            </div>
           </div>
         </ManifestProvider>
       </SWRConfig>
+      <Highlights />
     </Layout>
   );
 }

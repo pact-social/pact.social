@@ -8,6 +8,7 @@ import {
   RainbowKitProvider,
   getDefaultWallets,
   connectorsForWallets,
+  darkTheme,
 } from '@rainbow-me/rainbowkit';
 import {
   argentWallet,
@@ -82,7 +83,7 @@ const chillaxFont = localFont({
   variable: '--font-chillax'
 })
 const roboto = Roboto({
-  weight: ['300', '400', '700'],
+  weight: ['300', '400', '700', '900'],
   subsets: ['latin'],
   variable: '--font-roboto',
 })
@@ -92,10 +93,14 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <main className={`${roboto.variable} ${arrayFont.variable} ${chillaxFont.variable} font-sans`}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider appInfo={appInfo} chains={chains}>
+        <RainbowKitProvider appInfo={appInfo} chains={chains} theme={darkTheme({
+          accentColor: '#f000b8',
+        })}>
           <CeramicWrapper>
-            <NavBar />
-            <Component {...pageProps} ceramic />
+            <NavBar>
+              <Component {...pageProps} ceramic />
+            </NavBar>
+            <div id="portal"></div>
           </CeramicWrapper>
         </RainbowKitProvider>
       </WagmiConfig>

@@ -1,21 +1,29 @@
-import Image from 'next/image';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BasicProfile } from "@datamodels/identity-profile-basic"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 import { useCeramicContext } from "../context"
-import { authenticateCeramic, logoutCeramic } from "../utils"
+import { logoutCeramic } from "../utils"
 import { useAccount } from 'wagmi'
 import Link from 'next/link';
 import { getMySignatures } from '../lib/getMySignature';
 import useAuthCeramic from '../hooks/useAuthCeramic';
+import LogoBrand from './svg/logoBrand';
+import Footer from './footer';
 
-export default function NavBar() {
+type NavbarProps = {
+  children: ReactNode;
+}
+
+export default function NavBar({ children }: NavbarProps) {
   const { ceramic, composeClient, dispatch} = useCeramicContext()
   const [profile, setProfile] = useState<BasicProfile | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const {connectCeramic} = useAuthCeramic()
 
-  const account = useAccount({
+  const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const toggle = () => setDrawerOpen(!isDrawerOpen);
+
+  useAccount({
     async onConnect({ address, connector, isReconnected }) {
       await connectCeramic()
       await getProfile()
@@ -56,55 +64,104 @@ export default function NavBar() {
    */
   
   return (
-    <div className="navbar glass sticky top-0 z-50">
-      <div className="container">
-        <div className="navbar-start">
+    <div className="drawer">
+      <input id="my-drawer-3" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={toggle} /> 
+      <div className="drawer-content flex flex-col">
+
+        <div className="navbar bg-black text-neutral-content sticky top-0 z-50 min-h-[5rem]">
+          <div className="container">
+            <div className="navbar-start flex lg:w-auto xl:flex-1">
+              <div className="flex-none lg:hidden">
+                <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </label>
+              </div> 
+              <Link 
+                className="btn btn-ghost normal-case text-xl text-primary"
+                href="/"
+              >
+                <LogoBrand height={24} white></LogoBrand>
+              </Link>
+            </div>
+            <div className="flex-none hidden lg:flex lg:flex-1 lg:navbar-center">
+              <ul className="menu menu-horizontal px-1">
+                <MenuItems/>
+              </ul>
+            </div>
+            <div className="navbar-end flex-none hidden md:flex md:flex-1">
+              <ConnectButton chainStatus="icon" />
+            </div>
+          </div>
+        </div>
+        {/* Page Content */}
+
+        {children}
+        <Footer />
+      </div>
+      <div className="drawer-side">
+        <label htmlFor="my-drawer-3" className="drawer-overlay"></label> 
+        <ul className="menu p-4 w-80 backdrop-blur-lg bg-black/60 text-neutral-content">
+          {/* Sidebar content here */}
           <Link 
-            className="btn btn-ghost normal-case text-xl text-primary"
+            className="normal-case text-xl text-primary my-4 mb-8"
             href="/"
+            onClick={toggle}
           >
-            <Image
-              priority
-              src={'/logo.svg'}
-              height={32}
-              width={32}
-              alt="pact.social"
-              className="mr-3"
-            />
-            pact.social
+            <LogoBrand height={24} white></LogoBrand>
           </Link>
-        </div>
-        <div className="navbar-center lg:flex">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link
-                href={'/m/create'}
-              >
-                Start Petition
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={'/p/my-petitions'}
-              >
-                My Petitions
-              </Link>
-            </li>
-            <li><a>Explore</a></li>
-            <li>
-              <Link
-                href={'/about-us'}
-                className='btn btn-accent'
-              >
-                <span >about us</span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="navbar-end flex">
-          <ConnectButton/>
-        </div>
+          <ConnectButton showBalance={false} chainStatus="icon"/>
+          <div className="mt-4">
+            <MenuItems onClick={toggle}/>
+          </div>
+        </ul>
+        
       </div>
     </div>
+  )
+}
+
+type MenuItemsProps = {
+  onClick?: () => void;
+}
+const MenuItems = ({ onClick }: MenuItemsProps) => {
+  return (
+    <>
+      <li>
+        <Link
+          href={'/m/create'}
+          onClick={onClick}
+          className="active:bg-secondary"
+        >
+          Start a Pact
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={'/p/my-profile'}
+          onClick={onClick}
+          className="active:bg-secondary"
+        >
+          My Pacts
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={'/explore'}
+          onClick={onClick}
+          className="active:bg-secondary"
+        >
+          Explore
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={'/about-us'}
+          onClick={onClick}
+          className="active:bg-secondary"
+        >
+          <span >about us</span>
+        </Link>
+      </li>
+    </>
   )
 }

@@ -85,16 +85,21 @@ export const ViewContainer = forwardRef<SignBoxAttr, SignBoxProps>(ViewWrapper);
 
 type StreamProps = {
   children: ReactNode;
+  className?: string;
 }
 
-export default function SignBox({ children }: StreamProps) {
+export default function SignBox({ children, ...props }: StreamProps) {
 
   const containerRef = useRef<SignBoxAttr>(null);
 
   return (
     <>
         <ViewProvider refNode={containerRef}>
-          <ViewContainer name="signBox" className="stats shadow stats-vertical xl:w-64 min-h-[18rem]" ref={containerRef}>
+          <ViewContainer 
+            name="signBox" 
+            ref={containerRef}
+            {...props}
+          >
             {children}
           </ViewContainer>
         </ViewProvider>

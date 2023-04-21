@@ -1,36 +1,127 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import Divider from './svg/divider'
 
 export default function Hero() {
   return (
     <>
-      <div className="hero min-h-fit bg-base-200 py-32 font-title">
-        <div className="hero-content flex-col lg:flex-row">
-          <Image
-            src="https://images.unsplash.com/photo-1516589091380-5d8e87df6999?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80" 
-            className="max-w-sm rounded-lg shadow-2xl"
-            alt=""
-            width={800}
-            height={500}
-          />
-          <div className="">
-            <h1 className="text-5xl font-bold">where free voices act!</h1>
-            <p className="py-3 text-5xl font-medium">stand up and<br/>manifest</p>
+      <div className="hero hero-split">
+        <div className="hero-content">
+          <div className="hero-img lg:border-white lg:border-r-[1rem] lg:border-b-[1rem]">
+            <Image
+              src="/ehimetalor-akhere-unuabona-sW16rbnZHp8-unsplash.jpg" 
+              alt=""
+              width={800}
+              height={800}
+            />
+            <div className="absolute bottom-0 sm:bottom-10 xl:bottom-20 max-w-full min-w-[80%] lg:max-w-[90%] bg-[#f4fffb]/80 backdrop-blur-md font-sans p-8 py-3">
+              <div className="pb-2 font-light">
+                <div className="h-[0.875rem] w-[0.875rem] bg-secondary inline-flex rounded-2xl mr-2"></div>
+                featured petition
+              </div>
+              <h2 className="text-xl font-bold">
+              Help Save Grace the Ancient Tree and her friends, by ending the filling of wetlands!
+              </h2>
+            </div>
           </div>
-            <Link
-              href={'/m/create'}
-            >
-                <button className="btn btn-secondary">Start a Manifest</button>
-            </Link>
+          <div className="hero-details mb-40 mt-9 sm:mt-12 lg:mt-0">
+            <h1 className="text-5xl font-bold">where free voices act!</h1>
+            <p className="py-3 text-4xl xl:text-5xl font-medium">stand up and create</p>
+            <div className="relative overflow-hidden h-16 -ml-2">
+              <div className="message">
+                <div className="word-manifesto">manifestos</div>
+                <div className="word-petition">petitions</div>
+                <div className="word-openletter">open letters</div>
+              </div>
+            </div>
+            {/* <div className="py-6">
+              <Link
+                href={'/m/create'}
+              >
+                  <button className="btn btn-secondary">Start a Manifest</button>
+              </Link>
+            </div> */}
+            {/* <div className="stats shadow">
+              <div className="stat">
+                 <div className="stat-title">Total Page Views</div> 
+                <div className="stat-value text-primary font-normal font-alt">312,400</div>
+                <div className="stat-desc text-center">people making change</div>
+              </div>
+            </div> */}
+          </div>
         </div>
       </div>
-      <div className="flex place-content-center -mt-14">
-        <div className="stats shadow">
-          <div className="stat">
-            {/* <div className="stat-title">Total Page Views</div> */}
-            <div className="stat-value text-primary font-normal font-alt">312,400</div>
-            <div className="stat-desc text-center">people making change</div>
+    
+      <div className="mx-auto -mt-20 bg-[#eef9ff]">
+        <div className="relative pt-28 pb-28">
+
+        <Divider width={100} position="right" className="absolute right-0 -top-[117px]"></Divider>
+        <div className="grid lg:grid-flow-col lg:grid-cols-3 gap-12 justify-items-center lg:mx-12 xl:mx-24">
+          
+          <div className="grid h-full items-start max-w-xs">
+            <h3 className="font-bold text-3xl my-6">Manifesto</h3>
+            <p className="font-light text-lg self-start">
+              Make a stand and join all those free<br/>
+              voices that share your values
+            </p>
+            <div className="flex gap-4 mt-12 self-end">
+              <Link
+                className="btn normal-case btn-secondary"
+                href="/"
+              >
+                Post a Manifesto
+              </Link>
+              <Link
+                className="btn normal-case btn-outline"
+                href="/"
+              >
+                See all Manifestos
+              </Link>
+            </div>
           </div>
+
+          <div className="grid h-full items-start max-w-xs">
+            <h3 className="font-bold text-3xl my-6">Petition</h3>
+            <p className="font-light text-lg self-start">
+              Change your society, create decision power by gathering free voices to make change happen
+            </p>
+            <div className="flex gap-4 mt-12 self-end">
+              <Link
+                className="btn normal-case btn-secondary"
+                href="/"
+              >
+                Make a Petition
+              </Link>
+              <Link
+                className="btn normal-case btn-outline"
+                href="/"
+              >
+                See all Petitions
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid h-full items-start max-w-xs">
+            <h3 className="font-bold text-3xl my-6">Open letter</h3>
+            <p className="font-light text-lg self-start">
+              Your opinion counts, Get your free voice out there and power it up by others.
+            </p>
+            <div className="flex gap-4 mt-12 self-end">
+              <Link
+                className="btn normal-case btn-secondary"
+                href="/"
+              >
+                Write open letter
+              </Link>
+              <Link
+                className="btn normal-case btn-outline"
+                href="/"
+              >
+                See all Open letters
+              </Link>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </>

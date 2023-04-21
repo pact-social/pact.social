@@ -14,10 +14,14 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
 
   if(sessionStr) {
     session = await DIDSession.fromSession(sessionStr)
+    
+    if (getAddressFromDid(session.did?.parent)?.address !== address) {
+      console.log('no matching session', getAddressFromDid(session.did?.parent), address)
+      session = undefined;
+    }
   }
-
+  console.log('session', session, provider)
   if(!session || (session.hasSession && session.isExpired)) {
-
     const accountId = await getAccountId(provider, address)
     const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
 

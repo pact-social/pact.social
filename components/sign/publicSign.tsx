@@ -45,7 +45,8 @@ export default function PublicSign() {
       }, [composeClient.did.id]);
   
       // put the JWE into the ipfs dag
-      const jweCid = await (await ipfs).dag.put(jwe, {
+      // TODO: must be done serverside for not exposing ipfs api
+      const jweCid = await ipfs.dag.put(jwe, {
         storeCodec: 'dag-jose',
         hashAlg: 'sha2-256',
       });

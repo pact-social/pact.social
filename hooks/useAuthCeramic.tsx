@@ -1,13 +1,22 @@
 import { useAccount } from "wagmi";
 import { useCeramicContext } from "../context";
 import { authenticateCeramic } from "../utils";
+import { useEffect, useState } from "react";
 
 
-export default function useAuthCeramic (){
+export default function useAuthCeramic () {
     const { connector, address } = useAccount();
     const { ceramic, composeClient, dispatch, state: { isAuthenticated, isAuthenticating } } = useCeramicContext();
+    const [ authRequested, setAuthRequested ] = useState<boolean>(false);
     
-    async function connectCeramic() {  
+    useEffect(() => {
+      if (connector && authRequested) {
+        connectCeramic()
+        setAuthRequested(false);
+      }
+    }, [connector, authRequested])
+
+    async function connectCeramic() {
       dispatch({
         type: 'toggleIsAuthenticating',
       })
@@ -18,7 +27,11 @@ export default function useAuthCeramic (){
          type: 'setDID',
          payload: { did }
         })
-      } catch (error) {
+      } catch (error: any) {
+        if (!error?.code) {
+          setAuthRequested(true);
+        }
+        console.log('error', error)
         dispatch({
           type: 'toggleIsAuthenticating',
         })
