@@ -1,4 +1,4 @@
-export const manifestSignature = function (manifestId) {
+export const pactSignature = function (pactId) {
   return `
     enum VisibilityType {
       anon
@@ -6,19 +6,19 @@ export const manifestSignature = function (manifestId) {
       public
     }
 
-    type Manifest @loadModel(id: "${manifestId}") {
+    type Pact @loadModel(id: "${pactId}") {
       id: ID!
     }
 
-    type ManifestSignature @createModel(accountRelation: LIST, description: "A signature document for a manifest") {
+    type PactSignature @createModel(accountRelation: LIST, description: "A signature document for a pact") {
       author: DID! @documentAccount
       visibility: VisibilityType!
       validator: DID!
       signedAt: DateTime! 
       jwe: CID!
-      manifestVersion: CommitID!
-      manifestID: StreamID! @documentReference(model: "Manifest")
-      manifest: Manifest @relationDocument(property: "manifestID")
+      pactVersion: CommitID!
+      pactID: StreamID! @documentReference(model: "Pact")
+      pact: Pact @relationDocument(property: "pactID")
       metadata: String @string(maxLength: 10000)
     }
   `;

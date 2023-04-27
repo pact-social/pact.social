@@ -1,15 +1,16 @@
 import useSWR from 'swr'
-import { getLatestPetitions } from '../lib/getLatestPetitions'
-import ManifestCard from './manifest/manifestCard'
+import { getLatestPacts } from '../lib/getLatestPacts'
+import PactCard from './pacts/pactCard'
 import Divider from './svg/divider';
+import { Pact } from '../src/gql';
 
 export default function Highlights() {
   const { data, error } = useSWR(
     {
-      key: 'getLatestPetitions',
+      key: 'getLatestPacts',
       limit: 3,
     },
-    getLatestPetitions, 
+    getLatestPacts, 
     {
       dedupingInterval: 30000,
       focusThrottleInterval: 60000,
@@ -27,7 +28,7 @@ export default function Highlights() {
       </div>
       <div className="grid lg:grid-cols-3 gap-8 mx-8 lg:mx-16 xl:mx-24 justify-center">
         {data?.map(doc => (
-          <ManifestCard key={doc?.node?.id} manifest={doc?.node} />
+          <PactCard key={doc?.node?.id} pact={doc?.node as Pact} />
         ))}
       </div>
     </div>

@@ -3,8 +3,8 @@ import { CeramicAccount } from "../src/gql";
 import { shortAddress } from "../utils";
 
 export default function useGetUsername(details: CeramicAccount | undefined | null, address: string | undefined | null, did: string | undefined) {
-  if(details && details.basicProfile?.name) {
-    return details.basicProfile?.name;
+  if(details && details.pactProfile?.username) {
+    return details.pactProfile?.username;
   }
   // else if(details && details.body?.name) {
   //   return details.body.name;

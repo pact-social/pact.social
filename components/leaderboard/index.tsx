@@ -1,16 +1,16 @@
 import { useRouter } from "next/router"
 
-const Row = ({manifest} : { manifest?: {title: string; rank: string; id?: string;} }) => {
+const Row = ({pact} : { pact?: {title: string; rank: string; id?: string;} }) => {
   const { push } = useRouter()
   
-  function openManifest() {
-    push(`/m/${manifest?.id}`)
+  function openPact() {
+    push(`/m/${pact?.id}`)
   }
   
   return (
-    <tr className="hover" onClick={openManifest}>
+    <tr className="hover" onClick={openPact}>
       <th>
-        <span className="text-2xl font-alt font-light">#{manifest?.rank}</span>
+        <span className="text-2xl font-alt font-light">#{pact?.rank}</span>
         {/* <span>
           <div className="avatar placeholder">
             <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
@@ -21,7 +21,7 @@ const Row = ({manifest} : { manifest?: {title: string; rank: string; id?: string
       <td>
         <div className="flex items-center space-x-3">
           <div>
-            <div className="font-bold">{manifest?.title || 'title'}</div>
+            <div className="font-bold">{pact?.title || 'title'}</div>
           </div>
         </div>
       </td>
@@ -63,35 +63,35 @@ export default function Leaderboard() {
 
           <tbody className="md:bg-gradient-to-b from-[#c1dfff]/[.3] to-[#ffac95]/[.2]">
             {/* row 1 */}
-            <Row manifest={{title: 'my petition', rank: '1'}} />
+            <Row pact={{title: 'my pact', rank: '1'}} />
             {/* row 2 */}
-            <Row manifest={{title: 'my petition', rank: '2'}} />
+            <Row pact={{title: 'my pact', rank: '2'}} />
             {/* row 3 */}
-            <Row manifest={{title: 'my petition', rank: '3'}} />
+            <Row pact={{title: 'my pact', rank: '3'}} />
             {/* row 4 */}
-            <Row manifest={{title: 'my petition', rank: '4'}} />
+            <Row pact={{title: 'my pact', rank: '4'}} />
             {/* row 5 */}
-            <Row manifest={{title: 'my petition', rank: '5'}} />
+            <Row pact={{title: 'my pact', rank: '5'}} />
             {/* row 6 */}
-            <Row manifest={{title: 'my petition', rank: '6'}} />
+            <Row pact={{title: 'my pact', rank: '6'}} />
             {/* row 7 */}
-            <Row manifest={{title: 'my petition', rank: '7'}} />
+            <Row pact={{title: 'my pact', rank: '7'}} />
             {/* row 8 */}
-            <Row manifest={{title: 'my petition', rank: '8'}} />
+            <Row pact={{title: 'my pact', rank: '8'}} />
             {/* row 9 */}
-            <Row manifest={{title: 'my petition', rank: '9'}} />
+            <Row pact={{title: 'my pact', rank: '9'}} />
             {/* row 10 */}
-            <Row manifest={{title: 'my petition', rank: '10'}} />
+            <Row pact={{title: 'my pact', rank: '10'}} />
             {/* row 11 */}
-            <Row manifest={{title: 'my petition', rank: '11'}} />
+            <Row pact={{title: 'my pact', rank: '11'}} />
             {/* row 12 */}
-            <Row manifest={{title: 'my petition', rank: '12'}} />
+            <Row pact={{title: 'my pact', rank: '12'}} />
             {/* row 13 */}
-            <Row manifest={{title: 'my petition', rank: '13'}} />
+            <Row pact={{title: 'my pact', rank: '13'}} />
             {/* row 14 */}
-            <Row manifest={{title: 'my petition', rank: '14'}} />
+            <Row pact={{title: 'my pact', rank: '14'}} />
             {/* row 15 */}
-            <Row manifest={{title: 'my petition', rank: '15'}} />
+            <Row pact={{title: 'my pact', rank: '15'}} />
           </tbody>
           {/* foot */}
           {/* <tfoot>

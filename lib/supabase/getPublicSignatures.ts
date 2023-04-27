@@ -6,7 +6,7 @@ export default async function getPublicSignatures(streamID: string, page?: numbe
   const dbRecord = await supabase
     .from('public_signatures')
     .select('*', { count: 'exact'})
-    .eq('custom_manifestID', streamID)
+    .eq('custom_pactID', streamID)
     .range(limit * (page - 1), limit * page)
     .limit(limit)
   ;

@@ -1,6 +1,10 @@
+
 declare module '@orbisclub/components' {
-  export class Discussion extends React.Component {
- 
+  type DiscussionProps = {
+    context: string;
+  }
+  export class Discussion extends React.Component<DiscussionProps> {
+
   }
 }
 

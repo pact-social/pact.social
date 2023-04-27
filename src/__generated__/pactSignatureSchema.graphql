@@ -1,0 +1,23 @@
+
+    enum VisibilityType {
+      anon
+      private
+      public
+    }
+
+    type Pact @loadModel(id: "kjzl6hvfrbw6c67x7h663cfeduljp8fihe2r0eizhjllrdppe894ft14x7nyeu6") {
+      id: ID!
+    }
+
+    type PactSignature @createModel(accountRelation: LIST, description: "A signature document for a pact") {
+      author: DID! @documentAccount
+      visibility: VisibilityType!
+      validator: DID!
+      signedAt: DateTime! 
+      jwe: CID!
+      pactVersion: CommitID!
+      pactID: StreamID! @documentReference(model: "Pact")
+      pact: Pact @relationDocument(property: "pactID")
+      metadata: String @string(maxLength: 10000)
+    }
+  

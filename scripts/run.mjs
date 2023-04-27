@@ -2,7 +2,7 @@ import ora from 'ora'
 
 import { spawn } from "child_process"
 import { EventEmitter } from 'events'
-import { writeComposite } from './composites.mjs';
+import { deployComposites } from './composites.mjs';
 
 const events = new EventEmitter()
 const spinner = ora();
@@ -26,7 +26,8 @@ const bootstrap = async () => {
   //       & do not create the model if it already exists & has not been updated
   try {
     spinner.info("[Composites] bootstrapping composites");
-    await writeComposite(spinner)
+    // await writeComposite(spinner)
+    await deployComposites(spinner)
     spinner.succeed("Composites] composites bootstrapped");
   } catch (err) {
     spinner.fail(err.message)

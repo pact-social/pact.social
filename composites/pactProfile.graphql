@@ -1,0 +1,35 @@
+type EncryptedLitContent {
+  encryptedString: String! @string(minLength: 60, maxLength: 120)
+  encryptedSymmetricKey: String! @string(minLength: 100, maxLength: 600)
+  accessControlConditions: String! @string(minLength: 100, maxLength: 10000)
+}
+
+# type CredentialUserReference {
+#   issuer: String! @string(minLength: 3, maxLength: 30)
+#   username: String! @string(minLength: 2, maxLength: 100)
+#   timestamp: String! @int(minLenght: 10, maxLenght: 12) # 2022 to 9999
+#   credential_id: StreamID!
+# }
+
+# Basic copy of the basicProfile datamodel. 
+type PactProfile @createModel(accountRelation: SINGLE, description: "pact.social Profile") {
+  username: String! @string(minLength: 3, maxLength: 100)
+  fullname: String @string(minLength: 3, maxLength: 100)
+  bio: String @string(minLength: 3, maxLength: 100)
+  profilePicture: CID
+  organisation: String @string(minLength: 3, maxLength: 100)
+  locale: Locale
+  country: CountryCode
+  city: String @string(minLength: 3, maxLength: 100)
+  latitude: Latitude
+  longitude: Longitude
+
+  email: EncryptedLitContent
+  # twitter: CredentialUserReference
+  # discord: CredentialUserReference
+  # github: CredentialUserReference
+  # facebook: CredentialUserReference
+  # linkedin: CredentialUserReference
+  # lens: CredentialUserReference
+  isMagicLink: Boolean!
+}

@@ -3,7 +3,7 @@ import { Wallet } from "ethers"
 import { useAccount, useSigner } from "wagmi"
 import { useCeramicContext } from "../../context"
 import { useBoxContext } from "../../context/box"
-import { useManifestContext } from "../../context/manifest"
+import { usePactContext } from "../../context/pact"
 import { authenticateCeramic } from "../../utils"
 import { useViewContext } from "../signBox"
 
@@ -13,7 +13,7 @@ export default function AnonSign() {
   console.log('anon sign address', address)
   const signer = useSigner()
   const { composeClient, ceramic } = useCeramicContext();
-  const { manifest } = useManifestContext();
+  const { pact } = usePactContext();
 
   const handleCeramicAuth = async () => {
     const provider = await connector?.getProvider()
@@ -28,15 +28,15 @@ export default function AnonSign() {
     return wallet;
   }
 
-  const handlePetitionSign = async () => {
+  const handlePactSign = async () => {
     // generate a secret/nonce getCsrfToken from next-auth? or from client side
     const timestamp = new Date().valueOf();
     const signingAddress = getRandomWallet() ;
-    console.log('signing petition', timestamp, signingAddress)
+    console.log('signing pact', timestamp, signingAddress)
 
-    // get petition datas
+    // get pact datas
     const message = `
-      ${manifest}\n\n
+      ${pact}\n\n
       ${timestamp}
     `
     // form the message
@@ -69,7 +69,7 @@ export default function AnonSign() {
       <div className="divider"></div>
       <div 
         className="btn btn-primary"
-        onClick={handlePetitionSign}
+        onClick={handlePactSign}
       >
         Sign Petition
       </div>

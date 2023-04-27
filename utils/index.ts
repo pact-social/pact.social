@@ -20,7 +20,7 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
       session = undefined;
     }
   }
-  console.log('session', session, provider)
+  
   if(!session || (session.hasSession && session.isExpired)) {
     const accountId = await getAccountId(provider, address)
     const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
@@ -32,7 +32,7 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
      */
     // TODO: update resources to only provide access to our composities
     session = await DIDSession.authorize(authMethod, {
-      resources: ["http://localhost:3000*", "ceramic://*"],
+      resources: [`${process.env.NEXT_PUBLIC_APP_DOMAIN}*`, "ceramic://*"],
       // expiresInSecs: 60*60*24*7
        
     })

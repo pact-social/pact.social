@@ -17,7 +17,7 @@ export default function PrivateSign() {
     await authenticateCeramic(address, provider, ceramic, composeClient)
   }
 
-  const handlePetitionSign = async () => {
+  const handlePactSign = async () => {
     // generate a secret/nonce getCsrfToken from next-auth? or from client side
 
 
@@ -53,7 +53,7 @@ export default function PrivateSign() {
       <div className="divider"></div>
       <div 
         className="btn btn-primary"
-        onClick={handlePetitionSign}
+        onClick={handlePactSign}
       >
         Sign Petition
       </div>

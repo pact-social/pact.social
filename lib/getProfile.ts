@@ -8,7 +8,7 @@ const profileQuery = (address: string) => {
   const query = supportedChains.reduce((query, chain) => {
     return `${query}
       ${chain.name}: node(id: "did:pkh:eip155:${chain.id}:${address}") {
-        ... on BasicProfile {
+        ... on PactProfile {
           id
           name
           description
@@ -47,6 +47,8 @@ export default async function getProfile (did: string) {
     getComposeProfile(address),
     orbisIndexer.from("orbis_v_profiles").select().ilike('address', address)
   ])
+  console.log('profiles errors', error, errors, status);
+  console.log('Profiles', composeProfiles, orbisProfiles);
   
   /** Return results */
   return({ data: orbisProfiles as Profile[]});

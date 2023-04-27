@@ -1,7 +1,7 @@
 import ConnectButton from "../../components/connect";
 import { useRouter } from "next/router";
 import Layout from "../../components/layout";
-import ManifestsTable from "../../components/manifest/manifestsTable";
+import PactsTable from "../../components/pacts/pactsTable";
 import { useCeramicContext } from "../../context";
 import Link from "next/link";
 
@@ -10,7 +10,7 @@ const MyProfileContent = () => {
   if (!isAuthenticated) {
     return <ConnectButton />
   }
-  return <ManifestsTable />
+  return <PactsTable />
   
 }
 
@@ -19,13 +19,13 @@ export default function MyProfile () {
 
   return (
     <Layout metas={{
-      title: "My Petitions",
+      title: "My Pacts",
       description: "",
       imageSrc: ""
     }}>
       <div className="overflow-x-auto w-full">
         <div className="flex items-center mt-9">
-          <h1 className="text-xl collapse-title font-bold">My Petitions</h1>
+          <h1 className="text-xl collapse-title font-bold">My Pacts</h1>
           <Link
             href="/profile/edit"
             className="btn btn-outline"

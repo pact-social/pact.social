@@ -1,3 +1,4 @@
+import ora from 'ora'
 import { readFileSync, writeFileSync } from 'fs';
 import { CeramicClient } from '@ceramicnetwork/http-client'
 import {
@@ -13,10 +14,12 @@ import { Ed25519Provider } from "key-did-provider-ed25519";
 import { getResolver } from "key-did-resolver";
 import { fromString } from "uint8arrays/from-string";
 
-import { manifest } from '../composites/manifest.mjs';
-import { topicToManifest } from '../composites/topicToManifest.mjs';
-import { manifestSignature } from '../composites/signature.mjs';
-import { signatureToManifest } from '../composites/signatureToManifest.mjs';
+import { pact } from '../composites/pact.mjs';
+import { topicToPact } from '../composites/topicToPact.mjs';
+import { pactSignature } from '../composites/signature.mjs';
+import { signatureToPact } from '../composites/signatureToPact.mjs';
+
+const spinner = ora();
 
 const ceramic = new CeramicClient("http://localhost:7007");
 
@@ -29,50 +32,60 @@ export const writeComposite = async (spinner) => {
   spinner.info("writing composite to Ceramic")
 
   // profile
-  const profileComposite = await createComposite(ceramic, './composites/basicProfile.graphql');
+  const privateStoreComposite = await createComposite(ceramic, './composites/privateStore.graphql');
+  await writeEncodedComposite(privateStoreComposite, "./src/__generated__/private_store_definition.json");
+
+  // profile
+  const profileComposite = await createComposite(ceramic, './composites/pactProfile.graphql');
   await writeEncodedComposite(profileComposite, "./src/__generated__/profile_definition.json");
   
   // topic
   const topicComposite = await createComposite(ceramic, './composites/topic.graphql');
   await writeEncodedComposite(topicComposite, "./src/__generated__/topic_definition.json");
-
-  // manifest
-  const manifestSchema = manifest(topicComposite.modelIDs[0]);
-  writeFileSync('./src/__generated__/manifestSchema.graphql', manifestSchema);
-
-  const manifestComposite = await createComposite(ceramic, './src/__generated__/manifestSchema.graphql')
-  await writeEncodedComposite(manifestComposite, "./src/__generated__/manifest_definition.json");
-
-  // relation topic manifest
-  const topicToManifestView = topicToManifest(topicComposite.modelIDs[0], manifestComposite.modelIDs[1]);
-  writeFileSync('./src/__generated__/topicToManifestSchema.graphql', topicToManifestView);
   
-  const topicToManifestComposite = await createComposite(ceramic, './src/__generated__/topicToManifestSchema.graphql')
-  await writeEncodedComposite(topicToManifestComposite, "./src/__generated__/topicToManifest_definition.json");
-  
-  // doc and relation manifest signature
-  const manifestSignatureView = manifestSignature(topicToManifestComposite.modelIDs[0]);
-  writeFileSync('./src/__generated__/manifestSignatureSchema.graphql', manifestSignatureView);
+  // recipient
+  const recipientComposite = await createComposite(ceramic, './composites/recipient.graphql');
+  await writeEncodedComposite(recipientComposite, "./src/__generated__/recipient_definition.json");
 
-  const manifestSignatureComposite = await createComposite(ceramic, './src/__generated__/manifestSignatureSchema.graphql')
-  await writeEncodedComposite(manifestSignatureComposite, "./src/__generated__/manifestSignature_definition.json");
-  
-  // relation signature on manifest
-  const signatureToManifestView = signatureToManifest(manifestSignatureComposite.modelIDs[1], topicToManifestComposite.modelIDs[0]);
-  writeFileSync('./src/__generated__/signatureToManifestSchema.graphql', signatureToManifestView);
+  // pact
+  const pactSchema = pact(topicComposite.modelIDs[0], recipientComposite.modelIDs[0]);
+  writeFileSync('./src/__generated__/pactSchema.graphql', pactSchema);
 
-  const signatureToManifestComposite = await createComposite(ceramic, './src/__generated__/signatureToManifestSchema.graphql')
-  await writeEncodedComposite(signatureToManifestComposite, "./src/__generated__/signatureToManifest_definition.json");
+  const pactComposite = await createComposite(ceramic, './src/__generated__/pactSchema.graphql')
+  await writeEncodedComposite(pactComposite, "./src/__generated__/pact_definition.json");
+
+  // relation topic pact
+  const topicToPactView = topicToPact(topicComposite.modelIDs[0], pactComposite.modelIDs[1]);
+  writeFileSync('./src/__generated__/topicToPactSchema.graphql', topicToPactView);
+  
+  const topicToPactComposite = await createComposite(ceramic, './src/__generated__/topicToPactSchema.graphql')
+  await writeEncodedComposite(topicToPactComposite, "./src/__generated__/topicToPact_definition.json");
+  
+  // doc and relation pact signature
+  const pactSignatureView = pactSignature(topicToPactComposite.modelIDs[0]);
+  writeFileSync('./src/__generated__/pactSignatureSchema.graphql', pactSignatureView);
+
+  const pactSignatureComposite = await createComposite(ceramic, './src/__generated__/pactSignatureSchema.graphql')
+  await writeEncodedComposite(pactSignatureComposite, "./src/__generated__/pactSignature_definition.json");
+  
+  // relation signature on pact
+  const signatureToPactView = signatureToPact(pactSignatureComposite.modelIDs[1], topicToPactComposite.modelIDs[0]);
+  writeFileSync('./src/__generated__/signatureToPactSchema.graphql', signatureToPactView);
+
+  const signatureToPactComposite = await createComposite(ceramic, './src/__generated__/signatureToPactSchema.graphql')
+  await writeEncodedComposite(signatureToPactComposite, "./src/__generated__/signatureToPact_definition.json");
 
   spinner.info('creating composite for runtime usage')
   await mergeEncodedComposites(ceramic, [
+    "./src/__generated__/private_store_definition.json",
     "./src/__generated__/profile_definition.json",
     // below definition is not needed in the encoded composite
     // "./src/__generated__/topic_definition.json",
-    "./src/__generated__/manifest_definition.json",
-    "./src/__generated__/topicToManifest_definition.json",
-    "./src/__generated__/manifestSignature_definition.json",
-    "./src/__generated__/signatureToManifest_definition.json",
+    "./src/__generated__/recipient_definition.json",
+    "./src/__generated__/pact_definition.json",
+    "./src/__generated__/topicToPact_definition.json",
+    "./src/__generated__/pactSignature_definition.json",
+    "./src/__generated__/signatureToPact_definition.json",
     ],
     "./src/__generated__/definition.json"
   )
@@ -83,6 +96,9 @@ export const writeComposite = async (spinner) => {
     "./src/__generated__/definition.json",
     "./src/__generated__/definition.js"
   );
+}
+
+export const deployComposites = async (spinner) => {
   spinner.info('deploying composite')
   const deployComposite = await readEncodedComposite(ceramic, './src/__generated__/definition.json')
 
@@ -107,3 +123,15 @@ const authenticate = async () => {
   await did.authenticate()
   ceramic.did = did
 }
+const start = async () => {
+  try {
+    spinner.info("[Composites] bootstrapping composites");
+    await writeComposite(spinner)
+    spinner.succeed("Composites] composites bootstrapped")
+    await deployComposites(spinner)
+  } catch(err) {
+    spinner.fail(err)
+  }
+}
+
+start()

@@ -12,59 +12,29 @@ export type Scalars = {
   Float: number;
   CeramicCommitID: any;
   CeramicStreamID: any;
+  CountryCode: any;
   DID: any;
   DateTime: any;
   InterPlanetaryCID: any;
-};
-
-export type BasicProfile = Node & {
-  __typename?: 'BasicProfile';
-  description?: Maybe<Scalars['String']>;
-  emoji?: Maybe<Scalars['String']>;
-  gender?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
-
-/** A connection to a list of items. */
-export type BasicProfileConnection = {
-  __typename?: 'BasicProfileConnection';
-  /** A list of edges. */
-  edges?: Maybe<Array<Maybe<BasicProfileEdge>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type BasicProfileEdge = {
-  __typename?: 'BasicProfileEdge';
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-  /** The item at the end of the edge */
-  node?: Maybe<BasicProfile>;
-};
-
-export type BasicProfileInput = {
-  description?: InputMaybe<Scalars['String']>;
-  emoji?: InputMaybe<Scalars['String']>;
-  gender?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
+  Locale: any;
 };
 
 export type CeramicAccount = Node & {
   __typename?: 'CeramicAccount';
-  basicProfile?: Maybe<BasicProfile>;
   /** Globally unique identifier of the account (DID string) */
   id: Scalars['ID'];
   /** Whether the Ceramic instance is currently authenticated with this account or not */
   isViewer: Scalars['Boolean'];
-  manifestList?: Maybe<ManifestConnection>;
-  manifestSignatureList?: Maybe<ManifestSignatureConnection>;
+  pactList?: Maybe<PactConnection>;
+  pactProfile?: Maybe<PactProfile>;
+  pactRecipientList?: Maybe<PactRecipientConnection>;
+  pactSignatureList?: Maybe<PactSignatureConnection>;
+  privateStoreList?: Maybe<PrivateStoreConnection>;
   topicList?: Maybe<TopicConnection>;
 };
 
 
-export type CeramicAccountManifestListArgs = {
+export type CeramicAccountPactListArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -72,7 +42,23 @@ export type CeramicAccountManifestListArgs = {
 };
 
 
-export type CeramicAccountManifestSignatureListArgs = {
+export type CeramicAccountPactRecipientListArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CeramicAccountPactSignatureListArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CeramicAccountPrivateStoreListArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -87,15 +73,15 @@ export type CeramicAccountTopicListArgs = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
-export type CreateBasicProfileInput = {
+export type CreatePactInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
-  content: BasicProfileInput;
+  content: PactInput;
 };
 
-export type CreateBasicProfilePayload = {
-  __typename?: 'CreateBasicProfilePayload';
+export type CreatePactPayload = {
+  __typename?: 'CreatePactPayload';
   clientMutationId?: Maybe<Scalars['String']>;
-  document: BasicProfile;
+  document: Pact;
   /** Fetches an object given its ID */
   node?: Maybe<Node>;
   /** Account currently authenticated on the Ceramic instance, if set */
@@ -103,19 +89,19 @@ export type CreateBasicProfilePayload = {
 };
 
 
-export type CreateBasicProfilePayloadNodeArgs = {
+export type CreatePactPayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
-export type CreateManifestInput = {
+export type CreatePactProfileInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
-  content: ManifestInput;
+  content: PactProfileInput;
 };
 
-export type CreateManifestPayload = {
-  __typename?: 'CreateManifestPayload';
+export type CreatePactProfilePayload = {
+  __typename?: 'CreatePactProfilePayload';
   clientMutationId?: Maybe<Scalars['String']>;
-  document: Manifest;
+  document: PactProfile;
   /** Fetches an object given its ID */
   node?: Maybe<Node>;
   /** Account currently authenticated on the Ceramic instance, if set */
@@ -123,19 +109,19 @@ export type CreateManifestPayload = {
 };
 
 
-export type CreateManifestPayloadNodeArgs = {
+export type CreatePactProfilePayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
-export type CreateManifestSignatureInput = {
+export type CreatePactRecipientInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
-  content: ManifestSignatureInput;
+  content: PactRecipientInput;
 };
 
-export type CreateManifestSignaturePayload = {
-  __typename?: 'CreateManifestSignaturePayload';
+export type CreatePactRecipientPayload = {
+  __typename?: 'CreatePactRecipientPayload';
   clientMutationId?: Maybe<Scalars['String']>;
-  document: ManifestSignature;
+  document: PactRecipient;
   /** Fetches an object given its ID */
   node?: Maybe<Node>;
   /** Account currently authenticated on the Ceramic instance, if set */
@@ -143,7 +129,47 @@ export type CreateManifestSignaturePayload = {
 };
 
 
-export type CreateManifestSignaturePayloadNodeArgs = {
+export type CreatePactRecipientPayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type CreatePactSignatureInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PactSignatureInput;
+};
+
+export type CreatePactSignaturePayload = {
+  __typename?: 'CreatePactSignaturePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PactSignature;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type CreatePactSignaturePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type CreatePrivateStoreInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PrivateStoreInput;
+};
+
+export type CreatePrivateStorePayload = {
+  __typename?: 'CreatePrivateStorePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PrivateStore;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type CreatePrivateStorePayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
@@ -167,137 +193,45 @@ export type CreateTopicPayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
-export type Manifest = Node & {
-  __typename?: 'Manifest';
-  /** Account controlling the document */
-  author: CeramicAccount;
-  content: Scalars['String'];
-  id: Scalars['ID'];
-  picture?: Maybe<Scalars['InterPlanetaryCID']>;
-  signatures: ManifestSignatureConnection;
-  title: Scalars['String'];
-  topic?: Maybe<Topic>;
-  topicID: Scalars['CeramicStreamID'];
-  type?: Maybe<ManifestPactType>;
-  /** Current version of the document */
-  version: Scalars['CeramicCommitID'];
-};
-
-
-export type ManifestSignaturesArgs = {
-  account?: InputMaybe<Scalars['ID']>;
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-};
-
-/** A connection to a list of items. */
-export type ManifestConnection = {
-  __typename?: 'ManifestConnection';
-  /** A list of edges. */
-  edges?: Maybe<Array<Maybe<ManifestEdge>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ManifestEdge = {
-  __typename?: 'ManifestEdge';
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-  /** The item at the end of the edge */
-  node?: Maybe<Manifest>;
-};
-
-export type ManifestInput = {
-  content: Scalars['String'];
-  picture?: InputMaybe<Scalars['InterPlanetaryCID']>;
-  title: Scalars['String'];
-  topicID: Scalars['CeramicStreamID'];
-  type?: InputMaybe<ManifestPactType>;
-};
-
-export enum ManifestPactType {
-  Manifesto = 'manifesto',
-  Openletter = 'openletter',
-  Petition = 'petition'
-}
-
-export type ManifestSignature = Node & {
-  __typename?: 'ManifestSignature';
-  /** Account controlling the document */
-  author: CeramicAccount;
-  id: Scalars['ID'];
-  jwe: Scalars['InterPlanetaryCID'];
-  manifest?: Maybe<Manifest>;
-  manifestID: Scalars['CeramicStreamID'];
-  manifestVersion: Scalars['CeramicCommitID'];
-  metadata?: Maybe<Scalars['String']>;
-  signedAt: Scalars['DateTime'];
-  validator: CeramicAccount;
-  visibility?: Maybe<ManifestSignatureVisibilityType>;
-};
-
-/** A connection to a list of items. */
-export type ManifestSignatureConnection = {
-  __typename?: 'ManifestSignatureConnection';
-  /** A list of edges. */
-  edges?: Maybe<Array<Maybe<ManifestSignatureEdge>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ManifestSignatureEdge = {
-  __typename?: 'ManifestSignatureEdge';
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-  /** The item at the end of the edge */
-  node?: Maybe<ManifestSignature>;
-};
-
-export type ManifestSignatureInput = {
-  jwe: Scalars['InterPlanetaryCID'];
-  manifestID: Scalars['CeramicStreamID'];
-  manifestVersion: Scalars['CeramicCommitID'];
-  metadata?: InputMaybe<Scalars['String']>;
-  signedAt: Scalars['DateTime'];
-  validator: Scalars['DID'];
-  visibility?: InputMaybe<ManifestSignatureVisibilityType>;
-};
-
-export enum ManifestSignatureVisibilityType {
-  Anon = 'anon',
-  Private = 'private',
-  Public = 'public'
-}
-
 export type Mutation = {
   __typename?: 'Mutation';
-  createBasicProfile?: Maybe<CreateBasicProfilePayload>;
-  createManifest?: Maybe<CreateManifestPayload>;
-  createManifestSignature?: Maybe<CreateManifestSignaturePayload>;
+  createPact?: Maybe<CreatePactPayload>;
+  createPactProfile?: Maybe<CreatePactProfilePayload>;
+  createPactRecipient?: Maybe<CreatePactRecipientPayload>;
+  createPactSignature?: Maybe<CreatePactSignaturePayload>;
+  createPrivateStore?: Maybe<CreatePrivateStorePayload>;
   createTopic?: Maybe<CreateTopicPayload>;
-  updateBasicProfile?: Maybe<UpdateBasicProfilePayload>;
-  updateManifest?: Maybe<UpdateManifestPayload>;
-  updateManifestSignature?: Maybe<UpdateManifestSignaturePayload>;
+  updatePact?: Maybe<UpdatePactPayload>;
+  updatePactProfile?: Maybe<UpdatePactProfilePayload>;
+  updatePactRecipient?: Maybe<UpdatePactRecipientPayload>;
+  updatePactSignature?: Maybe<UpdatePactSignaturePayload>;
+  updatePrivateStore?: Maybe<UpdatePrivateStorePayload>;
   updateTopic?: Maybe<UpdateTopicPayload>;
 };
 
 
-export type MutationCreateBasicProfileArgs = {
-  input: CreateBasicProfileInput;
+export type MutationCreatePactArgs = {
+  input: CreatePactInput;
 };
 
 
-export type MutationCreateManifestArgs = {
-  input: CreateManifestInput;
+export type MutationCreatePactProfileArgs = {
+  input: CreatePactProfileInput;
 };
 
 
-export type MutationCreateManifestSignatureArgs = {
-  input: CreateManifestSignatureInput;
+export type MutationCreatePactRecipientArgs = {
+  input: CreatePactRecipientInput;
+};
+
+
+export type MutationCreatePactSignatureArgs = {
+  input: CreatePactSignatureInput;
+};
+
+
+export type MutationCreatePrivateStoreArgs = {
+  input: CreatePrivateStoreInput;
 };
 
 
@@ -306,18 +240,28 @@ export type MutationCreateTopicArgs = {
 };
 
 
-export type MutationUpdateBasicProfileArgs = {
-  input: UpdateBasicProfileInput;
+export type MutationUpdatePactArgs = {
+  input: UpdatePactInput;
 };
 
 
-export type MutationUpdateManifestArgs = {
-  input: UpdateManifestInput;
+export type MutationUpdatePactProfileArgs = {
+  input: UpdatePactProfileInput;
 };
 
 
-export type MutationUpdateManifestSignatureArgs = {
-  input: UpdateManifestSignatureInput;
+export type MutationUpdatePactRecipientArgs = {
+  input: UpdatePactRecipientInput;
+};
+
+
+export type MutationUpdatePactSignatureArgs = {
+  input: UpdatePactSignatureInput;
+};
+
+
+export type MutationUpdatePrivateStoreArgs = {
+  input: UpdatePrivateStoreInput;
 };
 
 
@@ -330,6 +274,215 @@ export type Node = {
   /** The id of the object. */
   id: Scalars['ID'];
 };
+
+export type Pact = Node & {
+  __typename?: 'Pact';
+  /** Account controlling the document */
+  author: CeramicAccount;
+  content: Scalars['String'];
+  id: Scalars['ID'];
+  picture?: Maybe<Scalars['InterPlanetaryCID']>;
+  recipientList?: Maybe<Array<Maybe<Scalars['CeramicStreamID']>>>;
+  signatures: PactSignatureConnection;
+  signaturesCount: Scalars['Int'];
+  title: Scalars['String'];
+  topic?: Maybe<Topic>;
+  topicID: Scalars['CeramicStreamID'];
+  type?: Maybe<PactType>;
+  /** Current version of the document */
+  version: Scalars['CeramicCommitID'];
+};
+
+
+export type PactSignaturesArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type PactSignaturesCountArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+};
+
+/** A connection to a list of items. */
+export type PactConnection = {
+  __typename?: 'PactConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<PactEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type PactEdge = {
+  __typename?: 'PactEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<Pact>;
+};
+
+export type PactInput = {
+  content: Scalars['String'];
+  picture?: InputMaybe<Scalars['InterPlanetaryCID']>;
+  recipientList?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']>>>;
+  title: Scalars['String'];
+  topicID: Scalars['CeramicStreamID'];
+  type?: InputMaybe<PactType>;
+};
+
+export type PactProfile = Node & {
+  __typename?: 'PactProfile';
+  bio?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['CountryCode']>;
+  email?: Maybe<PactProfileEncryptedLitContent>;
+  fullname?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isMagicLink: Scalars['Boolean'];
+  latitude?: Maybe<Scalars['Float']>;
+  locale?: Maybe<Scalars['Locale']>;
+  longitude?: Maybe<Scalars['Float']>;
+  organisation?: Maybe<Scalars['String']>;
+  profilePicture?: Maybe<Scalars['InterPlanetaryCID']>;
+  username: Scalars['String'];
+};
+
+/** A connection to a list of items. */
+export type PactProfileConnection = {
+  __typename?: 'PactProfileConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<PactProfileEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type PactProfileEdge = {
+  __typename?: 'PactProfileEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<PactProfile>;
+};
+
+export type PactProfileEncryptedLitContent = {
+  __typename?: 'PactProfileEncryptedLitContent';
+  accessControlConditions: Scalars['String'];
+  encryptedString: Scalars['String'];
+  encryptedSymmetricKey: Scalars['String'];
+};
+
+export type PactProfileEncryptedLitContentInput = {
+  accessControlConditions: Scalars['String'];
+  encryptedString: Scalars['String'];
+  encryptedSymmetricKey: Scalars['String'];
+};
+
+export type PactProfileInput = {
+  bio?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  country?: InputMaybe<Scalars['CountryCode']>;
+  email?: InputMaybe<PactProfileEncryptedLitContentInput>;
+  fullname?: InputMaybe<Scalars['String']>;
+  isMagicLink: Scalars['Boolean'];
+  latitude?: InputMaybe<Scalars['Float']>;
+  locale?: InputMaybe<Scalars['Locale']>;
+  longitude?: InputMaybe<Scalars['Float']>;
+  organisation?: InputMaybe<Scalars['String']>;
+  profilePicture?: InputMaybe<Scalars['InterPlanetaryCID']>;
+  username: Scalars['String'];
+};
+
+export type PactRecipient = Node & {
+  __typename?: 'PactRecipient';
+  id: Scalars['ID'];
+  isVerified: Scalars['Boolean'];
+  name: Scalars['String'];
+  profile?: Maybe<Scalars['CeramicStreamID']>;
+};
+
+/** A connection to a list of items. */
+export type PactRecipientConnection = {
+  __typename?: 'PactRecipientConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<PactRecipientEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type PactRecipientEdge = {
+  __typename?: 'PactRecipientEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<PactRecipient>;
+};
+
+export type PactRecipientInput = {
+  isVerified: Scalars['Boolean'];
+  name: Scalars['String'];
+  profile?: InputMaybe<Scalars['CeramicStreamID']>;
+};
+
+export type PactSignature = Node & {
+  __typename?: 'PactSignature';
+  /** Account controlling the document */
+  author: CeramicAccount;
+  id: Scalars['ID'];
+  jwe: Scalars['InterPlanetaryCID'];
+  metadata?: Maybe<Scalars['String']>;
+  pact?: Maybe<Pact>;
+  pactID: Scalars['CeramicStreamID'];
+  pactVersion: Scalars['CeramicCommitID'];
+  signedAt: Scalars['DateTime'];
+  validator: CeramicAccount;
+  visibility?: Maybe<PactSignatureVisibilityType>;
+};
+
+/** A connection to a list of items. */
+export type PactSignatureConnection = {
+  __typename?: 'PactSignatureConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<PactSignatureEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type PactSignatureEdge = {
+  __typename?: 'PactSignatureEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<PactSignature>;
+};
+
+export type PactSignatureInput = {
+  jwe: Scalars['InterPlanetaryCID'];
+  metadata?: InputMaybe<Scalars['String']>;
+  pactID: Scalars['CeramicStreamID'];
+  pactVersion: Scalars['CeramicCommitID'];
+  signedAt: Scalars['DateTime'];
+  validator: Scalars['DID'];
+  visibility?: InputMaybe<PactSignatureVisibilityType>;
+};
+
+export enum PactSignatureVisibilityType {
+  Anon = 'anon',
+  Private = 'private',
+  Public = 'public'
+}
+
+export enum PactType {
+  Manifesto = 'manifesto',
+  Openletter = 'openletter',
+  Petition = 'petition'
+}
 
 /** Information about pagination in a connection. */
 export type PageInfo = {
@@ -344,74 +497,139 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']>;
 };
 
-export type PartialBasicProfileInput = {
-  description?: InputMaybe<Scalars['String']>;
-  emoji?: InputMaybe<Scalars['String']>;
-  gender?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-};
-
-export type PartialManifestInput = {
+export type PartialPactInput = {
   content?: InputMaybe<Scalars['String']>;
   picture?: InputMaybe<Scalars['InterPlanetaryCID']>;
+  recipientList?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']>>>;
   title?: InputMaybe<Scalars['String']>;
   topicID?: InputMaybe<Scalars['CeramicStreamID']>;
-  type?: InputMaybe<ManifestPactType>;
+  type?: InputMaybe<PactType>;
 };
 
-export type PartialManifestSignatureInput = {
+export type PartialPactProfileInput = {
+  bio?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  country?: InputMaybe<Scalars['CountryCode']>;
+  email?: InputMaybe<PactProfileEncryptedLitContentInput>;
+  fullname?: InputMaybe<Scalars['String']>;
+  isMagicLink?: InputMaybe<Scalars['Boolean']>;
+  latitude?: InputMaybe<Scalars['Float']>;
+  locale?: InputMaybe<Scalars['Locale']>;
+  longitude?: InputMaybe<Scalars['Float']>;
+  organisation?: InputMaybe<Scalars['String']>;
+  profilePicture?: InputMaybe<Scalars['InterPlanetaryCID']>;
+  username?: InputMaybe<Scalars['String']>;
+};
+
+export type PartialPactRecipientInput = {
+  isVerified?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  profile?: InputMaybe<Scalars['CeramicStreamID']>;
+};
+
+export type PartialPactSignatureInput = {
   jwe?: InputMaybe<Scalars['InterPlanetaryCID']>;
-  manifestID?: InputMaybe<Scalars['CeramicStreamID']>;
-  manifestVersion?: InputMaybe<Scalars['CeramicCommitID']>;
   metadata?: InputMaybe<Scalars['String']>;
+  pactID?: InputMaybe<Scalars['CeramicStreamID']>;
+  pactVersion?: InputMaybe<Scalars['CeramicCommitID']>;
   signedAt?: InputMaybe<Scalars['DateTime']>;
   validator?: InputMaybe<Scalars['DID']>;
-  visibility?: InputMaybe<ManifestSignatureVisibilityType>;
+  visibility?: InputMaybe<PactSignatureVisibilityType>;
+};
+
+export type PartialPrivateStoreInput = {
+  jwe?: InputMaybe<Scalars['String']>;
 };
 
 export type PartialTopicInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+export type PrivateStore = Node & {
+  __typename?: 'PrivateStore';
+  id: Scalars['ID'];
+  jwe: Scalars['String'];
+};
+
+/** A connection to a list of items. */
+export type PrivateStoreConnection = {
+  __typename?: 'PrivateStoreConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<PrivateStoreEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type PrivateStoreEdge = {
+  __typename?: 'PrivateStoreEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<PrivateStore>;
+};
+
+export type PrivateStoreInput = {
+  jwe: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  basicProfileIndex?: Maybe<BasicProfileConnection>;
-  manifestIndex?: Maybe<ManifestConnection>;
-  manifestSignatureIndex?: Maybe<ManifestSignatureConnection>;
   /** Fetches an object given its ID */
   node?: Maybe<Node>;
+  pactIndex?: Maybe<PactConnection>;
+  pactProfileIndex?: Maybe<PactProfileConnection>;
+  pactRecipientIndex?: Maybe<PactRecipientConnection>;
+  pactSignatureIndex?: Maybe<PactSignatureConnection>;
+  privateStoreIndex?: Maybe<PrivateStoreConnection>;
   topicIndex?: Maybe<TopicConnection>;
   /** Account currently authenticated on the Ceramic instance, if set */
   viewer?: Maybe<CeramicAccount>;
 };
 
 
-export type QueryBasicProfileIndexArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryManifestIndexArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryManifestSignatureIndexArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-};
-
-
 export type QueryNodeArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryPactIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryPactProfileIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryPactRecipientIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryPactSignatureIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryPrivateStoreIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -427,17 +645,23 @@ export type Topic = Node & {
   /** Account controlling the document */
   author: CeramicAccount;
   id: Scalars['ID'];
-  manifests: ManifestConnection;
   name: Scalars['String'];
+  pacts: PactConnection;
+  pactsCount: Scalars['Int'];
 };
 
 
-export type TopicManifestsArgs = {
+export type TopicPactsArgs = {
   account?: InputMaybe<Scalars['ID']>;
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type TopicPactsCountArgs = {
+  account?: InputMaybe<Scalars['ID']>;
 };
 
 /** A connection to a list of items. */
@@ -462,77 +686,121 @@ export type TopicInput = {
   name: Scalars['String'];
 };
 
-export type UpdateBasicProfileInput = {
-  clientMutationId?: InputMaybe<Scalars['String']>;
-  content: PartialBasicProfileInput;
-  id: Scalars['ID'];
-  options?: InputMaybe<UpdateOptionsInput>;
-};
-
-export type UpdateBasicProfilePayload = {
-  __typename?: 'UpdateBasicProfilePayload';
-  clientMutationId?: Maybe<Scalars['String']>;
-  document: BasicProfile;
-  /** Fetches an object given its ID */
-  node?: Maybe<Node>;
-  /** Account currently authenticated on the Ceramic instance, if set */
-  viewer?: Maybe<CeramicAccount>;
-};
-
-
-export type UpdateBasicProfilePayloadNodeArgs = {
-  id: Scalars['ID'];
-};
-
-export type UpdateManifestInput = {
-  clientMutationId?: InputMaybe<Scalars['String']>;
-  content: PartialManifestInput;
-  id: Scalars['ID'];
-  options?: InputMaybe<UpdateOptionsInput>;
-};
-
-export type UpdateManifestPayload = {
-  __typename?: 'UpdateManifestPayload';
-  clientMutationId?: Maybe<Scalars['String']>;
-  document: Manifest;
-  /** Fetches an object given its ID */
-  node?: Maybe<Node>;
-  /** Account currently authenticated on the Ceramic instance, if set */
-  viewer?: Maybe<CeramicAccount>;
-};
-
-
-export type UpdateManifestPayloadNodeArgs = {
-  id: Scalars['ID'];
-};
-
-export type UpdateManifestSignatureInput = {
-  clientMutationId?: InputMaybe<Scalars['String']>;
-  content: PartialManifestSignatureInput;
-  id: Scalars['ID'];
-  options?: InputMaybe<UpdateOptionsInput>;
-};
-
-export type UpdateManifestSignaturePayload = {
-  __typename?: 'UpdateManifestSignaturePayload';
-  clientMutationId?: Maybe<Scalars['String']>;
-  document: ManifestSignature;
-  /** Fetches an object given its ID */
-  node?: Maybe<Node>;
-  /** Account currently authenticated on the Ceramic instance, if set */
-  viewer?: Maybe<CeramicAccount>;
-};
-
-
-export type UpdateManifestSignaturePayloadNodeArgs = {
-  id: Scalars['ID'];
-};
-
 export type UpdateOptionsInput = {
   /** Fully replace the document contents instead of performing a shallow merge */
   replace?: InputMaybe<Scalars['Boolean']>;
   /** Only perform mutation if the document matches the provided version */
   version?: InputMaybe<Scalars['CeramicCommitID']>;
+};
+
+export type UpdatePactInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialPactInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdatePactPayload = {
+  __typename?: 'UpdatePactPayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: Pact;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdatePactPayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type UpdatePactProfileInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialPactProfileInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdatePactProfilePayload = {
+  __typename?: 'UpdatePactProfilePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PactProfile;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdatePactProfilePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type UpdatePactRecipientInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialPactRecipientInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdatePactRecipientPayload = {
+  __typename?: 'UpdatePactRecipientPayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PactRecipient;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdatePactRecipientPayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type UpdatePactSignatureInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialPactSignatureInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdatePactSignaturePayload = {
+  __typename?: 'UpdatePactSignaturePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PactSignature;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdatePactSignaturePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type UpdatePrivateStoreInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialPrivateStoreInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdatePrivateStorePayload = {
+  __typename?: 'UpdatePrivateStorePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PrivateStore;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdatePrivateStorePayloadNodeArgs = {
+  id: Scalars['ID'];
 };
 
 export type UpdateTopicInput = {

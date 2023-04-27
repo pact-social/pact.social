@@ -3,8 +3,8 @@ import formidable from 'formidable';
 import { promises as fs } from 'fs'
 import { create } from 'ipfs-http-client'
 
-const ipfsApi = 'http://127.0.0.1:5011'
-const ipfsGateway = 'http://localhost:9011'
+const ipfsApi = process.env.IPFS_API
+const ipfsGateway = process.env.NEXT_PUBLIC_IPFS_GATEWAY
 
 const ipfs = create({
   url: ipfsApi

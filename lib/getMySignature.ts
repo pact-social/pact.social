@@ -1,10 +1,10 @@
 import { composeClient } from "../context";
-import { Query, ManifestSignatureEdge, Maybe } from "../src/gql";
+import { Query, PactSignatureEdge, Maybe } from "../src/gql";
 
 const query = `
   query GetMySignatures($limit: Int=50, $after: String="") {
     viewer {
-      manifestSignatureList(first: $limit, after: $after) {
+      pactSignatureList(first: $limit, after: $after) {
         pageInfo {
           hasNextPage
           endCursor
@@ -12,7 +12,7 @@ const query = `
         edges {
           node {
             id
-            manifestID
+            pactID
             signedAt
             visibility
             metadata
@@ -26,7 +26,7 @@ const query = `
 
 export const getMySignatures = async () => {
 
-  async function fetch(limit: number = 50, after: string = '', previous: Maybe<ManifestSignatureEdge>[] =[]): Promise<Maybe<ManifestSignatureEdge>[]> {
+  async function fetch(limit: number = 50, after: string = '', previous: Maybe<PactSignatureEdge>[] =[]): Promise<Maybe<PactSignatureEdge>[]> {
     const { data, errors } = await composeClient.executeQuery<Query>(query, {
       limit,
       after,
@@ -40,11 +40,11 @@ export const getMySignatures = async () => {
       throw new Error('No Results.')
     }
 
-    if (data.viewer?.manifestSignatureList?.pageInfo.hasNextPage && data.viewer?.manifestSignatureList?.pageInfo.endCursor) {
-      const docs = data.viewer?.manifestSignatureList.edges || []
-      return fetch(limit, data.viewer?.manifestSignatureList?.pageInfo.endCursor, [...previous, ...docs])
+    if (data.viewer?.pactSignatureList?.pageInfo.hasNextPage && data.viewer?.pactSignatureList?.pageInfo.endCursor) {
+      const docs = data.viewer?.pactSignatureList.edges || []
+      return fetch(limit, data.viewer?.pactSignatureList?.pageInfo.endCursor, [...previous, ...docs])
     } else {
-      const docs = data.viewer?.manifestSignatureList?.edges || []
+      const docs = data.viewer?.pactSignatureList?.edges || []
       return [...previous, ...docs];
     }
   }

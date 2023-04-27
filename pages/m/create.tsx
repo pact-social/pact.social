@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import dynamic from 'next/dynamic'
 import Layout from "../../components/layout";
@@ -8,7 +8,7 @@ import "react-quill/dist/quill.snow.css";
 import useTopics from "../../hooks/useTopics";
 import { useCeramicContext } from "../../context";
 import { useRouter } from "next/router";
-import { Mutation, Manifest } from "../../src/gql";
+import { Mutation, Pact } from "../../src/gql";
 import TopicSelect from "../../components/form/topicSelect";
 import ConnectButton from "../../components/connect";
 //import "react-quill/dist/quill.bubble.css";
@@ -45,7 +45,7 @@ const pactTypes: PactTypeInput[] = [
   {id: PactType.petition, name:"Petition"},
 ]
 
-type PetitionInputs = {
+type PactInputs = {
   type: PactType, 
   title: string,
   topicID: string,
@@ -66,11 +66,11 @@ const modules = {
 }
 
 
-const PetitionForm = () => {
+const PactForm = () => {
   const ref = useRef<HTMLInputElement>(null);
   const { push } = useRouter();
   
-  const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<PetitionInputs>({
+  const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<PactInputs>({
     defaultValues: {
       type: PactType.petition,
       title: ''
@@ -125,15 +125,15 @@ const PetitionForm = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<PetitionInputs> = async (data) => {
+  const onSubmit: SubmitHandler<PactInputs> = async (data) => {
 
     try {
       if(data.picture === '') {
         delete data.picture;
       }
       const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
-      mutation newManifest($input: CreateManifestInput!) {
-        createManifest(input: $input) {
+      mutation newPact($input: CreatePactInput!) {
+        createPact(input: $input) {
           document {
             id
           }
@@ -149,7 +149,7 @@ const PetitionForm = () => {
       })
 
       if (!errors) {
-        return push(`/m/${res?.createManifest?.document.id}`)
+        return push(`/m/${res?.createPact?.document.id}`)
       }
     } catch (error) {
       console.log('error', error)
@@ -223,7 +223,7 @@ return (
         
         <div className="formControl">
           <label htmlFor="content" className="label cursor-pointer">
-            Compose your petition or your manifest here:
+            Compose your pact here:
           </label>  
               <ReactQuill 
                 modules={modules}
@@ -275,4 +275,4 @@ return (
 );
 };
 
-export default PetitionForm;
+export default PactForm;

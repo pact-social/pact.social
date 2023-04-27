@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { GetStaticPaths, NextPage } from 'next'
 import Image from 'next/image';
 import { SWRConfig, unstable_serialize } from 'swr';
 import Hero from '../components/hero';
@@ -8,11 +8,11 @@ import BrandName from '../components/svg/brandName';
 import Leaderboard from '../components/leaderboard';
 
 export async function getStaticProps() {
-  const { getLatestPetitions } = await import('../lib/getLatestPetitions')
+  const { getLatestPacts } = await import('../lib/getLatestPacts')
   return { 
     props: {
       fallback: {
-        [unstable_serialize({key: 'getLatestPetitions',limit: 6})]: await getLatestPetitions({limit: 6})
+        [unstable_serialize({key: 'getLatestPacts',limit: 6})]: await getLatestPacts({limit: 6})
       }
     }, 
     revalidate: 1000
@@ -28,7 +28,7 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
     <Layout 
       metas={{
         title: 'Pact.Social',
-        description: 'decentralized petition and manifest for change and impact'
+        description: 'decentralized petitions, manifestos and open-letters for change and impact'
       }}
     >
       <SWRConfig value={{ fallback }}>

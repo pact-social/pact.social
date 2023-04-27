@@ -1,0 +1,5 @@
+type PactRecipient @createModel(accountRelation: LIST, description: "A Pact Recipient") {
+  name: String! @string(minLength: 3, maxLength: 100)
+  isVerified: Boolean!
+  profile: StreamID
+}

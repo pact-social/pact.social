@@ -30,11 +30,11 @@ async function getComposeClient() {
   await did.authenticate()
 
   // Connect to the local Ceramic node
-  const ceramic = new CeramicClient('http://localhost:7007')
+  const ceramic = new CeramicClient(process.env.NEXT_PUBLIC_CERAMIC || "http://localhost:7007")
   ceramic.did = did
 
   const composeClient = new ComposeClient({
-    ceramic: "http://localhost:7007",
+    ceramic: process.env.NEXT_PUBLIC_CERAMIC || "http://localhost:7007",
     // cast our definition as a RuntimeCompositeDefinition
     definition: definition as RuntimeCompositeDefinition,
   });

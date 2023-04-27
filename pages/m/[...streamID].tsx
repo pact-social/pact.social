@@ -1,14 +1,14 @@
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Layout from '../../components/layout';
-import ManifestHero from '../../components/manifest/manifestHero';
+import PactHero from '../../components/pacts/pactHero';
 import SignStats from '../../components/sign/stats';
 import SignBox from '../../components/signBox';
 import { SWRConfig, unstable_serialize } from 'swr';
-import ManifestBody from '../../components/manifest/manifestBody';
-import { ManifestProvider } from '../../context/manifest';
+import PactBody from '../../components/pacts/pactBody';
+import { PactProvider } from '../../context/pact';
 import { ReactNode, useState } from 'react';
-import ManifestComments from '../../components/manifest/manifestComments';
+import PactComments from '../../components/pacts/pactComments';
 import Highlights from '../../components/highlights';
 import Portal from '../../components/portal';
 import WalletSign from '../../components/sign/wallet';
@@ -34,11 +34,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   }
   const [ streamID ] = params?.streamID as Array<string>;
-  const { getManifest } = await import('../../lib/getManifest')
+  const { getPact } = await import('../../lib/getPact')
   
   try {
 
-    const data = await getManifest({ streamID })
+    const data = await getPact({ streamID })
     
     if (!data) {
       console.log('404', data)
@@ -65,17 +65,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 
 
-const ManifestPage: NextPage<{fallback: Object}> = ({ fallback }) => {
+const PactPage: NextPage<{fallback: Object}> = ({ fallback }) => {
   const router = useRouter();
   const [ streamID ]  = router.query.streamID as Array<string>;
   const tabList: Tab[] = [
     {
       name: 'Petition details',
-      content: <ManifestBody />
+      content: <PactBody />
     },
     {
       name: 'Comments',
-      content: <ManifestComments />
+      content: <PactComments context={streamID}/>
     },
     {
       name: 'Updates',
@@ -93,9 +93,9 @@ const ManifestPage: NextPage<{fallback: Object}> = ({ fallback }) => {
       }}
     >
       <SWRConfig value={{ fallback }}>
-        <ManifestProvider manifestId={streamID}>
+        <PactProvider pactId={streamID}>
 
-          <ManifestHero />
+          <PactHero />
 
           <div className="bg-neutral-50 sticky top-[5rem] z-10">
             
@@ -171,11 +171,11 @@ const ManifestPage: NextPage<{fallback: Object}> = ({ fallback }) => {
               </button> */}
             </div>
           </div>
-        </ManifestProvider>
+        </PactProvider>
       </SWRConfig>
       <Highlights />
     </Layout>
   );
 }
 
-export default ManifestPage
+export default PactPage

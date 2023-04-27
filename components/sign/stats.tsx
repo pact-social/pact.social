@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useCeramicContext } from "../../context";
-import { useManifestContext } from "../../context/manifest";
-import { getManifestSignature } from "../../lib/getManifestSignature";
+import { usePactContext } from "../../context/pact";
+import { getPactSignature } from "../../lib/getPactSignature";
 import { useViewContext } from "../signBox";
 import WalletSign from "./wallet";
 
@@ -14,14 +14,14 @@ enum SignedType {
 
 export default function SignStats() {
   const { setView } = useViewContext();
-  const { manifest } = useManifestContext();
+  const { pact } = usePactContext();
   const { state: { isAuthenticated, did } } = useCeramicContext();
   const [ signedType, setSignedType ] = useState<SignedType>(SignedType.NONE)
 
   async function fetchSigningStatus () {
-    if (!manifest || !did) return;
+    if (!pact || !did) return;
     // check PUBLIC
-    const res = await getManifestSignature({ streamID: manifest?.id, accountID: did.parent || did.id });
+    const res = await getPactSignature({ streamID: pact?.id, accountID: did.parent || did.id });
 
     if (res.signatures.edges && res.signatures.edges.length > 0) {
       setSignedType(SignedType.PUBLIC)
