@@ -19,8 +19,22 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
+import { AnalyticsProvider } from 'use-analytics'
+
 import {CeramicWrapper} from "../context";
 import NavBar from '../components/navbar';
+import { LitProvider } from '../context/lit';
+import analytics from '../context/analytics';
+import { ReactElement, ReactNode } from 'react';
+import { type NextPage } from 'next';
+
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
@@ -34,12 +48,12 @@ const { chains, provider, webSocketProvider } = configureChains(
 );
 
 const { wallets } = getDefaultWallets({
-  appName: 'Pact.Social',
+  appName: 'pact.social',
   chains,
 });
 
 const appInfo = {
-  appName: 'Pact.Social',
+  appName: 'pact.social',
 };
 
 const connectors = connectorsForWallets([
@@ -88,8 +102,10 @@ const roboto = Roboto({
   variable: '--font-roboto',
 })
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
-
+const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
+  
+  const getLayout = Component.getLayout ?? ((page) => page)
+  
   return (
     <main className={`${roboto.variable} ${arrayFont.variable} ${chillaxFont.variable} font-sans`}>
       <WagmiConfig client={wagmiClient}>
@@ -97,10 +113,14 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           accentColor: '#f000b8',
         })}>
           <CeramicWrapper>
-            <NavBar>
-              <Component {...pageProps} ceramic />
-            </NavBar>
-            <div id="portal"></div>
+            <AnalyticsProvider instance={analytics}>
+            <LitProvider>
+              <NavBar>
+                {getLayout(<Component {...pageProps} ceramic />)}
+              </NavBar>
+              <div id="portal"></div>
+            </LitProvider>
+            </AnalyticsProvider>
           </CeramicWrapper>
         </RainbowKitProvider>
       </WagmiConfig>
