@@ -1,14 +1,24 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
-import { Topic } from '../../src/gql'
+import { PactInput, PactType, Topic } from '../../src/gql'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { UseFormSetValue } from 'react-hook-form';
 
 interface TopicProps {
   topics: Topic[];
   register: any;
+  setValue: UseFormSetValue<PactInput>;
 }
 
-export default function TopicSelect({topics, register}: TopicProps) {
+type PactInputs = {
+  type: PactType, 
+  title: string,
+  topicID: string,
+  content: string,
+  image?: string,
+};
+
+export default function TopicSelect({topics, register, setValue}: TopicProps) {
   const [selectedTopic, setSelectedTopic] = useState<Topic>(topics?.[0])
   const [query, setQuery] = useState<string>('')
   
@@ -50,10 +60,13 @@ export default function TopicSelect({topics, register}: TopicProps) {
 
 
   useEffect(() => {
+    console.log('Topic changed', selectedTopic)
     if (selectedTopic && !selectedTopic?.id) {
       // create the topic
+      console.log('saveTopic', selectedTopic)
       saveTopic(selectedTopic)
     }
+    setValue('topicID', selectedTopic?.id)
   }, [selectedTopic]);
 
   return (
