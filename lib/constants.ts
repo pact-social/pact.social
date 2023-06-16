@@ -10,5 +10,5 @@ export const supportedChains = [
   mainnet,
   polygon,
   optimism,
-  arbitrum,
+  // arbitrum,
 ]

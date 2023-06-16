@@ -1,17 +1,39 @@
-import { Orbis } from "@orbisclub/orbis-sdk";
 import type { CeramicClient } from "@ceramicnetwork/http-client"
+import { composeClient } from "./composeClient";
+import { PactProfile, CreatePactProfileInput, Mutation } from "../src/gql";
 
 
-export default async function updateProfile (profile: Profile, ceramic?: CeramicClient) {
-  // const orbis = new Orbis({ ceramic });
-  const orbis = new Orbis();
-  const isConnected = await orbis.isConnected(localStorage.getItem('did'))
-  
-  if (isConnected.status !== 200) {
-    await orbis.connect_v2(window.ethereum);
+const createProfileQuery = `
+  mutation CreateProfile($input: CreatePactProfileInput!) {
+    createPactProfile(input: $input) {
+      clientMutationId
+        document {
+          id
+        }
+    }
   }
-  let res = await orbis.updateProfile(profile);
-  
-  /** Return results */
-  // return({ data: orbisProfiles as Profile[]});
+`;
+
+export default async function createProfile (profile: PactProfile, ceramic?: CeramicClient) {
+  const inputs = Object.fromEntries(Object.entries(profile).filter(([_, v]) => v != null && v != ''));
+  inputs?.id && delete inputs.id
+
+  const inputProfile: CreatePactProfileInput = {
+    content: {
+      username: profile.username,
+      ...inputs,
+      isMagicLink: false,
+    }
+  }
+
+  const { data, errors } = await composeClient.executeQuery<Mutation>(
+    createProfileQuery,
+    {input: inputProfile},
+  )
+  if (errors) {
+    errors.map(err => console.log(err.message));
+    throw new Error('error submitting profile')
+  }
+
+  return data
 }

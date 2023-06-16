@@ -1,8 +1,12 @@
 import { useMemo } from 'react';
 import { emojiAvatarForAddress } from './emojiAvatarForAddress';
 
-export default function EmojiAvatar({ address }: {
+export default function EmojiAvatar({ 
+  address,
+  className,
+}: {
   address: string;
+  className?: string;
 }) {
   const { color: backgroundColor, emoji } = useMemo(
     () => emojiAvatarForAddress(address),
@@ -12,7 +16,7 @@ export default function EmojiAvatar({ address }: {
     <div
       className="avatar placeholder"
     >
-      <div className="text-neutral-content rounded-full w-8" style={{backgroundColor}}>
+      <div className={"text-neutral-content ".concat(className || ' rounded-full w-8')} style={{backgroundColor}}>
         <span className="text-md">{emoji}</span>
       </div>
     </div>

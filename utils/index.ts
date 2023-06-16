@@ -8,19 +8,19 @@ import { DID } from "dids";
  * Checks localStorage for a stored DID Session. If one is found we authenticate it, otherwise we create a new one.
  * @returns Promise<DID-Session> - The User's authenticated sesion.
  */
-export const authenticateCeramic = async (address: any, provider: any, ceramic: CeramicApi, compose: ComposeClient) => {
+export const authenticateCeramic = async (address: any, provider: any, ceramic: CeramicApi, compose: ComposeClient, fromStore: boolean = true) => {
   const sessionStr = localStorage.getItem('did') // for production you will want a better place than localStorage for your sessions.
   let session
 
-  if(sessionStr) {
+  if(fromStore && sessionStr) {
     session = await DIDSession.fromSession(sessionStr)
     
-    if (getAddressFromDid(session.did?.parent)?.address !== address) {
-      console.log('no matching session', getAddressFromDid(session.did?.parent), address)
+    if (getAddressFromDid(session.did?.parent)?.address !== address.toLowerCase()) {
+      console.log('no matching session', getAddressFromDid(session.did?.parent), address.toLowerCase())
       session = undefined;
     }
   }
-  
+  console.log('session', session)
   if(!session || (session.hasSession && session.isExpired)) {
     const accountId = await getAccountId(provider, address)
     const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
@@ -37,7 +37,9 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
        
     })
     // Set the session in localStorage.
-    localStorage.setItem('did', session.serialize());
+    if (fromStore) {
+      localStorage.setItem('did', session.serialize());
+    }
   }
   
   // Set our Ceramic DID to be our session DID.

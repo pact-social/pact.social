@@ -1,7 +1,9 @@
 import { createContext, Dispatch, useContext, useReducer } from "react";
 import { CeramicClient } from "@ceramicnetwork/http-client"
-import type { ComposeClient } from "@composedb/client";
+import { ComposeClient } from "@composedb/client";
 import { DID } from "dids";
+import { RuntimeCompositeDefinition } from "@composedb/types";
+import { definition } from "../src/__generated__/definition.js";
 
 import { composeClient as composeClientInstance } from "../lib/composeClient";
 
@@ -24,6 +26,17 @@ type Action =
 export const ceramic = new CeramicClient(process.env.NEXT_PUBLIC_CERAMIC || "http://localhost:7007");
 
 export const composeClient = composeClientInstance;
+
+export function newClients() {
+  return {
+    ceramic: new CeramicClient(process.env.NEXT_PUBLIC_CERAMIC || "http://localhost:7007"),
+    composeClient: new ComposeClient({
+      ceramic: process.env.NEXT_PUBLIC_CERAMIC || "http://localhost:7007",
+      // cast our definition as a RuntimeCompositeDefinition
+      definition: definition as RuntimeCompositeDefinition,
+    })
+  }
+}
 
 
 const initialState = {
