@@ -7,13 +7,19 @@
   border-color: black;
 } */
 
+/* @layer base {
+  html {
+    @apply scroll-smooth;
+  }
+} */
+
 /* Card component */
 [data-theme="pacttheme"] .card {
   @apply shadow-none rounded-none;
 }
 
 [data-theme="pacttheme"] .card figure {
-  @apply mb-5 aspect-[4/3]
+  @apply aspect-[4/3]
 }
 
 [data-theme="pacttheme"] .card figure:after {
@@ -68,29 +74,29 @@
 
 /* Table */
 [data-theme="pacttheme"] .table {
-  @apply font-light text-sm;
+  @apply font-light text-xs sm:text-base;
 }
 [data-theme="pacttheme"] .table thead th {
-  @apply font-light font-alt text-xl lowercase;
+  @apply font-light font-alt sm:text-xl lowercase;
 }
 [data-theme="pacttheme"] .table td {
-  @apply font-light text-sm text-right;
+  @apply font-light text-xs sm:text-base;
 }
 [data-theme="pacttheme"] .table :where(th, td) {
-  @apply max-w-[8rem] text-right;
+  @apply max-w-[8rem];
 }
 [data-theme="pacttheme"] .table :where(tbody th, tbody td, thead th) {
   @apply bg-white md:bg-inherit;
 }
-[data-theme="pacttheme"] .table :where(thead th:first-child, tbody th:first-child)  {
-  @apply w-24 md:w-44 md:pl-12 text-left;
-}
-[data-theme="pacttheme"] .table :where(th:nth-child(2), td:nth-child(2))  {
-  @apply text-left md:min-w-[12rem];
-}
-[data-theme="pacttheme"] .table :where(th:last-child, td:last-child)  {
+/* [data-theme="pacttheme"] .table :where(thead th:first-child, tbody th:first-child)  {
+  @apply text-left;
+} */
+/* [data-theme="pacttheme"] .table :where(th:nth-child(2), td:nth-child(2))  {
+  @apply md:min-w-[12rem];
+} */
+/* [data-theme="pacttheme"] .table :where(th:last-child, td:last-child)  {
   @apply md:pr-12;
-}
+} */
 [data-theme="pacttheme"] .table tbody tr, tbody th  {
   @apply cursor-pointer;
 }
@@ -112,25 +118,26 @@
   @apply w-full p-0 justify-items-stretch font-title;
 }
 [data-theme="pacttheme"] .hero-split .hero-content {
-  @apply flex flex-col lg:flex-row p-0 w-full min-w-full gap-0 sm:gap-4 lg:gap-8 lg:max-h-full;
+  @apply block lg:flex lg:flex-row p-0 w-full min-w-full gap-0 sm:gap-4 lg:gap-8 lg:max-h-full;
 }
 
 [data-theme="pacttheme"] .hero-split .hero-img {
-  overflow: hidden;
-  @apply relative flex-1;
+  /* overflow: hidden; */
+  /* @apply relative flex-1; */
 }
 
 [data-theme="pacttheme"] .hero-split .hero-img img {
-  @apply aspect-[1/1] object-cover;
+  /* @apply aspect-[1/1] object-cover; */
 }
 
-[data-theme="pacttheme"] .hero-split .hero-img:before {
+[data-theme="pacttheme"] .hero-split .hero-img figure:before {
   content: '';
   display: block;
   background-image: url('/mask-header.svg');
   height: 100%;
   width: 140px;
   background-position: top right;
+  z-index: 1;
   @apply absolute top-0 -right-[1px] max-w-[20%] bg-no-repeat bg-contain;
 }
 

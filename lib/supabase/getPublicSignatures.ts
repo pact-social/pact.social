@@ -1,7 +1,7 @@
 import { supabase } from ".";
 
-export default async function getPublicSignatures(streamID: string, page?: number) {
-  const limit = 1;
+export default async function getPublicSignatures(streamID: string, page?: number, limit?: number) {
+  limit = limit || 10;
   page = page || 1;
   const dbRecord = await supabase
     .from('public_signatures')
@@ -10,5 +10,6 @@ export default async function getPublicSignatures(streamID: string, page?: numbe
     .range(limit * (page - 1), limit * page)
     .limit(limit)
   ;
+
   return dbRecord;
 }

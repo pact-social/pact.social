@@ -3,13 +3,14 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { usePactContext } from "../../context/pact"
 import { getAddressFromDid, shortAddress } from "../../utils";
-import { orbisIndexer } from "../../lib/getOrbisIndexer";
 import EmojiAvatar from "../avatar/emojiAvatar";
 
 dayjs.extend(relativeTime)
 
+const limit = 10;
+
 export default function PactSignatures() {
-  const { data, count } = useSignatureListPage(null);
+  const { data, count } = useSignatureListPage(undefined);
 
   return (
     <>
@@ -21,16 +22,23 @@ export default function PactSignatures() {
 }
 
 function SignatureList({data, count}: {data: any[], count: number}) {
-  const { allPages, currentPage, setCurrentPageNumber } = usePagination(count, 1);
-  
+  const { allPages, currentPage, setCurrentPageNumber } = usePagination(count, limit);
+
   return (
     <>
-      <SignatureListPage page={currentPage.after} />
+      <SignatureListPage page={currentPage.number} />
+      {allPages.length > 1 && (
+        <SignaturePaginationPanel
+          allPages={allPages}
+          currentPage={currentPage}
+          setCurrentPageNumber={setCurrentPageNumber}
+        />
+      )}
     </>
   )
 }
 
-function SignatureListPage({ page }: { page: number | null }) {
+function SignatureListPage({ page }: { page: number | undefined }) {
   const { data, count } = useSignatureListPage(page);
 
   if (!data) return null;
@@ -47,12 +55,13 @@ function SignatureListPage({ page }: { page: number | null }) {
           <span>public signatures</span>
         </div>
       </div>
-      <div>
+      <div className="grid">
         {data && data?.map((signature: any, index) => (
           <SignatureRow
             key={`signatures-${index}`}
-            did={signature.controller_did}
-            datetime={signature.created_at}
+            signature={signature}
+            // did={signature.controller_did}
+            // datetime={signature.created_at}
           />
         ))}
       </div>
@@ -72,7 +81,6 @@ function usePagination(totalCount: number, pageSize: number) {
       after: (index + 1) * pageSize,
     })
   );
-  console.log('allPages', allPages);
 
   if (allPages.length === 0) throw new Error(`unexpected empty list`);
 
@@ -88,30 +96,28 @@ function usePagination(totalCount: number, pageSize: number) {
 }
 
 const SignatureRow = ({
-  did,
-  datetime
+  signature
 }: {
-  did: string;
-  datetime: string;
+  signature: any;
 }) => {
-  const [profile, setProfile] = useState<any>();
-  const address = getAddressFromDid(did).address || 'anon';
+  // const [profile, setProfile] = useState<any>();
+  const address = getAddressFromDid(signature.controller_did).address || 'anon';
 
-  const getProfile = async (did: string) => {
+  // const getProfile = async (did: string) => {
 
-    if(!address) return;
+  //   if(!address) return;
 
-		let { data, error, status } = await orbisIndexer.from("orbis_v_profiles").select().ilike('address', address);
-    if((data as Array<any>)?.length > 0) {
-      setProfile(data);
-    }
-		/** Return results */
-		return({ data, error, status });
-	}
+	// 	let { data, error, status } = await orbisIndexer.from("orbis_v_profiles").select().ilike('address', address);
+  //   if((data as Array<any>)?.length > 0) {
+  //     setProfile(data);
+  //   }
+	// 	/** Return results */
+	// 	return({ data, error, status });
+	// }
 
-  useEffect(() => {
-    getProfile(did);
-  }, []);
+  // useEffect(() => {
+  //   getProfile(did);
+  // }, []);
 
   return (
     <div className="flex items-center my-2">
@@ -119,15 +125,92 @@ const SignatureRow = ({
         <EmojiAvatar address={address} />
       </div>
       <div className="">
-        <span className="hidden lg:block">{profile?.profile?.username || address}</span>
-        <span className="block lg:hidden">{profile?.profile?.username || shortAddress(address)}</span>
+        <div className="flex gap-2 font-bold">
+          <span className="hidden lg:block">{(signature?.name || signature?.username) || address}</span>
+          <span className="block lg:hidden">{(signature?.name || signature?.username) || shortAddress(address)}</span>
+        </div>
+        <div className="flex gap-2 text-sm">
+          {signature?.title && 
+            <span className="">{signature?.title}{signature?.organisation ? `, ${signature?.organisation}` : ''}</span>
+          }
+          {(!signature?.title && signature?.organisation) && 
+            <span className="">{signature?.organisation}</span>
+          }
+        </div>
       </div>
-      <span className="flex-1 text-right">{dayjs(datetime).fromNow()}</span>
+      <span className="flex-1 text-right">{dayjs(signature?.created_at).fromNow()}</span>
     </div>
   )
 }
 
-export function useSignatureListPage(page: number | null) {
+function SignaturePaginationPanel({
+  allPages,
+  currentPage,
+  setCurrentPageNumber,
+}: {
+  allPages: SignaturePage[];
+  currentPage: SignaturePage;
+  setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  return (
+    <div className="btn-group">
+      {ellipsizePages(allPages, currentPage).map((page, index) =>
+        page === "ellipsis" ? (
+          <button key={index} className="btn">
+            &hellip;
+          </button>
+        ) : (
+          <button
+            key={index}
+            className={`btn ${ page.number === currentPage.number ? 'btn-active' : ''}`}
+            onClick={() => setCurrentPageNumber(page.number)}
+          >
+            {page.number}
+          </button>
+        )
+      )}
+    </div>
+  );
+}
+
+function ellipsizePages(
+  allPages: SignaturePage[],
+  currentPage: SignaturePage
+): Array<SignaturePage | "ellipsis"> {
+  const fullLimit = 7;
+
+  const sidePages = 5;
+  const sideLimit = 4;
+
+  const middlePagesPerSide = 1;
+
+  const firstPage = allPages[0];
+  const lastPage = allPages[allPages.length - 1];
+
+  return allPages.length <= fullLimit
+    ? allPages
+    : currentPage.number <= sideLimit
+    ? [...allPages.slice(0, sidePages), "ellipsis", lastPage]
+    : currentPage.number >= allPages.length - sideLimit + 1
+    ? [
+        firstPage,
+        "ellipsis",
+        ...allPages.slice(allPages.length - sidePages, allPages.length),
+      ]
+    : [
+        firstPage,
+        "ellipsis",
+        ...allPages.slice(
+          currentPage.number - middlePagesPerSide - 1,
+          currentPage.number + middlePagesPerSide
+        ),
+        "ellipsis",
+        lastPage,
+      ];
+}
+
+
+export function useSignatureListPage(page: number | undefined) {
   const { pact } = usePactContext();
   const [ data, setData ] = useState<any[] | null>(null);
   const [ count, setCount ] = useState<number>(0);
@@ -136,6 +219,7 @@ export function useSignatureListPage(page: number | null) {
     const params = {
       streamID,
       page,
+      limit,
     }
     const res = await fetch('/api/pacts/signatures', {
       method: 'POST',
@@ -147,7 +231,6 @@ export function useSignatureListPage(page: number | null) {
     });
     const {count, data } = await res.json();
     if (data) {
-      console.log('data signatures', data)
       setData(data);
       setCount(count);
     }
@@ -155,7 +238,7 @@ export function useSignatureListPage(page: number | null) {
 
   useEffect(() => {
     if (pact) {
-      getSignatures(pact?.id)
+      getSignatures(pact?.id, page)
     }
   }, [pact, page])
 

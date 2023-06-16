@@ -1,7 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { useAccount, useSigner } from "wagmi"
 import { useCeramicContext } from "../../context"
-import { useBoxContext } from "../../context/box"
 import { authenticateCeramic } from "../../utils"
 import { useViewContext } from "../signBox"
 
@@ -18,16 +17,7 @@ export default function PrivateSign() {
   }
 
   const handlePactSign = async () => {
-    // generate a secret/nonce getCsrfToken from next-auth? or from client side
-
-
-    // get petition datas
-
-    // form the message
-
-    // call wallet sign
-
-    // save datas on ceramic
+  // @TODO
   }
 
 
@@ -49,7 +39,7 @@ export default function PrivateSign() {
   return (
     <div className="flex flex-col justify-around my-6 mx-4">
       <p className=" text-lg font-semibold text-neutral-700">Private Signature</p>
-      <p className="text-sm">encrypt and share with Pact.Social operator keys the secret used to sign.</p>
+      <p className="text-sm">encrypt and share with pact.social operator keys the secret used to sign.</p>
       <div className="divider"></div>
       <div 
         className="btn btn-primary"

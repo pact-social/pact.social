@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   
   return (
     <Layout metas={{
-      title: 'Pact.Social',
+      title: 'pact.social',
       description: 'decentralized petition and manifest for change and impact'
     }}>
 

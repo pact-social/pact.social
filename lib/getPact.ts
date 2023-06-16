@@ -8,14 +8,22 @@ const query = `
         __typename
         id
         version
+        createdAt
         title
         content
         type
-        picture
+        image
+        media {
+          item
+          cid
+          type
+          cover
+          altTag
+        }
         author {
           id
           pactProfile {
-            name
+            username
           }
         }
         topic {
@@ -31,17 +39,16 @@ export type PactQueryArgs = {
 }
 
 export const getPact = async (args: PactQueryArgs) => {
-  
+  if (!args.streamID) {
+    throw new Error('no streamID')
+  }
+
   const { data, errors } = await composeClient.executeQuery<Query>(query, args);
 
   if (errors || !data) {
-    console.log('error', errors, data, args)
+    console.log('getPact error', errors, data, args)
     throw new Error('an error occured')
   }
-  
-  // if (data.node && data.node?.__typename !== 'Pact' && "title" in data?.node ) {
-  //   throw new Error('Result is not a pact.')
-  // }
   
   return data.node as Pact;
 }

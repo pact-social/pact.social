@@ -16,7 +16,10 @@ const query = `
             signedAt
             visibility
             metadata
-            jwe
+            signature
+            pact {
+              title
+            }
           }
         }
       }
@@ -33,6 +36,7 @@ export const getMySignatures = async () => {
     });
 
     if (errors || !data) {
+      console.error(errors)
       throw new Error('an error occured')
     }
 

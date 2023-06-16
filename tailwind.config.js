@@ -64,7 +64,7 @@ module.exports = {
     themes: [
       {
         pacttheme: {
-          ...require('daisyui/src/colors/themes')['[data-theme=light]'],
+          ...require("daisyui/src/theming/themes")['[data-theme=light]'],
           '.table-bg-gradient': {
             'padding': '1.5rem',
             'background-image': 'linear-gradient(to bottom, #c1dfff, #ffac95)',
@@ -99,6 +99,7 @@ module.exports = {
         }
       },
       'light',
+      'dark',
     ],
     base: true,
     utils: true,

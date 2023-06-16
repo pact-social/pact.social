@@ -3,12 +3,12 @@ import getPublicSignatures from '../../../lib/supabase/getPublicSignatures'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { streamID, page } = req.body;
+    const { streamID, page, limit } = req.body;
     
     if (!streamID) return res.status(500).end();
 
-    const { data, error, count } = await getPublicSignatures(streamID as string, page)
-    console.log('getPublicSignatures', data)
+    const { data, error, count } = await getPublicSignatures(streamID as string, page, limit)
+
     if (error) return res.status(500).json(error);
     return res.status(200).json({data, count})
   } else {

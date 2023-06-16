@@ -1,12 +1,14 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ethers } from "ethers";
 import { useState } from "react";
-import { useAccount, useSigner, useSignMessage } from "wagmi";
+import { useAccount, useSignMessage } from "wagmi";
 import { useCeramicContext } from "../../context";
 import { usePactContext } from "../../context/pact";
 import { authenticateCeramic } from "../../utils";
 import { useViewContext } from "../signBox";
 import VerifiedSign from "./verifiedSign";
+import { formatMessage } from "../../lib/pact-utils";
+import { CreatePactSignatureInput, PactSignatureVisibilityType } from "../../src/gql";
 
 export default function PublicSign() {
   const { address, connector, status } = useAccount()
@@ -21,55 +23,30 @@ export default function PublicSign() {
       saveSignature(data);
     }
   });
-  const { composeClient, ceramic } = useCeramicContext();
-  const validatorDID = "did:key:z6MkmnaXQ9N85XjXFy57wie3uixawegPbQjsQxifL1VAjVVB";
-  
+  const { composeClient, ceramic } = useCeramicContext();  
   
   const saveSignature = async (data: string) => {
-    // validity of pacto signature and compare with authenticated user
-    if (!msg) return;
-    // TODO: upload to ipfs using server api to not expose ipfs apis publicly
     try {
       // verify message
       const signerAddress = await ethers.utils.verifyMessage(
         `${msg}`,
         data
       );
-  
-      const jwe = await composeClient.did?.createDagJWE({
-        timestamp: timestamp?.valueOf(),
-        message: msg,
-        signature: data,
-      }, [composeClient.did.id]);
-  
-      // put the JWE into the ipfs dag with server side api
-      // TODO: must be done serverside for not exposing ipfs api
-      const response = await fetch('/api/pacts/sign', {
-          method: 'POST',
-          body: JSON.stringify({jwe}),
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-        }
-      )
-      if (response.status !== 200) {
-        console.error('error adding a topic', response.status)
-        return;
-      }
-  
-      const {jweCid} = await response.json();
-      console.log('jweCid', jweCid)
-      const input = {
+
+      const input: CreatePactSignatureInput = {
         content: {
-          jwe: jweCid,
+          signature: data,
           signedAt: timestamp?.toISOString(),
-          validator: validatorDID,
           pactID: pact?.id,
-          visibility: 'public',
-          pactVersion: pact?.version
+          visibility: PactSignatureVisibilityType.Public,
+          pactVersion: pact?.version,
         }
       };
+      const referral = localStorage.getItem(`ref_${pact?.id}`)
+      if (referral) {
+        const data = JSON.parse(referral)
+        input.content.referral = data.ref
+      }
       const res = await composeClient.executeQuery(`
       mutation RecordSignature($input: CreatePactSignatureInput!) {
         createPactSignature(input: $input) {
@@ -83,7 +60,12 @@ export default function PublicSign() {
         input
       });
 
-      setView(<VerifiedSign/>);
+      setView(
+        <>
+          <VerifiedSign/>
+        </>
+      );
+
     } catch (error) {
       console.log('error signature', error);
     }
@@ -97,13 +79,12 @@ export default function PublicSign() {
 
   const handlePactSign = async () => {
     // check if user already signed
-
+    if (!pact) return;
     // form the message
-    const time = new Date();
+    const { message, time } = formatMessage(pact);
     if(!timestamp) {
       setTimestamp(time);
     }
-    const message = `I am signing in support of the following {pact?.type}:\n\ntitle: ${pact?.title}\n${pact?.type} content:\n${pact?.content.replace(/<[^>]+>/g, '')}\ncreated by:\n ${pact?.author?.id}\nsigned at:\n ${time.valueOf()}\n`;
     setMsg(message);
 
     // call wallet sign
@@ -132,7 +113,7 @@ export default function PublicSign() {
   return (
     <div className="flex flex-col justify-around my-6 mx-4">
       <p className=" text-lg font-semibold text-neutral-700">Public Signature</p>
-      <p className="text-sm">encrypt and share with Pact.Social operator keys the secret used to sign.</p>
+      <p className="text-sm">Give the maximum impact to your voice by making your signature verifiable and public.</p>
       <div className="divider"></div>
       <div 
         className="btn btn-primary"

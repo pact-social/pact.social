@@ -1,0 +1,13 @@
+type PublicationMetadataMedia {
+  item: URI
+  type: String @string(maxLength: 50) # MimeType
+  altTag: String @string(maxLength: 500)
+  cover: String @string(maxLength: 500)
+  cid: CID
+}
+
+type Collection @createModel(accountRelation: LIST, description:"A collection of Documents") {
+  name: String @string(maxLength: 100)
+  description: String @string(maxLength: 500)
+  media: [PublicationMetadataMedia] @list(maxLength: 20)
+}

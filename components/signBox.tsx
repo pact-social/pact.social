@@ -94,15 +94,15 @@ export default function SignBox({ children, ...props }: StreamProps) {
 
   return (
     <>
-        <ViewProvider refNode={containerRef}>
-          <ViewContainer 
-            name="signBox" 
-            ref={containerRef}
-            {...props}
-          >
-            {children}
-          </ViewContainer>
-        </ViewProvider>
+      <ViewProvider refNode={containerRef}>
+        <ViewContainer 
+          name="signBox" 
+          ref={containerRef}
+          {...props}
+        >
+          {children}
+        </ViewContainer>
+      </ViewProvider>
     </>
   )
 }

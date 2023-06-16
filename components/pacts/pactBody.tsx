@@ -1,4 +1,5 @@
 import { usePactContext } from "../../context/pact";
+import { markdownToHtml } from "../../lib/mdUtils";
 import PactSignatures from "./pactSignatures";
 
 export default function PactBody () {
@@ -9,7 +10,7 @@ export default function PactBody () {
       <h1 className="text-3xl font-bold">{pact?.title}</h1>
       <article className="prose">
         {pact?.content &&
-          <div dangerouslySetInnerHTML={{ __html: pact?.content }}></div>
+          <div dangerouslySetInnerHTML={{ __html: markdownToHtml( pact?.content) }}></div>
         }
       </article>
       <section>

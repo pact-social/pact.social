@@ -53,7 +53,7 @@ async function uploadfilePOST (
 
       res.status(200).json({ 
         cid: cid.toV1().toString(),
-        url: `${ipfsGateway}/ipfs/${cid.toString()}`,
+        url: `${ipfsGateway}/${cid.toString()}`,
       })
     } catch (error) {
       console.log('cannot publish to ipfs', error)

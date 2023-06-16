@@ -2,15 +2,15 @@ import useSWR from 'swr'
 import type { TopicEdge } from '../src/gql';
 
 
-const fetcher = async () => {
+const fetcher = async (uri: string) => {
 
-  const res = await fetch('/api/topics');
+  const res = await fetch(uri);
   const topics = await res.json();
   return topics.map((topic: TopicEdge) => topic.node);
 }
 
 export default function useTopics() {
-  const { data, error, isLoading, mutate } = useSWR({},
+  const { data, error, isLoading, mutate } = useSWR('/api/topics',
     fetcher,
     // {
     //   dedupingInterval: 30000,

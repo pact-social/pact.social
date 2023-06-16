@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useAccount, useSignMessage } from "wagmi";
 import type { ChallengeResponse, ScorerResponse } from "../../pages/api/credentials/challenge";
 import { useViewContext } from "../signBox"
+import ShareView from "./share";
 
 export default function VerifiedSign() {
   const [ challengeLoading, toggleChallengeLoading ] = useState<boolean>(false)
@@ -84,7 +85,7 @@ export default function VerifiedSign() {
             </div>
           }
           {!challengeLoading && 
-          <>
+          <div className="grid gap-2">
             <div 
               className="btn btn-primary"
               onClick={getChallenge}
@@ -92,8 +93,8 @@ export default function VerifiedSign() {
               score your GitcoinPassport
             </div>
 
-            <div 
-            className="btn btn-primary"
+            <button 
+            className="btn btn-outline gap-1"
             onClick={getChallenge}
             >
               <Image
@@ -101,10 +102,11 @@ export default function VerifiedSign() {
                 height={32}
                 width={32}
                 alt=""
+                className=""
               ></Image>
-            Add Credentials to your wallet
-            </div>
-          </>
+            Manage your passport
+            </button>
+          </div>
           }
         </>
       }
@@ -153,12 +155,18 @@ export default function VerifiedSign() {
       </div>
       }
       <div className="divider"></div>
-      <div className=" self-start">
+      <div className="flex justify-between">
         <div
           className="btn"
           onClick={previousView}
         >
           Back
+        </div>
+        <div
+          className="btn btn-outline"
+          onClick={() => setView(<ShareView/>)}
+        >
+          Skip
         </div>
       </div>
     </div>
