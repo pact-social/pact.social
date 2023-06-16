@@ -1,31 +1,63 @@
 import Image from 'next/image'
 import Link from 'next/link';
 import { Pact } from '../../src/gql';
+import useStreamStats from '../../hooks/useStreamStats';
+import IconSig from '../svg/noun-signature';
 
 export default function PactCard({pact}: { pact: Pact }) {
-  
+  const { data: stats, error } = useStreamStats(pact?.id);
+
   return (
-    <div className="card card-compact bg-base-100 shadow-xl max-w-sm">
-      <figure className="relative aspect-[4/3]">
-        <Image 
-          src={pact.picture ? `${process.env.NEXT_PUBLIC_IPFS_GATEWAY}/${pact.picture}` : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
-          alt={pact.title}
-          fill
-          className="object-cover"
-        />
-      </figure>
-      <div className={`card-body bg-${pact.type}-light`}>
+  <Link 
+    href={`/m/${pact.id}`}
+    className=""
+    >
+    <div className="card card-compact bg-base-100 shadow-xl max-w-sm h-full m-auto">
+      {pact.media &&
+        <div className="carousel aspect-[4/3] mb-5">
+          {pact.media?.map((current, index) => 
+            <figure 
+              key={index}
+              className="relative aspect-[4/3] carousel-item">
+              <Image 
+                src={current?.item ? current.item : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
+                alt={current?.altTag || pact.title}
+                fill
+                // height={210}
+                // width={280}
+                className=" object-cover"
+              />
+            </figure>
+          )}
+        </div>
+      }
+      {(!pact.media && pact.image) && 
+        <figure className="relative aspect-[4/3] mb-5">
+          <Image 
+            src={pact?.image ? pact?.image : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
+            alt={pact.title}
+            fill
+            className="object-cover"
+          />
+        </figure>
+      }
+      <div className={`card-body bg-${pact.type}-light justify-between`}>
         <div className={`label-${pact.type}`}>featured {pact.type === 'openletter' ? 'open letter' : pact.type}</div>
         <h2 className="card-title">{pact.title}</h2>
-        <div className="card-actions justify-end">
-          <Link 
-            scroll
-            href={`/m/${pact.id}`}
-            className="btn btn-primary">
-            sign
-          </Link>
+        <div className="text-sm">{pact?.topic?.name}</div>
+        <div className="card-actions justify-between items-baseline">
+          <div className="flex gap-3">
+            <IconSig className="w-4 h-4" />
+            <div className="text-sm">{stats?.total}</div>
+          </div>
+          <div className="justify-end">
+            <div className="btn btn-primary">
+              sign
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    </Link>
   );
 }

@@ -1,6 +1,7 @@
 type SvgType = {
   height: number;
   white?: boolean;
+  style?: Object;
 }
 export default function Logo({ height, white,  ...rest }: SvgType) {
   return (

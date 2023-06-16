@@ -13,6 +13,7 @@ export default function Hero() {
               alt=""
               width={800}
               height={800}
+              className="aspect-[1/1] object-cover"
             />
             <div className="absolute bottom-0 sm:bottom-10 xl:bottom-20 max-w-full min-w-[80%] lg:max-w-[90%] bg-[#f4fffb]/80 backdrop-blur-md font-sans p-8 py-3">
               <div className="pb-2 font-light">
@@ -34,20 +35,6 @@ export default function Hero() {
                 <div className="word-openletter">open letters</div>
               </div>
             </div>
-            {/* <div className="py-6">
-              <Link
-                href={'/m/create'}
-              >
-                  <button className="btn btn-secondary">Start a Manifest</button>
-              </Link>
-            </div> */}
-            {/* <div className="stats shadow">
-              <div className="stat">
-                 <div className="stat-title">Total Page Views</div> 
-                <div className="stat-value text-primary font-normal font-alt">312,400</div>
-                <div className="stat-desc text-center">people making change</div>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
@@ -67,13 +54,13 @@ export default function Hero() {
             <div className="flex gap-4 mt-12 self-end">
               <Link
                 className="btn normal-case btn-secondary"
-                href="/"
+                href="/m/create"
               >
                 Post a Manifesto
               </Link>
               <Link
                 className="btn normal-case btn-outline"
-                href="/"
+                href="/explore/manifesto"
               >
                 See all Manifestos
               </Link>
@@ -88,13 +75,13 @@ export default function Hero() {
             <div className="flex gap-4 mt-12 self-end">
               <Link
                 className="btn normal-case btn-secondary"
-                href="/"
+                href="/m/create"
               >
                 Make a Petition
               </Link>
               <Link
                 className="btn normal-case btn-outline"
-                href="/"
+                href="/explore/petition"
               >
                 See all Petitions
               </Link>
@@ -109,13 +96,13 @@ export default function Hero() {
             <div className="flex gap-4 mt-12 self-end">
               <Link
                 className="btn normal-case btn-secondary"
-                href="/"
+                href="/m/create"
               >
                 Write open letter
               </Link>
               <Link
                 className="btn normal-case btn-outline"
-                href="/"
+                href="/explore/openletter"
               >
                 See all Open letters
               </Link>

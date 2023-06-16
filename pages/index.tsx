@@ -1,4 +1,4 @@
-import type { GetStaticPaths, NextPage } from 'next'
+import type { NextPage } from 'next'
 import Image from 'next/image';
 import { SWRConfig, unstable_serialize } from 'swr';
 import Hero from '../components/hero';
@@ -6,6 +6,7 @@ import Highlights from '../components/highlights';
 import Layout from '../components/layout';
 import BrandName from '../components/svg/brandName';
 import Leaderboard from '../components/leaderboard';
+import Roadmap from '../components/roadmap';
 
 export async function getStaticProps() {
   const { getLatestPacts } = await import('../lib/getLatestPacts')
@@ -27,8 +28,9 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
   return (
     <Layout 
       metas={{
-        title: 'Pact.Social',
-        description: 'decentralized petitions, manifestos and open-letters for change and impact'
+        title: 'pact.social',
+        description: 'decentralized petitions, manifestos and open-letters for change and impact',
+        imageSrc: `${process.env.NEXT_PUBLIC_APP_DOMAIN}/api/og/default`
       }}
     >
       <SWRConfig value={{ fallback }}>
@@ -42,22 +44,38 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
             width={680}
             height={1024}
             alt=""
-            className="picture-frame max-w-[75%] sm:max-w-[calc(50%-3.5rem)] mx-auto sm:ml-14"
+            className="picture-frame max-w-[75%] lg:max-w-[calc(50%-3.5rem)] mx-auto lg:ml-14"
           />
-          <div className="sm:absolute w-full min-h-[50%] sm:top-1/4 py-8 pt-32 -mt-24 sm:mt-0 sm:py-0 flex items-center justify-center sm:justify-end backdrop-opacity-10 bg-gradient-to-b from-[#cfffc1]/[.4] to-[#d495ff]/[.4]">
-            <div className="w-3/4 sm:w-1/2 sm:px-14 py-4">
-              <BrandName black className="h-9 mb-11" />
-              <p className="font-bold">A bunch of impact punks worried about voices becoming less free. <br/>
-              pact.social is decentralized, verified </p>
+          <div className="lg:absolute w-full min-h-[50%] lg:top-0 py-8 pt-32 -mt-24 lg:mt-0 lg:py-0 flex items-center justify-center lg:justify-end backdrop-opacity-10 bg-gradient-to-b from-[#cfffc1]/[.4] to-[#d495ff]/[.4]">
+            <div className="w-3/4 lg:w-1/2 lg:px-14 my-24">
+              <div className="grid gap-9 lg:max-w-lg text-md">
+                <BrandName black className="h-9 mb-4" />
+                <p className=" font-light">
+                Is a tool to gather verfied signaures for your open letter, manifesto or petitions. Where people can sign public, private or anonoums. Decentralized, transparent and open. 
+                </p>
+                <p className=" font-light">
+                To really stand up to change, voices need to be free. To be free you need to have the option of maintaining your privacy. Gathered voices (evidence) needs to be provable, verifiable, and unchangable (immutable). And lobbying should be a power of the many, and not just the elite with access. 
+                </p>
+                <p className=" font-light">
+                We are a bunch of Cyberpunks that build Sybil restistent tools to bring people together to Act.
+                </p>
+                <p className=" font-light">
+                We are all hackers driven by change. We are the 99%. Our world seems under chaos everyday, yet we strive to change our daily lives in a certainly unfair war against each other.
+                </p>
+                <p className=" font-bold">
+                This is our cry for change. Join us.
+                </p>
+              </div>
+
             </div>
           </div>
         </section>
-
+        <div className="divider"></div>
         {/* Partners */}
-        <section className="flex flex-col items-center my-9">
+        <section className="flex flex-col items-center py-9">
           <h3 className="font-title text-5xl font-bold lowercase">partners</h3>
           <p className="my-4 font-light">buidl on the following tech stack and partners</p>
-          <div className="grid grid-cols-3 lg:grid-cols-6 justify-items-center items-center gap-12 my-11">
+          <div className="grid md:grid-cols-3 lg:grid-cols-6 justify-items-center items-center gap-12 my-11">
             <Image 
               src="/partners/ceramic_logo.png"
               width={120}
@@ -112,85 +130,7 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
         </section>
 
         {/* Roadmap */}
-        <section>
-          <div className="flex flex-col items-center py-24 mx-24">
-            <h3 className="font-title text-5xl font-bold lowercase">roadmap</h3>
-          </div>
-
-          <div className="container mx-auto w-full h-full">
-            <div className="relative wrap overflow-hidden m-10 h-full">
-              <div className=" border-4 -ml-[4px] rounded absolute border-opacity-20 border-gray-700 h-full left-1/2"></div>
-              {/* <!-- right timeline --> */}
-              <div className="mb-8 flex justify-between items-center w-full right-timeline">
-                <div className="order-1 w-5/12"></div>
-                <div className="z-20 flex items-center order-1 bg-secondary shadow-xl w-8 h-8 rounded-full">
-                  <h1 className="mx-auto font-semibold text-lg text-white">1</h1>
-                </div>
-                <div className="order-1 w-5/12">
-                  <Image 
-                    src="/timeline/step1.png"
-                    width={400}
-                    height={400}
-                    alt=""
-                    className="rounded-lg shadow-xl"
-                  />
-                </div>
-              </div>
-
-              {/* <!-- left timeline --> */}
-              <div className="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
-                <div className="order-1 w-5/12"></div>
-                <div className="z-20 flex items-center order-1 bg-secondary shadow-xl w-8 h-8 rounded-full">
-                  <h1 className="mx-auto text-white font-semibold text-lg">2</h1>
-                </div>
-                <div className="order-1 w-5/12 flex justify-end">
-                  <Image 
-                    src="/timeline/step2.png"
-                    width={400}
-                    height={400}
-                    alt=""
-                    className="rounded-lg shadow-xl"
-                  />
-                </div>
-              </div>
-              
-              {/* <!-- right timeline --> */}
-              <div className="mb-8 flex justify-between items-center w-full right-timeline">
-                <div className="order-1 w-5/12"></div>
-                <div className="z-20 flex items-center order-1 bg-secondary shadow-xl w-8 h-8 rounded-full">
-                  <h1 className="mx-auto font-semibold text-lg text-white">3</h1>
-                </div>
-                <div className="order-1 w-5/12">
-                  <Image 
-                    src="/timeline/step3.png"
-                    width={400}
-                    height={400}
-                    alt=""
-                    className="rounded-lg shadow-xl"
-                  />
-                </div>
-              </div>
-
-              {/* <!-- left timeline --> */}
-              <div className="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
-                <div className="order-1 w-5/12"></div>
-                <div className="z-20 flex items-center order-1 bg-secondary shadow-xl w-8 h-8 rounded-full">
-                  <h1 className="mx-auto text-white font-semibold text-lg">4</h1>
-                </div>
-                <div className="order-1 w-5/12 flex justify-end">
-                  <Image 
-                    src="/timeline/step4.png"
-                    width={300}
-                    height={300}
-                    alt=""
-                    className="rounded-lg shadow-xl"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </section>
+        <Roadmap />
       </SWRConfig>
     </Layout>
   );

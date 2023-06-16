@@ -6,10 +6,18 @@ const query = `query GetLatestPacts($limit: Int=10) {
     edges {
       node {
         id
+        createdAt
         title
         content
         type
-        picture
+        image
+        media {
+          item
+          cid
+          type
+          cover
+          altTag
+        }
         topic {
           name
         }

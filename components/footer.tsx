@@ -2,7 +2,7 @@ import Logo from "./svg/logo"
 
 export default function Footer() {
   return (
-    <footer className="footer items-center p-4 bg-black text-neutral-content mt-24 py-9 px-11">
+    <footer className="footer items-center p-4 bg-black text-neutral-content py-9 px-11">
       <div className="items-center grid-flow-col gap-9">
         <Logo height={32} white/>
         <p>Copyright © 2023 - All right reserved</p>

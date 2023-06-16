@@ -8,6 +8,7 @@ export interface MetaProps {
 }
 
 export const Metas: FC<MetaProps> = ({ title, description, imageSrc }) => {
+  if (!imageSrc) imageSrc = `${process.env.NEXT_PUBLIC_APP_DOMAIN}/api/og/default`
   return (
     <Head>
       <title>{title}</title>

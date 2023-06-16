@@ -1,36 +1,39 @@
 import { useRouter } from "next/router"
+import useTopStats from "../../hooks/useTopStats";
+import usePact from "../../hooks/usePact";
 
-const Row = ({pact} : { pact?: {title: string; rank: string; id?: string;} }) => {
+const Row = ({rank, streamID, stats} : { rank: number; streamID?: string; stats?: StatsProps }) => {
   const { push } = useRouter()
-  
+  const { data: pact } = usePact({stream: streamID});
+
   function openPact() {
     push(`/m/${pact?.id}`)
   }
-  
+  if (!pact) {
+    return (
+      <tr className="">
+        <td colSpan={6} className=" text-left">
+          loading
+        </td>
+      </tr>
+    )
+  }
   return (
     <tr className="hover" onClick={openPact}>
-      <th>
-        <span className="text-2xl font-alt font-light">#{pact?.rank}</span>
-        {/* <span>
-          <div className="avatar placeholder">
-            <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
-            </div>
-          </div>
-        </span> */}
+      <th className="md:w-44 md:pl-12 text-left">
+        <span className="sm:text-2xl font-alt font-light">#{rank}</span>
       </th>
-      <td>
-        <div className="flex items-center space-x-3">
-          <div>
+      <td className="md:min-w-[12rem] text-left">
+        <div className="text-left text-xs sm:text-base space-x-3">
             <div className="font-bold">{pact?.title || 'title'}</div>
-          </div>
         </div>
       </td>
-      <td className="font-alt">102,303</td>
-      <td className="font-alt">30,000</td>
+      <td className="font-alt">{stats?.total}</td>
+      <td className="font-alt">{stats?.verified}</td>
       <td className="font-alt">
-        4M
+        {stats?.views}
       </td>
-      <td className="font-alt text-secondary">
+      <td className="font-alt text-secondary md:pr-12">
         4M
       </td>
     </tr>
@@ -38,6 +41,9 @@ const Row = ({pact} : { pact?: {title: string; rank: string; id?: string;} }) =>
 }
 
 export default function Leaderboard() {
+
+  const { data: stats } = useTopStats();
+
   return (
     <div className="py-24">
 
@@ -48,62 +54,28 @@ export default function Leaderboard() {
       </div>
 
       <div className="pb-24 overflow-x-auto w-full">
-        <table className="table table-zebra w-full">
+        <table className="table table-zebra w-full text-right">
           {/* head */}
           <thead>
             <tr>
-              <th>rank</th>
-              <th>title</th>
+              <th className="md:w-44 md:pl-12 text-left">rank</th>
+              <th className="md:min-w-[12rem] text-left">title</th>
               <th>total<br/> signatures</th>
               <th>verified<br/>signatures</th>
               <th>total<br/>views</th>
-              <th className="text-secondary">$LOBBY<br/>volume</th>
+              <th className="text-secondary md:pr-12">$LOBBY<br/>volume</th>
             </tr>
           </thead>
 
           <tbody className="md:bg-gradient-to-b from-[#c1dfff]/[.3] to-[#ffac95]/[.2]">
-            {/* row 1 */}
-            <Row pact={{title: 'my pact', rank: '1'}} />
-            {/* row 2 */}
-            <Row pact={{title: 'my pact', rank: '2'}} />
-            {/* row 3 */}
-            <Row pact={{title: 'my pact', rank: '3'}} />
-            {/* row 4 */}
-            <Row pact={{title: 'my pact', rank: '4'}} />
-            {/* row 5 */}
-            <Row pact={{title: 'my pact', rank: '5'}} />
-            {/* row 6 */}
-            <Row pact={{title: 'my pact', rank: '6'}} />
-            {/* row 7 */}
-            <Row pact={{title: 'my pact', rank: '7'}} />
-            {/* row 8 */}
-            <Row pact={{title: 'my pact', rank: '8'}} />
-            {/* row 9 */}
-            <Row pact={{title: 'my pact', rank: '9'}} />
-            {/* row 10 */}
-            <Row pact={{title: 'my pact', rank: '10'}} />
-            {/* row 11 */}
-            <Row pact={{title: 'my pact', rank: '11'}} />
-            {/* row 12 */}
-            <Row pact={{title: 'my pact', rank: '12'}} />
-            {/* row 13 */}
-            <Row pact={{title: 'my pact', rank: '13'}} />
-            {/* row 14 */}
-            <Row pact={{title: 'my pact', rank: '14'}} />
-            {/* row 15 */}
-            <Row pact={{title: 'my pact', rank: '15'}} />
+            {/* rows */}
+            {stats && stats.map((row, index) => {
+              return (
+                <Row key={index} rank={index + 1} streamID={row.streamid} stats={row} />
+              )
+            }
+            )}
           </tbody>
-          {/* foot */}
-          {/* <tfoot>
-            <tr>
-              <th>eee</th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>Favorite Color</th>
-              <th>ww</th>
-              <th>ee</th>
-            </tr>
-          </tfoot> */}
         </table>
       </div>
     </div>

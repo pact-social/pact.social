@@ -22,4 +22,18 @@ export const PactProvider = ({
   );
 };
 
+export const DraftPactProvider = ({
+  pact,
+  children,
+}: {
+  pact: Pact;
+  children: ReactNode;
+}) => {
+  return (
+    <PactContext.Provider value={{pact}}>
+      {children}
+    </PactContext.Provider>
+  )
+}
+
 export const usePactContext = () => useContext(PactContext);

@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import Footer from "./footer";
 import { MetaProps, Metas } from "./metas";
 
 export default function Layout({
@@ -20,7 +19,7 @@ export default function Layout({
         <>{children}</>
       }
       {!noContainer &&
-        <div className={`container mx-auto ${className}`}>
+        <div className={`container ${className}`}>
           <div className=" min-h-[100dvh]">
             {children}
           </div>

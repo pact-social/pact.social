@@ -78,6 +78,7 @@ export default function PactLayout({ children }: { children: ReactElement }) {
                         streamID: pactID
                       }
                     }}
+                    scroll={false}
                     key={`tab-${index}`} 
                     className={`tab tab-bordered ${tab.pathname === router.pathname && 'tab-active'}`}
                   >

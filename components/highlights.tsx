@@ -26,7 +26,7 @@ export default function Highlights() {
           Pacts that are most promoted by its signers and champions
         </p>
       </div>
-      <div className="grid lg:grid-cols-3 gap-8 mx-8 lg:mx-16 xl:mx-24 justify-center">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-8 lg:mx-16 xl:mx-24 justify-center ">
         {data?.map(doc => (
           <PactCard key={doc?.node?.id} pact={doc?.node as Pact} />
         ))}
