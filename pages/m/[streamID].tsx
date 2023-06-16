@@ -19,7 +19,7 @@ export const getStaticPaths: GetStaticPaths<{ streamID: string }> = async () => 
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { params } = context;
-  console.log('getStaticProps PactPage', params, context)
+
   if (!params?.streamID || params?.streamID.length === 0 || params.streamID.indexOf('<no source>') > -1 ) {
     return {
       notFound: true,
