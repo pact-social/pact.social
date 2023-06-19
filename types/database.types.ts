@@ -34,243 +34,50 @@ export interface Database {
   }
   public: {
     Tables: {
-      ceramic_config: {
+      event_view: {
         Row: {
-          created_at: string
-          option: string
-          updated_at: string
-          updated_by: string | null
-          value: string
+          count: number | null
+          path: string
+          ref: string
         }
         Insert: {
-          created_at?: string
-          option: string
-          updated_at?: string
-          updated_by?: string | null
-          value: string
+          count?: number | null
+          path: string
+          ref?: string
         }
         Update: {
-          created_at?: string
-          option?: string
-          updated_at?: string
-          updated_by?: string | null
-          value?: string
+          count?: number | null
+          path?: string
+          ref?: string
         }
-      }
-      ceramic_models: {
-        Row: {
-          created_at: string
-          enable_historical_sync: boolean
-          is_indexed: boolean
-          model: string
-          updated_at: string
-          updated_by: string
-        }
-        Insert: {
-          created_at?: string
-          enable_historical_sync?: boolean
-          is_indexed?: boolean
-          model: string
-          updated_at?: string
-          updated_by: string
-        }
-        Update: {
-          created_at?: string
-          enable_historical_sync?: boolean
-          is_indexed?: boolean
-          model?: string
-          updated_at?: string
-          updated_by?: string
-        }
-      }
-      compose_indexer: {
-        Row: {
-          created_at: string | null
-          cursor: string | null
-          key: string
-          last_indexed: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          cursor?: string | null
-          key: string
-          last_indexed?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          cursor?: string | null
-          key?: string
-          last_indexed?: string | null
-        }
-      }
-      kjzl6hvfrbw6c5dai8aofbwhn5a5i1chh23kfveqbf6zkhb8c27nuehxodym5m9: {
-        Row: {
-          controller_did: string
-          created_at: string
-          custom_manifestID: string
-          first_anchored_at: string | null
-          last_anchored_at: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at: string
-        }
-        Insert: {
-          controller_did: string
-          created_at?: string
-          custom_manifestID: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at?: string
-        }
-        Update: {
-          controller_did?: string
-          created_at?: string
-          custom_manifestID?: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content?: Json
-          stream_id?: string
-          tip?: string
-          updated_at?: string
-        }
-      }
-      kjzl6hvfrbw6c64flvg8scssg663ortm0eu92kr0fmpa7li6ajgx7t3ytga3o3y: {
-        Row: {
-          controller_did: string
-          created_at: string
-          first_anchored_at: string | null
-          last_anchored_at: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at: string
-        }
-        Insert: {
-          controller_did: string
-          created_at?: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at?: string
-        }
-        Update: {
-          controller_did?: string
-          created_at?: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content?: Json
-          stream_id?: string
-          tip?: string
-          updated_at?: string
-        }
-      }
-      kjzl6hvfrbw6c890xjb0alh5kzxc5ebaxvhzcvo03w1npo8s8uqa0muigwn15a0: {
-        Row: {
-          controller_did: string
-          created_at: string
-          first_anchored_at: string | null
-          last_anchored_at: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at: string
-        }
-        Insert: {
-          controller_did: string
-          created_at?: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at?: string
-        }
-        Update: {
-          controller_did?: string
-          created_at?: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content?: Json
-          stream_id?: string
-          tip?: string
-          updated_at?: string
-        }
-      }
-      kjzl6hvfrbw6c9qmhjxe6om8jht0drz9qgxxnps4pj6u26626odywthu2440tvc: {
-        Row: {
-          controller_did: string
-          created_at: string
-          custom_topicID: string
-          first_anchored_at: string | null
-          last_anchored_at: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at: string
-        }
-        Insert: {
-          controller_did: string
-          created_at?: string
-          custom_topicID: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content: Json
-          stream_id: string
-          tip: string
-          updated_at?: string
-        }
-        Update: {
-          controller_did?: string
-          created_at?: string
-          custom_topicID?: string
-          first_anchored_at?: string | null
-          last_anchored_at?: string | null
-          stream_content?: Json
-          stream_id?: string
-          tip?: string
-          updated_at?: string
-        }
+        Relationships: []
       }
       pact_indexer_logs: {
         Row: {
           account: string
           action: string
-          first_commit: string | null
-          first_indexed_at: string | null
-          last_commit: string | null
-          last_indexed_at: string | null
           model_id: string | null
+          referral: string | null
           stream_id: string
           target: string
         }
         Insert: {
           account: string
           action: string
-          first_commit?: string | null
-          first_indexed_at?: string | null
-          last_commit?: string | null
-          last_indexed_at?: string | null
           model_id?: string | null
+          referral?: string | null
           stream_id: string
           target: string
         }
         Update: {
           account?: string
           action?: string
-          first_commit?: string | null
-          first_indexed_at?: string | null
-          last_commit?: string | null
-          last_indexed_at?: string | null
           model_id?: string | null
+          referral?: string | null
           stream_id?: string
           target?: string
         }
+        Relationships: []
       }
       passport_sybil_scorer: {
         Row: {
@@ -300,52 +107,195 @@ export interface Database {
           scorer?: string
           status?: string | null
         }
+        Relationships: []
       }
-      "petition-stats": {
+      turnstile_history: {
         Row: {
+          challenge_ts: string
           created_at: string | null
-          id: string
-          influencers: number | null
-          signatures_private: number | null
-          signatures_public: number | null
-          signatures_total: number | null
-          signatures_verified: number | null
-          updated_at: string | null
-          views: number | null
+          hostname: string
+          token: string
         }
         Insert: {
+          challenge_ts: string
           created_at?: string | null
-          id: string
-          influencers?: number | null
-          signatures_private?: number | null
-          signatures_public?: number | null
-          signatures_total?: number | null
-          signatures_verified?: number | null
-          updated_at?: string | null
-          views?: number | null
+          hostname: string
+          token: string
         }
         Update: {
+          challenge_ts?: string
           created_at?: string | null
-          id?: string
-          influencers?: number | null
-          signatures_private?: number | null
-          signatures_public?: number | null
-          signatures_total?: number | null
-          signatures_verified?: number | null
-          updated_at?: string | null
-          views?: number | null
+          hostname?: string
+          token?: string
         }
+        Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      pact_all: {
+        Row: {
+          id: string | null
+          image: string | null
+          media: string | null
+          title: string | null
+          type: string | null
+        }
+        Insert: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Update: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Relationships: []
+      }
+      pact_manifesto: {
+        Row: {
+          id: string | null
+          image: string | null
+          media: string | null
+          title: string | null
+          type: string | null
+        }
+        Insert: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Update: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Relationships: []
+      }
+      pact_openletter: {
+        Row: {
+          id: string | null
+          image: string | null
+          media: string | null
+          title: string | null
+          type: string | null
+        }
+        Insert: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Update: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Relationships: []
+      }
+      pact_petition: {
+        Row: {
+          id: string | null
+          image: string | null
+          media: string | null
+          title: string | null
+          type: string | null
+        }
+        Insert: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Update: {
+          id?: string | null
+          image?: never
+          media?: never
+          title?: never
+          type?: never
+        }
+        Relationships: []
+      }
+      public_signatures: {
+        Row: {
+          controller_did: string | null
+          created_at: string | null
+          custom_pactID: string | null
+          name: string | null
+          organisation: string | null
+          title: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      pacts_per_topic: {
+        Args: {
+          _topic_id: string
+        }
+        Returns: {
+          id: string
+          topic_id: string
+          type: string
+          title: string
+          image: string
+          media: string
+        }[]
+      }
+      pacts_per_topics_type: {
+        Args: {
+          _topic_id: string
+          _type: string
+        }
+        Returns: {
+          id: string
+          topic_id: string
+          type: string
+          title: string
+          image: string
+          media: string
+        }[]
+      }
+      referral_signatures: {
+        Args: {
+          did: string
+        }
+        Returns: {
+          pactID: string
+          count: number
+        }[]
+      }
       sign_daily_count: {
         Args: {
           actionparam: string
         }
         Returns: Record<string, unknown>[]
+      }
+      sign_stats_referral: {
+        Args: {
+          did: string
+        }
+        Returns: {
+          streamid: string
+          total: number
+          public: number
+          private: number
+          anon: number
+          verified: number
+          views: number
+        }[]
       }
       sign_stats_stream: {
         Args: {
@@ -358,6 +308,8 @@ export interface Database {
           private: number
           anon: number
           verified: number
+          views: number
+          influencers: number
         }[]
       }
       sign_stats_top: {
@@ -369,6 +321,8 @@ export interface Database {
           private: number
           anon: number
           verified: number
+          views: number
+          influencers: number
         }[]
       }
       sign_stream_daily_count: {
@@ -377,6 +331,24 @@ export interface Database {
           streamid: string
         }
         Returns: Record<string, unknown>[]
+      }
+      topic_all: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          topic_id: string
+          name: string
+          count: number
+        }[]
+      }
+      topic_per_type: {
+        Args: {
+          _type: string
+        }
+        Returns: {
+          topic_id: string
+          name: string
+          count: number
+        }[]
       }
     }
     Enums: {
@@ -422,6 +394,14 @@ export interface Database {
           public?: boolean | null
           updated_at?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "buckets_owner_fkey"
+            columns: ["owner"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       migrations: {
         Row: {
@@ -442,6 +422,7 @@ export interface Database {
           id?: number
           name?: string
         }
+        Relationships: []
       }
       objects: {
         Row: {
@@ -480,6 +461,20 @@ export interface Database {
           updated_at?: string | null
           version?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "objects_bucketId_fkey"
+            columns: ["bucket_id"]
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "objects_owner_fkey"
+            columns: ["owner"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
@@ -511,7 +506,7 @@ export interface Database {
         Args: {
           name: string
         }
-        Returns: string[]
+        Returns: unknown
       }
       get_size_by_bucket: {
         Args: Record<PropertyKey, never>

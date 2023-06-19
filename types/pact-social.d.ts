@@ -21,3 +21,23 @@ type Profile = {
     accessControlConditions: string;
   }
 }
+
+type StatsProps = {
+  anon: number;
+  private: number;
+  public: number;
+  verified: number;
+  total: number;
+  streamid: string;
+  views: number;
+  influencers: number;
+}
+
+// type PactInputs = {
+//   type: PactType;
+//   createdAt: string;
+//   title: string;
+//   topicID: string;
+//   content: string;
+//   picture?: string;
+// };

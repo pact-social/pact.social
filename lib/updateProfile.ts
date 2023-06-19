@@ -20,9 +20,7 @@ export default async function createProfile (profile: PactProfile, ceramic?: Cer
 
   const inputProfile: CreatePactProfileInput = {
     content: {
-      username: profile.username,
       ...inputs,
-      isMagicLink: false,
     }
   }
 

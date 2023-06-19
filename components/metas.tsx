@@ -12,6 +12,7 @@ export const Metas: FC<MetaProps> = ({ title, description, imageSrc }) => {
   return (
     <Head>
       <title>{title}</title>
+      <meta name="description" content={description}/>
       <meta
         property="og:image"
         content={imageSrc} />
@@ -42,6 +43,7 @@ export const Metas: FC<MetaProps> = ({ title, description, imageSrc }) => {
       <meta
         name="twitter:image"
         content={imageSrc} />
+      {/* <meta property="twitter:domain" content="testnet.pact.social" /> */}
     </Head>
   )
 }

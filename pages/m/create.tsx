@@ -188,7 +188,7 @@ return (
               type="text" 
               className={`input input-bordered input-primary w-full max-w-xs${errors.description && 'input-error'}`}
               placeholder="Description your petition"
-              {...register('description', {required: false, minLength: 10, maxLength: 120})}
+              {...register('description', {required: false, maxLength: 500})}
             />
           {errors.description && 
            <label className="label">

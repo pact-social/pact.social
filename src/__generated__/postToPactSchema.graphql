@@ -1,0 +1,9 @@
+
+  type Post @loadModel(id:  "kjzl6hvfrbw6c63ywpeqhict371wlk56ftqal6fto50u2uzvl7f1jm78m3k2cgo") {
+    id: ID!
+  }
+  type Pact @loadModel(id: "kjzl6hvfrbw6c6yeolo1iwxxk84j80fnmtkgufd5l9hibjolzcvu96ujgdm24h7"){
+    posts: [Post] @relationFrom(model: "Post", property: "pactID")
+    postsCount: Int! @relationCountFrom(model: "Post", property: "pactID")
+  }
+  

@@ -12,7 +12,7 @@ type PayloadType = {
   meta: { ts: { toString: () => any; }; }; 
 }
 
-const CERAMIC_ADDRESS = 'http://localhost:7007'
+const CERAMIC_ADDRESS = process.env.NEXT_PUBLIC_CERAMIC || 'http://localhost:7007'
 
 
 // Set up Ceramic ComposeDB
@@ -180,6 +180,7 @@ export default function web3Analytics(userConfig: { appId: any; loglevel?: strin
     config: {},
     initialize: async () => {
       let seed;
+      if (typeof window === 'undefined') return;
       const localSeed = localStorage.getItem('ceramicSeed')
       if (!localSeed) {
           // Create new seed

@@ -774,7 +774,6 @@ export type PactProfile = Node & {
   organisation?: Maybe<Scalars['String']>;
   profilePicture?: Maybe<Scalars['InterPlanetaryCID']>;
   title?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
 };
 
 /** A connection to a list of items. */
@@ -820,7 +819,6 @@ export type PactProfileInput = {
   organisation?: InputMaybe<Scalars['String']>;
   profilePicture?: InputMaybe<Scalars['InterPlanetaryCID']>;
   title?: InputMaybe<Scalars['String']>;
-  username: Scalars['String'];
 };
 
 export enum PactPublicationContentWarning {
@@ -1046,7 +1044,6 @@ export type PartialPactProfileInput = {
   organisation?: InputMaybe<Scalars['String']>;
   profilePicture?: InputMaybe<Scalars['InterPlanetaryCID']>;
   title?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
 };
 
 export type PartialPactRecipientInput = {

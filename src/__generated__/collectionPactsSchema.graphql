@@ -1,0 +1,15 @@
+
+  type Pact @loadModel(id: "kjzl6hvfrbw6c6yeolo1iwxxk84j80fnmtkgufd5l9hibjolzcvu96ujgdm24h7") {
+    id: ID!
+  }
+  type Collection @loadModel(id: "kjzl6hvfrbw6ca8o2cwzgax8zg1yofyub4fuay3gqztsmjwgnj4ygg4j5zjvdyn") {
+    id: ID!
+  }
+
+  type CollectionPact @createModel(accountRelation: LIST, description:"Link between collection and Pact") {
+    pactID: StreamID! @documentReference(model: "Pact")
+    pact: Pact @relationDocument(property: "pactID")
+    collectionID: StreamID! @documentReference(model: "Collection")
+    collection: Pact @relationDocument(property: "collectionID")
+  }
+  

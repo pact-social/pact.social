@@ -1,5 +1,4 @@
-export const profile = function () {
-  return `
+
     type EncryptedLitContent {
       encryptedString: String! @string(minLength: 60, maxLength: 120)
       encryptedSymmetricKey: String! @string(minLength: 100, maxLength: 600)
@@ -20,5 +19,4 @@ export const profile = function () {
 
       email: EncryptedLitContent
     }
-  `
-}
+  

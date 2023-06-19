@@ -56,7 +56,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 const PactCommentsPage: NextPageWithLayout = () => {
   const { query } = useRouter()
-  const pactID = query.pactID as string
+  const pactID = query.streamID as string
+
   return (
     <>
       <PactComments context={pactID} />

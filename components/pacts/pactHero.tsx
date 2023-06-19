@@ -1,13 +1,13 @@
 import Image from 'next/image'
 import { usePactContext } from "../../context/pact";
-import useGetUsername from '../../hooks/useGetUsername';
+import useGetName from '../../hooks/useGetName';
 import { ReactNode } from 'react';
 import CollectionButton from '../collections/collectionButton';
 
 
 export default function PactHero({ children }: { children?: ReactNode}) {
   const { pact } = usePactContext()
-  const username = useGetUsername(pact?.author, null, pact?.author?.id)
+  const name = useGetName(pact?.author, null, pact?.author?.id)
   return (
     <>
       <div className="hero hero-split">
@@ -17,7 +17,7 @@ export default function PactHero({ children }: { children?: ReactNode}) {
               {pact.media?.map((current, index) => 
                 <figure 
                   key={index}
-                  className="relative aspect-[4/3] carousel-item">
+                  className="relative w-full h-full carousel-item">
                   <Image 
                     src={current?.item ? current.item : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
                     alt={current?.altTag || pact.title}
@@ -30,11 +30,11 @@ export default function PactHero({ children }: { children?: ReactNode}) {
               )}
             </div>
           }
-          {(!pact?.media && pact?.image) && 
-            <figure className="hero-img aspect-[4/3] min-w-[14rem] mb-0!">
+          {(!pact?.media) && 
+            <figure className="hero-img w-full self-start aspect-[4/3] carousel flex flex-1 relative mb-0!">
               <Image 
                 src={pact?.image ? pact?.image : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
-                alt={pact?.title}
+                alt={pact?.title || ''}
                 fill
                 className="object-cover"
               />
@@ -60,7 +60,7 @@ export default function PactHero({ children }: { children?: ReactNode}) {
                   </div>
                 </div>
                 <div>
-                  <h5 className=" font-extralight">{ username }</h5>
+                  <h5 className=" font-extralight">{ name }</h5>
                   <p className=" text-xs">Profile</p>
                 </div>
               </div>

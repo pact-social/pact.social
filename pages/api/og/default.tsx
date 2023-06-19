@@ -11,7 +11,7 @@ export default async function OgDefault(req: NextApiRequest, res: NextApiRespons
     await template(),
     {
       width: 1200,
-      height: 600,
+      height: 630,
       fonts: [
         {
           name: 'Chillax',

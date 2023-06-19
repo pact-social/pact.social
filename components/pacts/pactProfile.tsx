@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { usePactContext } from '../../context/pact'
-import useGetUsername from '../../hooks/useGetUsername'
+import useGetName from '../../hooks/useGetName'
 
 export default function PactProfile() {
   const { pact } = usePactContext()
-  const username = useGetUsername(pact?.author, null, pact?.author.id)
+  const name = useGetName(pact?.author, null, pact?.author.id)
 
   return (
     <>
@@ -21,7 +21,7 @@ export default function PactProfile() {
           </div>
         </div>
         <div>
-          <h5 className=" font-extralight">{ username }</h5>
+          <h5 className=" font-extralight">{ name }</h5>
           <p className=" text-xs">Profile</p>
         </div>
       </div>

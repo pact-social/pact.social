@@ -9,7 +9,7 @@ import ExplorerHeader from "../../../components/explorer/header";
 
 export const getStaticPaths: GetStaticPaths<{ type: string }> = async () => {
   return {
-    paths: ['/explore/openletter', '/explore/manifesto', '/explore/petition'], //indicates that no page needs be created at build time
+    paths: [], //indicates that no page needs be created at build time
     fallback: 'blocking' //indicates the type of fallback
   }
 }

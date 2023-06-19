@@ -4,7 +4,7 @@ import useProfile from "../hooks/useProfile";
 import usePrivateStore, { PrivateType } from "../hooks/usePrivateStore";
 import { Pact, PactProfile, PactSignature, PactSignatureVisibilityType } from "../src/gql";
 import useMySignatures from "../hooks/useMySignatures";
-import { ExecutionResult } from "graphql";
+import type { ExecutionResult } from "graphql";
 
 export const ProfileContext = createContext<{
   profile?: PactProfile, 

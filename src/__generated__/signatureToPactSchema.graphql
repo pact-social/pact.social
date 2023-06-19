@@ -1,9 +1,9 @@
 
-    type PactSignature @loadModel(id: "kjzl6hvfrbw6c82zmk1eami1kirxjmxey3xr805z6oddqqpenb04itknk6llnmw") {
+    type PactSignature @loadModel(id: "kjzl6hvfrbw6c5jirx77mbuplu9dz1r0aobmoo2sku18thc22bgl9ug13p1tzm9") {
       id: ID!
     }
 
-    type Pact @loadModel(id: "kjzl6hvfrbw6c67x7h663cfeduljp8fihe2r0eizhjllrdppe894ft14x7nyeu6") {
+    type Pact @loadModel(id: "kjzl6hvfrbw6c6yeolo1iwxxk84j80fnmtkgufd5l9hibjolzcvu96ujgdm24h7") {
       id: ID!
       signatures: [PactSignature] @relationFrom(model: "PactSignature", property: "pactID")
       signaturesCount: Int! @relationCountFrom(model: "PactSignature", property: "pactID")

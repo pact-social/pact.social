@@ -19,7 +19,6 @@ const query = `
                 id
                 pactProfile {
                   name
-                  username
                 }
               }
               image

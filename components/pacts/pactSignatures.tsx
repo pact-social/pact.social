@@ -126,8 +126,8 @@ const SignatureRow = ({
       </div>
       <div className="">
         <div className="flex gap-2 font-bold">
-          <span className="hidden lg:block">{(signature?.name || signature?.username) || address}</span>
-          <span className="block lg:hidden">{(signature?.name || signature?.username) || shortAddress(address)}</span>
+          <span className="hidden lg:block">{signature?.name || address}</span>
+          <span className="block lg:hidden">{signature?.name || shortAddress(address)}</span>
         </div>
         <div className="flex gap-2 text-sm">
           {signature?.title && 

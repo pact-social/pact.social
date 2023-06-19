@@ -23,7 +23,6 @@ const profileQuery = (address: string) => {
             name
             organisation
             profilePicture
-            username
           }
         }
       }

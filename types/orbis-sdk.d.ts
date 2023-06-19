@@ -2,6 +2,7 @@
 declare module '@orbisclub/components' {
   type DiscussionProps = {
     context: string;
+    theme?: string;
   }
   export class Discussion extends React.Component<DiscussionProps> {
 

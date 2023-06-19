@@ -10,6 +10,7 @@ const query = `
         version
         createdAt
         title
+        description
         content
         type
         image
@@ -23,7 +24,7 @@ const query = `
         author {
           id
           pactProfile {
-            username
+            name
           }
         }
         topic {

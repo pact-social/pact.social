@@ -5,7 +5,7 @@
       public
     }
 
-    type Pact @loadModel(id: "kjzl6hvfrbw6c67x7h663cfeduljp8fihe2r0eizhjllrdppe894ft14x7nyeu6") {
+    type Pact @loadModel(id: "kjzl6hvfrbw6c6yeolo1iwxxk84j80fnmtkgufd5l9hibjolzcvu96ujgdm24h7") {
       id: ID!
     }
 
@@ -17,8 +17,8 @@
       pactVersion: CommitID!
       pactID: StreamID! @documentReference(model: "Pact")
       pact: Pact @relationDocument(property: "pactID")
-      turnToken: String @string(minLength: 10, maxLength: 200) # cf turnstill token
-      validator: DID
+      turnToken: String @string(maxLength: 1000) # cf turnstill token
+      referral: DID
       metadata: String @string(maxLength: 10000)
     }
   

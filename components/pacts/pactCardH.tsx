@@ -9,15 +9,16 @@ export default function PactCardH({pact}: { pact: Pact }) {
   return (
     <Link 
       href={`/m/${pact.id}`}>
-    <div className="card card-compact card-side bg-base-100 shadow-xl max-w-3xl">
-      {pact.media &&
-        <div className="carousel aspect-[4/3] min-w-[14rem] mb-0!">
+    <div className="card card-compact sm:card-side bg-base-100 shadow-xl max-w-3xl">
+      <div className="flex h-full">
+      {pact.media && pact.media.length > 0 &&
+        <div className="carousel aspect-[4/3] w-full sm:w-[232px] xl:w-[300px] mb-0!">
           {pact.media?.map((current, index) => 
             <figure 
               key={index}
               className="relative aspect-[4/3] carousel-item">
               <Image 
-                src={current?.item ? current.item : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
+                src={current?.item}
                 alt={current?.altTag || pact.title}
                 fill
                 // height={210}
@@ -28,8 +29,8 @@ export default function PactCardH({pact}: { pact: Pact }) {
           )}
         </div>
       }
-      {(!pact.media && pact.image) && 
-        <figure className="relative aspect-[4/3] min-w-[14rem] mb-0!">
+      {pact.media && pact.media.length === 0 && 
+        <figure className="relative aspect-[4/3] w-full sm:w-[232px] xl:w-[300px] mb-0!">
           <Image 
             src={pact?.image ? pact?.image : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
             alt={pact.title}
@@ -38,6 +39,7 @@ export default function PactCardH({pact}: { pact: Pact }) {
           />
         </figure>
       }
+      </div>
       <div className={`card-body bg-${pact.type}-light justify-between`}>
         <div className={`label-${pact.type}`}>featured {pact.type === 'openletter' ? 'open letter' : pact.type}</div>
         <h2 className="card-title">{pact.title}</h2>

@@ -26,34 +26,7 @@ export default function ProfilEditForm({
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid grid-row gap-2 w-full px-4">
-      
-      <div className="formControl">
-        <label htmlFor="username" className="label cursor-pointer">
-          <span className="label-text">username</span>
-          <span className="label-text-alt">required</span>
-        </label>
-          <input 
-            id="username" 
-            type="text" 
-            className={`input input-bordered w-full max-w-xs${errors.username && 'input-error'}`}
-            placeholder="your username"
-            {...register('username', {
-              required: true, 
-              minLength: 5, 
-              maxLength: 120,
-              pattern: {
-                value: /^\S*$/,
-                message: "username cannot contains white spacing"
-              },
-            })}
-          />
-          {errors.username && 
-          <label className="label">
-            <span className="label-text-alt ">{errors.username.message || 'username is required'}</span>
-          </label>
-          }
-      </div>
-      
+
       <div className="formControl">
         <label htmlFor="name" className="label cursor-pointer">
           <span className="label-text">name</span>

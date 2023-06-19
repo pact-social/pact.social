@@ -3,7 +3,8 @@ import satori from 'satori';
 import sharp from 'sharp';
 import path from 'path';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { type IncomingMessage, get } from 'http';
+import { type IncomingMessage,  get as unsecureGet  } from 'http';
+import { get } from 'https';
 import { Maybe, Pact, PactType } from '../../../src/gql';
 import { getPact } from '../../../lib/getPact';
 import supabase from '../../../lib/supabase';
@@ -31,7 +32,7 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
     content,
     {
       width: 1200,
-      height: 600,
+      height: 630,
       fonts: [
         {
           name: 'Roboto',
@@ -105,7 +106,7 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
 
 function getReadStream(url: string): Promise<IncomingMessage> {
   return new Promise((resolve, reject) => {
-    const req = get(url);
+    const req = process.env.NODE_ENV === 'production' ? get(url) : unsecureGet(url);
     req.on('response', (response) => {
       response.pause(); // -> this solves the issue
       if (response.statusCode === 200) {
