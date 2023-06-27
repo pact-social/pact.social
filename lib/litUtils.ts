@@ -52,7 +52,6 @@ export class Lit {
   async disconnect() {
     ethConnect.disconnectWeb3();
   }
-  }
 
   getClient() {
     return this.litNodeClient;
