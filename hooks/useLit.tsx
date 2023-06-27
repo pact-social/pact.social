@@ -13,24 +13,25 @@ export default function useLit() {
   const { litClient } = useLitContext()
 
   async function connectLit() {
-    if (litClient.getClient().ready && isConnected) return litClient
+    setLoading(true)
+    if (!litClient.getClient().ready) litClient.connect()
 
-    await litClient.connect()
     const provider = await connector?.getProvider();
+
     const store = new Store()
     try {
       const auth = await Lit.getAuthSig(store);
-
-      if (auth.address !== address?.toLowerCase() && provider) throw new Error('invalid lit auth')
-
+      if (auth.address !== address?.toLowerCase() && provider) {
+        console.log('authentication missmatch')
+        throw new Error('invalid lit auth')
+      }
       setLoading(false)
       setConnected(true)
       return litClient
 
     } catch(error: any) {
-
-      if (address) {
-        const sig = await litClient.generateLitSignatureV2(provider, address.toLowerCase(), 'ethereum', store)
+      if (address && provider) {
+        await litClient.generateLitSignatureV2(provider, address.toLowerCase(), 'ethereum', store)
       }
 
       setLoading(false)
@@ -39,11 +40,30 @@ export default function useLit() {
     }
   }
 
+  const restoreLit = async () => {
+    const store = new Store()
+    try {
+      const authSig = await Lit.getAuthSig(store);
+      setConnected(true)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  const logoutLit = async () => {
+    setLoading(false)
+    setConnected(false)
+    await litClient.disconnect()
+  }
+
   return {
     isLoading,
     error,
     lit: litClient,
+    isConnected,
     connect: connectLit,
-    isConnected
+    restoreLit,
+    logoutLit,
   };
 }

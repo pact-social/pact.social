@@ -1,5 +1,5 @@
 import { createContext, ReactNode, FC, useContext, useState } from "react";
-import { useAccount, useSigner } from "wagmi";
+import { useAccount } from "wagmi";
 
 type BoxContext = {
   nextView: (view: FC) => void;
@@ -7,7 +7,6 @@ type BoxContext = {
   store: any;
   currentView?: FC;
   views?: [ReactNode?];
-  signer?: ReturnType<typeof useSigner>;
   account?: ReturnType<typeof useAccount>;
  };
 
@@ -26,17 +25,14 @@ export const useBoxContext = () => useContext(BoxContext);
 export const BoxContent: React.FC<{ children: ReactNode, boxNodes?: [ReactNode] }> = ({ children, boxNodes }) => {
   const [store, setStore] = useState<any>();
   const [currentView, setCurrentView] = useState<FC>();
-  const signer = useSigner()
   const account = useAccount()
   // const { modalType, modalProps } = store || {};
 
   const nextView = (view: FC) => {
-    console.log('nextView', view)
     setCurrentView(view)
   };
  
   const previousView = () => {
-    console.log('previousView')
     setStore({
       ...store,
       modalType: null,
@@ -51,7 +47,6 @@ export const BoxContent: React.FC<{ children: ReactNode, boxNodes?: [ReactNode] 
       </>
     )
     const ViewComponent = currentView;
-    console.log('rendering currentView', currentView)
     // if (!modalType || !ModalComponent) {
     //   return null;
     // }
@@ -59,7 +54,7 @@ export const BoxContent: React.FC<{ children: ReactNode, boxNodes?: [ReactNode] 
   };
  
   return (
-    <BoxContext.Provider value={{ store, nextView, previousView, signer, account }}>
+    <BoxContext.Provider value={{ store, nextView, previousView, account }}>
       {renderComponent()}
       {/* {children} */}
     </BoxContext.Provider>

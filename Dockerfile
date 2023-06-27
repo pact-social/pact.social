@@ -20,7 +20,7 @@ ARG PROD_ENV="NEXT_PUBLIC_CERAMIC=http://192.168.0.177:7007"
 
 RUN printf "$PROD_ENV" >> .env.production
 
-RUN yarn build
+RUN NODE_OPTIONS="--max_old_space_size=1024 --report-on-fatalerror" yarn build
 
 # production deps cleaning
 FROM node:16-alpine AS prod-deps

@@ -8,7 +8,6 @@ import { DIDSession } from "did-session"
 import { AuthMethodOpts, Cacao, SiweMessage } from "@didtools/cacao"
 import { CreatePactSignatureInput, Mutation, PactSignatureVisibilityType } from "../../src/gql"
 import Turnstile from "react-turnstile";
-import useLit from "../../hooks/useLit"
 import ShareView from "./share"
 import { useProfileContext } from "../../context/profile"
 
@@ -22,8 +21,7 @@ const {
 export default function AnonSign() {
   const { pact } = usePactContext();
   const { setView, previousView } = useViewContext()
-  const { composeClient, ceramic } = useCeramicContext();
-  const { lit } = useLit()
+  const { composeClient } = useCeramicContext();
   const { add, hasSigned } = useProfileContext()
 
   const [ timestamp, setTimestamp ] = useState<Date | undefined>();
@@ -32,7 +30,6 @@ export default function AnonSign() {
   
   const saveSignature = async (data: string, time: Date) => {
     try {
-      console.log('turnToken', token?.length, token)
       const input: CreatePactSignatureInput = {
         content: {
           signature: data,

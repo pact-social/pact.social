@@ -34,6 +34,9 @@ module.exports = {
           DEFAULT: '#03d391',
         },
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      }
     },
     // colors: {
     //   'petition': {

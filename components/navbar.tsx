@@ -1,13 +1,9 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ReactNode, useState } from "react"
 import { useCeramicContext } from "../context"
-import { logoutCeramic } from "../utils"
-import { useAccount } from 'wagmi'
 import Link from 'next/link';
-import useAuthCeramic from '../hooks/useAuthCeramic';
 import LogoBrand from './svg/logoBrand';
 import Footer from './footer';
-import useLit from '../hooks/useLit';
 import { useRouter } from 'next/router';
 import { ProfileProvider } from '../context/profile';
 
@@ -17,22 +13,9 @@ type NavbarProps = {
 
 export default function NavBar({ children }: NavbarProps) {
   const { ceramic, composeClient } = useCeramicContext()
-  const {connectCeramic} = useAuthCeramic()
-  const { connect: connectLit } = useLit()
 
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
   const toggle = () => setDrawerOpen(!isDrawerOpen);
-
-  useAccount({
-    async onConnect({ address, connector, isReconnected }) {
-      await connectCeramic()
-      await connectLit()
-    },
-    async onDisconnect() {
-      await logoutCeramic(ceramic, composeClient)
-    },
-  });
-
 
   /**
    * On load check if there is a DID-Session in local storage.
@@ -45,7 +28,7 @@ export default function NavBar({ children }: NavbarProps) {
       <input id="main-mobile-drawer" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={toggle} /> 
       <div className="drawer-content flex flex-col" 
       >
-        <div className="navbar bg-black text-neutral-content sticky top-0 z-50 min-h-[5rem]">
+        <div className="navbar bg-black text-neutral-content sticky top-0 z-20 min-h-[5rem]">
           <div className="container">
             <div className="navbar-start flex lg:w-auto xl:flex-1">
               <div className="flex-none lg:hidden">
@@ -80,21 +63,27 @@ export default function NavBar({ children }: NavbarProps) {
 
         <Footer />
       </div>
-      <div className="drawer-side">
+      <div className="drawer-side z-30">
         <label htmlFor="main-mobile-drawer" className="drawer-overlay"></label> 
         <ul className="menu p-4 w-80 h-full backdrop-blur-lg bg-black/60 text-neutral-content" data-theme="dark">
           {/* Sidebar content here */}
-          <Link 
-            className="normal-case text-xl text-primary my-4 mb-8"
-            href="/"
-            onClick={toggle}
-          >
-            <LogoBrand height={24} white></LogoBrand>
-          </Link>
-          <ConnectButton showBalance={false} chainStatus="icon"/>
-          <div className="mt-4 menu">
-            <MenuItems onClick={toggle}/>
-          </div>
+          <li>
+            <Link 
+              className="normal-case text-xl text-primary my-4 mb-8"
+              href="/"
+              onClick={toggle}
+            >
+              <LogoBrand height={24} white></LogoBrand>
+            </Link>
+          </li>
+          <li className="block">
+            <ConnectButton showBalance={false} chainStatus="icon"/>
+          </li>
+          <li>
+            <ul className="mt-4 menu">
+              <MenuItems onClick={toggle}/>
+            </ul>
+          </li>
         </ul>
         
       </div>

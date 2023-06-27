@@ -49,8 +49,9 @@ export class Lit {
     await this.litNodeClient.connect()
   }
 
-  async authenticate() {
-    await LitJsSdk.checkAndSignAuthMessage({ chain: "ethereum" });
+  async disconnect() {
+    ethConnect.disconnectWeb3();
+  }
   }
 
   getClient() {
@@ -58,18 +59,19 @@ export class Lit {
   }
 
   async generateLitSignatureV2(provider: ExternalProvider | JsonRpcFetchFunc, account: string, providerNetwork: string, store: Store) {
+
     switch (providerNetwork) {
       /** Support for EVM chains */
       case "ethereum":
         const web3 = new Web3Provider(provider);
         /** Step 1: Get chain id */
-        const { chainId } = await web3.getNetwork();
+        // const { chainId } = await web3.getNetwork();
   
         /** Step 2: Generate signature */
         let res = await ethConnect.signAndSaveAuthMessage({
           web3,
           account,
-          chainId,
+          chainId: 1,
           resources: null,
           expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
         });
@@ -82,8 +84,8 @@ export class Lit {
       }
       
       /** Step 3: Save signature in local storage while referencing address */
-      let __authSig = await Lit.getAuthSig(store)
-      store.setItem("lit-auth-signature-" + account, JSON.stringify(__authSig));
+      // let __authSig = await Lit.getAuthSig(store)
+      // store.setItem("lit-auth-signature-" + account, JSON.stringify(__authSig));
       this.account = account;
   
     /** Step 3: Return results */
@@ -107,7 +109,7 @@ export class Lit {
 
   async decryptString(encryptedContent: any, chain: string, store: Store, forcedAuthSig = null) {
     /** Make sure Lit is ready before trying to decrypt the string */
-    await this.connect();
+    // await this.connect();
   
     /** Retrieve AuthSig or used the one passed as a parameter */
     let authSig;

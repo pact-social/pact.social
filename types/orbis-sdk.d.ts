@@ -4,7 +4,14 @@ declare module '@orbisclub/components' {
     context: string;
     theme?: string;
   }
+  type UserCredentialProps = {
+    credential: any;
+    
+  }
   export class Discussion extends React.Component<DiscussionProps> {
+
+  }
+  export class UserCredential extends React.Component<UserCredentialProps> {
 
   }
 }

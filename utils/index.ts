@@ -3,13 +3,30 @@ import { EthereumWebAuth, getAccountId } from "@didtools/pkh-ethereum";
 import type { CeramicApi } from "@ceramicnetwork/common"
 import type { ComposeClient } from "@composedb/client";
 import { DID } from "dids";
+import { getAddress } from 'ethers/lib/utils';
+
+export const restoreAuth = async (address: any, ceramic: CeramicApi, compose: ComposeClient) => {
+  const sessionStr = localStorage.getItem('ceramic-session') // for production you will want a better place than localStorage for your sessions.
+
+  if(!sessionStr) return false;
+
+  const session = await DIDSession.fromSession(sessionStr)
+  
+  if (getAddressFromDid(session.did?.parent)?.address !== address.toLowerCase()) {
+    return false;
+  }
+  compose.setDID(session.did)
+  ceramic.did = session.did
+  
+  return session.did
+}
 
 /**
  * Checks localStorage for a stored DID Session. If one is found we authenticate it, otherwise we create a new one.
  * @returns Promise<DID-Session> - The User's authenticated sesion.
  */
 export const authenticateCeramic = async (address: any, provider: any, ceramic: CeramicApi, compose: ComposeClient, fromStore: boolean = true) => {
-  const sessionStr = localStorage.getItem('did') // for production you will want a better place than localStorage for your sessions.
+  const sessionStr = localStorage.getItem('ceramic-session') // for production you will want a better place than localStorage for your sessions.
   let session
 
   if(fromStore && sessionStr) {
@@ -20,9 +37,11 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
       session = undefined;
     }
   }
-  console.log('session', session)
+
   if(!session || (session.hasSession && session.isExpired)) {
     const accountId = await getAccountId(provider, address)
+    accountId.chainId.reference = '1'
+
     const authMethod = await EthereumWebAuth.getAuthMethod(provider, accountId)
 
     /**
@@ -32,13 +51,18 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
      */
     // TODO: update resources to only provide access to our composities
     session = await DIDSession.authorize(authMethod, {
-      resources: [`${process.env.NEXT_PUBLIC_APP_DOMAIN}*`, "ceramic://*"],
-      // expiresInSecs: 60*60*24*7
+      resources: [
+        `${process.env.NEXT_PUBLIC_APP_DOMAIN}/*`, 
+        'ceramic://*',
+        // 'lit-accesscontrolcondition://*'
+      ],
+      expiresInSecs: 60*60*24*7,
+      // statement: ''
        
     })
     // Set the session in localStorage.
     if (fromStore) {
-      localStorage.setItem('did', session.serialize());
+      localStorage.setItem('ceramic-session', session.serialize());
     }
   }
   
@@ -49,7 +73,7 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
 }
 
 export const logoutCeramic = async (ceramic: CeramicApi, compose: ComposeClient) => {
-  localStorage.removeItem('did');
+  localStorage.removeItem('ceramic-session');
   const did = new DID()
   compose.setDID(did)
   ceramic.did = undefined

@@ -118,6 +118,7 @@ export default function PactLayout({ children }: { children: ReactElement }) {
                           <label htmlFor="sign-modal" className="btn">Yay!</label>
                         </div>
                       </div>
+                      <label className="modal-backdrop" htmlFor="sign-modal">Close</label>
                     </div>
                   </Portal>
               </label>

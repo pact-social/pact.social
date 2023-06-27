@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import { Lit } from "../lib/litUtils";
 
 const litClient = new Lit();
@@ -12,6 +12,9 @@ export const LitProvider = ({
   children: ReactNode
 }) => {
 
+  useEffect(() => {
+    litClient.connect()
+  }, [])
   return (
     <LitContext.Provider value={{ litClient }}>
       {children}

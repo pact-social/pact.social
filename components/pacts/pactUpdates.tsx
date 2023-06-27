@@ -138,16 +138,13 @@ export default function PactUpdates({ posts }: { posts: PostConnection}) {
   return (
     <>
       <div className="grid grid-cols-2 gap-8">
-        {posts.edges?.map((edge, index) => {
-          // console.log(index)
-          return (
-            <>
-            {edge?.node &&
-              <PostCard key={`post-${edge.node.id}`} post={edge.node} />
-            }
-            </>
-          )
-        })}
+        {posts.edges?.map((edge, index) => 
+          <div key={`post-${edge?.node?.id || index}`}>
+          {edge?.node &&
+            <PostCard post={edge.node} />
+          }
+          </div>
+        )}
       </div>
       {posts.edges?.length === 0 &&
         <div className="hero bg-base-200 mb-12">

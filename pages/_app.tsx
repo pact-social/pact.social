@@ -7,15 +7,15 @@ import { Roboto } from 'next/font/google'
 import {
   RainbowKitProvider,
   getDefaultWallets,
-  connectorsForWallets,
+  RainbowKitAuthenticationProvider,
   darkTheme,
 } from '@rainbow-me/rainbowkit';
-import {
-  argentWallet,
-  trustWallet,
-  ledgerWallet,
-} from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+// import {
+//   argentWallet,
+//   trustWallet,
+//   ledgerWallet,
+// } from '@rainbow-me/rainbowkit/wallets';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -27,6 +27,7 @@ import { LitProvider } from '../context/lit';
 import analytics from '../context/analytics';
 import { ReactElement, ReactNode } from 'react';
 import { type NextPage } from 'next';
+import { AuthenticationProvider } from '../context/authentication';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -36,7 +37,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-const { chains, provider, webSocketProvider } = configureChains(
+const { chains, publicClient } = configureChains(
   [
     mainnet,
     polygon,
@@ -47,8 +48,9 @@ const { chains, provider, webSocketProvider } = configureChains(
   [publicProvider()]
 );
 
-const { wallets } = getDefaultWallets({
+const { connectors } = getDefaultWallets({
   appName: 'pact.social',
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
   chains,
 });
 
@@ -56,23 +58,22 @@ const appInfo = {
   appName: 'pact.social',
 };
 
-const connectors = connectorsForWallets([
-  ...wallets,
-  {
-    groupName: 'Other',
-    wallets: [
-      argentWallet({ chains }),
-      trustWallet({ chains }),
-      ledgerWallet({ chains }),
-    ],
-  },
-]);
+// const connectors = connectorsForWallets([
+//   ...wallets,
+//   {
+//     groupName: 'Other',
+//     wallets: [
+//       argentWallet({ chains }),
+//       trustWallet({ chains }),
+//       ledgerWallet({ chains }),
+//     ],
+//   },
+// ]);
 
-const wagmiClient = createClient({
+const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
-  provider,
-  webSocketProvider,
+  publicClient,
 });
 
 const arrayFont = localFont({
@@ -108,19 +109,25 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   
   return (
     <main className={`${roboto.variable} ${arrayFont.variable} ${chillaxFont.variable} font-sans`}>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider appInfo={appInfo} chains={chains} theme={darkTheme({
-          accentColor: '#f000b8',
-        })}>
+      <WagmiConfig config={wagmiConfig}>
+        <RainbowKitProvider 
+          appInfo={appInfo}
+          chains={chains}
+          theme={darkTheme({
+            accentColor: '#f000b8',
+          })}
+        >
           <CeramicWrapper>
-            <AnalyticsProvider instance={analytics}>
             <LitProvider>
-              <NavBar>
-                {getLayout(<Component {...pageProps} ceramic />)}
-              </NavBar>
-              <div id="portal"></div>
+              <AuthenticationProvider>
+                <AnalyticsProvider instance={analytics}>
+                  <NavBar>
+                    {getLayout(<Component {...pageProps} ceramic />)}
+                  </NavBar>
+                  <div id="portal"></div>
+                </AnalyticsProvider>
+              </AuthenticationProvider>
             </LitProvider>
-            </AnalyticsProvider>
           </CeramicWrapper>
         </RainbowKitProvider>
       </WagmiConfig>

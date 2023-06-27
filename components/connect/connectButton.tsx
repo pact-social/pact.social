@@ -17,9 +17,12 @@ export default function ConnectButton({ el }: {el?: ReactNode}) {
   }
   if (isConnected && !isAuthenticated) {
     return (
-      <div onClick={connectCeramic} className={`btn ${isAuthenticating && 'loading disabled'}`}>
-        {isAuthenticating && 'Please sign!'}
-        {!isAuthenticating && 'Connect ceramic'}
+      <div onClick={connectCeramic} className={`btn btn-secondary ${isAuthenticating ? 'disabled' : ''}`}>
+        {isAuthenticating &&
+          <span className="loading loading-spinner"></span>
+        }
+        {isAuthenticating && 'Please sign in your wallet'}
+        {!isAuthenticating && 'sign'}
       </div>
 
     )

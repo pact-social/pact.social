@@ -52,11 +52,12 @@ export default function usePrivateStore() {
   )
 
   async function fetcher (query: string): Promise<PrivateType[]> {
-    if (!isConnected && !isLitLoading) {
-      await connect()
-    }
     const {data: storeData, errors} = await composeClient.executeQuery<Query>(query, {})
-    // console.log('fetcher privateStore', data, errors)
+    if (!isConnected && !isLitLoading && storeData) {
+      // await connect()
+      // open lit modal to connect
+    }
+    console.log('fetcher privateStore', storeData, errors)
     // if (errors) throw new Error('')
     const list = storeData?.viewer?.privateStoreList?.edges || [];
     const resProms: Promise<PrivateType>[] = [];
@@ -100,6 +101,7 @@ export default function usePrivateStore() {
     }, [])
     
     setDrafts(draftsPact)
+    // console.log('privateStore data fetch success', newPactSignatures, draftsPact)
     return res;
   }
 
