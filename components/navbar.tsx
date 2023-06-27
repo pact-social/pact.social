@@ -43,7 +43,7 @@ export default function NavBar({ children }: NavbarProps) {
                 <LogoBrand height={24} white></LogoBrand>
               </Link>
             </div>
-            <div className="flex-none hidden lg:flex lg:flex-1 lg:navbar-center">
+            <div className="flex-none hidden lg:flex lg:flex-1 lg:navbar-center justify-center">
               <ul className="menu menu-horizontal text-neutral-content px-1 bg-black" data-theme="dark">
                 <MenuItems/>
               </ul>
