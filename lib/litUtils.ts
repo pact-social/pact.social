@@ -2,6 +2,7 @@ import * as LitJsSdk from '@lit-protocol/lit-node-client';
 import { ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers"
 import { ethConnect } from '@lit-protocol/auth-browser';
 import { Store } from './store';
+import { SESSION_DAYS } from './constants';
 
 export function decodeb64(b64String: string) {
   return new Uint8Array(Buffer.from(b64String, "base64"));
@@ -72,7 +73,7 @@ export class Lit {
           account,
           chainId: 1,
           resources: null,
-          expiration: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+          expiration: new Date(Date.now() + 1000 * 60 * 60 * SESSION_DAYS).toISOString(),
         });
         break;
       /** Support for Solana */
