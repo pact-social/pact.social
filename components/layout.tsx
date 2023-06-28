@@ -19,9 +19,20 @@ export default function Layout({
         <>{children}</>
       }
       {!noContainer &&
-        <div className={`container ${className} min-h-[calc(100dvh-11.5rem)]`}>
-          {children}
-        </div>
+        <>
+        {className &&
+          <div className={className}>
+            <div className={`container min-h-[calc(100vh-5rem)]`}>
+              {children}
+            </div>
+          </div>
+        }
+        {!className &&
+          <div className={`container min-h-[calc(100vh-5rem)]`}>
+            {children}
+          </div>
+        }
+        </>
       }
     </>
   )

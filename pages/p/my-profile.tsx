@@ -36,15 +36,15 @@ export default function MyProfile () {
   const { query: { tab } } = useRouter();
   const { state: { did } } = useCeramicContext()
   return (
-    <Layout 
-      noContainer
+    <Layout
       metas={{
         title: "My Profile",
         description: "",
         imageSrc: ""
-      }
-    }>
-      <div className="w-full min-h-screen bg-[#f1faf0] bg-slate-100">
+      }}
+      className="bg-slate-100"
+    >
+      <div className="w-full">
         <div className="container">
           <div className="grid grid-cols-12 grid-flow-row flex-shrink-0 gap-4 py-9">
             <ViewBox className="col-span-12 md:col-span-4 lg:col-span-3">
