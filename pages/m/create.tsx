@@ -125,17 +125,18 @@ return (
     <FormProvider {...methods} >
     <div className="container max-w-md my-12">
 
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-row gap-12">
-        <div className=" max-w-fit">
-          <h1 className="text-3xl font-bold">Your cry for change!</h1>
-          <div className="divider"></div>
+      <h1 className="text-3xl font-bold">Your cry for change!</h1>
+      <div className="divider"></div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-row gap-3">
+        <div className="formControl">
 
           <div className="form-control">
             <label htmlFor="type" className="label cursor-pointer ">
               Choose the type of Pact:
             </label>
             <select 
-              className="select select-primary w-full max-w-xs"  
+              className="select select-primary w-full"  
               placeholder="placeholder"
               multiple={false}
               {...register('type', {required: true})}
@@ -149,7 +150,7 @@ return (
           </div>
         </div>
 
-        <div>
+        <div className="formControl">
           <label htmlFor="topic" className="label cursor-pointer">
              Choose the topic that fit to your Pact:
           </label>
@@ -201,17 +202,17 @@ return (
         <RteField label="Post your content:" field="content" />
         
         <MediaField />
-        
-        <div className="formControl flex justify-center">
+        <div className="divider"></div>
+        <div className="formControl flex justify-end">
           <ConnectButton el={
-            <>
-              <button type="submit" className="btn btn-primary">Publish Live</button>
+            <div className="join">
               <button 
                 type="button"
-                className="btn btn-secondary"
+                className="btn btn-primary join-item"
                 onClick={() => SaveDraft()}
               >Save Draft</button>
-            </>
+              <button type="submit" className="btn btn-secondary join-item">Publish Live</button>
+            </div>
           } />
         </div>
 

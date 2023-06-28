@@ -70,14 +70,11 @@ export default function TopicSelect({topics, register, setValue}: TopicProps) {
   }, [selectedTopic]);
 
   return (
-    <div className="w-72">
+    <div className="w-full">
       <input type="hidden" {...register('topicID', {required: true})} value={selectedTopic?.id}/>
       <Combobox value={selectedTopic} onChange={setSelectedTopic}>
         <div className="relative mt-1">
-          <div className="relative w-full min-h-12 inline-flex
-            cursor-default
-             bg-transparent text-left
-            sm:text-sm">
+          <div className="relative w-full min-h-12 inline-flex cursor-default bg-transparent text-left sm:text-sm">
             <Combobox.Input
               className="w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900
               shadow-md 

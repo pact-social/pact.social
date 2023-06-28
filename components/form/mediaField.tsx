@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { PostPublicationMetadataMedia } from "../../src/gql";
 
@@ -97,7 +97,7 @@ export default function MediaField () {
             type="file"
             multiple
             onChange={handleFilesUpload} 
-            className="file-input w-full max-w-xs"
+            className="file-input w-full file-input-bordered file-input-primary"
           />
           <input 
             type="hidden"
