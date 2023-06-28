@@ -1,27 +1,5 @@
 import type { NextPage } from 'next'
-import Image from 'next/image';
-import Hero from '../components/hero';
-import Highlights from '../components/highlights';
 import Layout from '../components/layout';
-
-const ShareLink = ({ label, imageSrc, shape }: {label: string; imageSrc: string; shape?: string;}) => {
-  return (
-    <div className='flex flex-col gap-2 items-center hover:scale-110 transition-all'>
-        <figure
-          className='drop-shadow-xl'
-        >
-        <img 
-          src={imageSrc}
-          // height={100}
-          // width={100}
-          className={`mask mask-${shape || 'squircle'} max-h-24`}
-          alt=''
-        />
-        </figure>
-        <a className='text-violet-500 font-bold'>{label}</a>
-      </div>
-  )
-}
 
 const Home: NextPage = () => {
   

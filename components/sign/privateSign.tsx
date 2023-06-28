@@ -1,5 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit"
-import { useAccount, useSigner } from "wagmi"
+import { useAccount } from "wagmi"
 import { useCeramicContext } from "../../context"
 import { authenticateCeramic } from "../../utils"
 import { useViewContext } from "../signBox"
@@ -7,8 +7,6 @@ import { useViewContext } from "../signBox"
 export default function PrivateSign() {
   const { address, connector, status } = useAccount()
   const { setView, previousView } = useViewContext()
-  console.log('private sign address', address)
-  const signer = useSigner()
   const { composeClient, ceramic } = useCeramicContext();
 
   const handleCeramicAuth = async () => {
