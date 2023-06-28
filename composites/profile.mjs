@@ -7,14 +7,14 @@ export const profile = function () {
     }
 
     type PactProfile @createModel(accountRelation: SINGLE, description: "pact.social Profile") {
-      name: String @string(minLength: 2, maxLength: 100)
-      bio: String @string(minLength: 3, maxLength: 100)
+      name: String @string(maxLength: 100)
+      bio: String @string(maxLength: 200)
       profilePicture: CID
-      organisation: String @string(minLength: 3, maxLength: 100)
-      title: String @string(minLength: 3, maxLength: 100)
+      organisation: String @string(maxLength: 100)
+      title: String @string(maxLength: 100)
       locale: Locale
       country: CountryCode
-      city: String @string(minLength: 3, maxLength: 100)
+      city: String @string(maxLength: 100)
       latitude: Latitude
       longitude: Longitude
 
