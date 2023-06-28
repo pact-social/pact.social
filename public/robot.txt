@@ -1,0 +1,7 @@
+# Block all crawlers for /p/my-profile
+User-agent: *
+Disallow: /p/my-profile
+
+# Allow all crawlers
+User-agent: *
+Allow: /
