@@ -14,7 +14,7 @@ export default function useLit() {
 
   async function connectLit() {
     setLoading(true)
-    if (!litClient.getClient().ready) litClient.connect()
+    if (!litClient.getClient().ready) await litClient.connect()
 
     const provider = await connector?.getProvider();
 

@@ -11,10 +11,6 @@ export const LitProvider = ({
 }: {
   children: ReactNode
 }) => {
-
-  useEffect(() => {
-    litClient.connect()
-  }, [])
   return (
     <LitContext.Provider value={{ litClient }}>
       {children}

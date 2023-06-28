@@ -115,7 +115,7 @@ export class Lit {
 
   async decryptString(encryptedContent: any, chain: string, store: Store, forcedAuthSig = null) {
     /** Make sure Lit is ready before trying to decrypt the string */
-    // await this.connect();
+    await this.connect();
   
     /** Retrieve AuthSig or used the one passed as a parameter */
     let authSig;
