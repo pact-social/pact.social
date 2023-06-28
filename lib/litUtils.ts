@@ -1,4 +1,5 @@
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
+import type { AuthSig } from '@lit-protocol/types'
 import { ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers"
 import { ethConnect } from '@lit-protocol/auth-browser';
 import { Store } from './store';
@@ -58,6 +59,10 @@ export class Lit {
     return this.litNodeClient;
   }
 
+  isValid(authSig: AuthSig) {
+    return !ethConnect.getMustResign(authSig, null)
+  }
+
   async generateLitSignatureV2(provider: ExternalProvider | JsonRpcFetchFunc, account: string, providerNetwork: string, store: Store) {
 
     switch (providerNetwork) {
@@ -74,6 +79,7 @@ export class Lit {
           chainId: 1,
           resources: null,
           expiration: new Date(Date.now() + 1000 * 60 * 60 * SESSION_DAYS).toISOString(),
+          uri: process.env.NEXT_PUBLIC_APP_DOMAIN,
         });
         break;
       /** Support for Solana */

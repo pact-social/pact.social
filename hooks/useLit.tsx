@@ -21,8 +21,7 @@ export default function useLit() {
     const store = new Store()
     try {
       const auth = await Lit.getAuthSig(store);
-      if (auth.address !== address?.toLowerCase() && provider) {
-        console.log('authentication missmatch')
+      if ((auth.address !== address?.toLowerCase() && provider) || !litClient.isValid(auth)) {
         throw new Error('invalid lit auth')
       }
       setLoading(false)
@@ -44,9 +43,13 @@ export default function useLit() {
     const store = new Store()
     try {
       const authSig = await Lit.getAuthSig(store);
+      if(authSig.address !== address?.toLowerCase() || !litClient.isValid(authSig)) {
+        throw new Error('auth invalid')
+      }
       setConnected(true)
       return true
     } catch (error) {
+      setConnected(false)
       return false
     }
   }
