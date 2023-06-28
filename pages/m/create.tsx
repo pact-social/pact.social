@@ -118,7 +118,7 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
 
 return (
   <Layout metas={{
-    title: "Create a Petition",
+    title: "Create a Pact",
     description: "",
     imageSrc: ""
   }}>
@@ -127,12 +127,12 @@ return (
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-row gap-12">
         <div className=" max-w-fit">
-          <h1 className="text-3xl font-bold">Your first step toward change</h1>
+          <h1 className="text-3xl font-bold">Your cry for change!</h1>
           <div className="divider"></div>
 
           <div className="form-control">
             <label htmlFor="type" className="label cursor-pointer ">
-              Choose the type of pact:
+              Choose the type of Pact:
             </label>
             <select 
               className="select select-primary w-full max-w-xs"  
@@ -151,7 +151,7 @@ return (
 
         <div>
           <label htmlFor="topic" className="label cursor-pointer">
-             Choose the topic that fit to your petition:
+             Choose the topic that fit to your Pact:
           </label>
           {topics && 
             <TopicSelect topics={topics} register={register} setValue={setValue}></TopicSelect>
@@ -161,13 +161,13 @@ return (
         <div className="formControl">
 
           <label htmlFor="title" className="label cursor-pointer">
-            Choose the title of your petition: 
+            Choose the title of your Pact: 
           </label>
             <input 
               id="title" 
               type="text" 
               className={`input input-bordered input-primary w-full max-w-xs${errors.title && 'input-error'}`}
-              placeholder="Name your petition"
+              placeholder="Name your Pact"
               {...register('title', {required: true, minLength: 10, maxLength: 120})}
             />
           {errors.title && 
@@ -181,13 +181,13 @@ return (
         <div className="formControl">
 
           <label htmlFor="description" className="label cursor-pointer">
-            Choose the description of your petition: 
+            Summarize your Pact: 
           </label>
             <input 
               id="description" 
               type="text" 
               className={`input input-bordered input-primary w-full max-w-xs${errors.description && 'input-error'}`}
-              placeholder="Description your petition"
+              placeholder=" Summarize your Pact"
               {...register('description', {required: false, maxLength: 500})}
             />
           {errors.description && 
@@ -198,7 +198,7 @@ return (
           }
         </div>
 
-        <RteField label="Your post content" field="content" />
+        <RteField label="Post your content:" field="content" />
         
         <MediaField />
         
