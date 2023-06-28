@@ -91,6 +91,9 @@ dependencies:
   ipfs-http-client:
     specifier: ^60.0.0
     version: registry.npmjs.org/ipfs-http-client@60.0.0
+  iso-3166-1-alpha-2:
+    specifier: ^1.0.1
+    version: registry.npmjs.org/iso-3166-1-alpha-2@1.0.1
   key-did-provider-ed25519:
     specifier: ^3.0.0
     version: registry.npmjs.org/key-did-provider-ed25519@3.0.0
@@ -207,6 +210,9 @@ devDependencies:
   '@types/formidable':
     specifier: ^2.0.5
     version: registry.npmjs.org/@types/formidable@2.0.5
+  '@types/iso-3166-1-alpha-2':
+    specifier: ^1.0.0
+    version: registry.npmjs.org/@types/iso-3166-1-alpha-2@1.0.0
   '@types/node':
     specifier: ^17.0.15
     version: registry.npmjs.org/@types/node@17.0.45
@@ -9878,6 +9884,12 @@ packages:
     resolution: {integrity: sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz}
     name: '@types/http-cache-semantics'
     version: 4.0.1
+
+  registry.npmjs.org/@types/iso-3166-1-alpha-2@1.0.0:
+    resolution: {integrity: sha512-ORG4uhzcTGmsZ6o8t3khARl5tIdu+4mdy82V20jW7LNFZ5i898AMFFmqO+0EeDalQ2JKcIzkTP7n7WhBEHo0FA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/iso-3166-1-alpha-2/-/iso-3166-1-alpha-2-1.0.0.tgz}
+    name: '@types/iso-3166-1-alpha-2'
+    version: 1.0.0
+    dev: true
 
   registry.npmjs.org/@types/istanbul-lib-coverage@2.0.4:
     resolution: {integrity: sha512-z/QT1XN4K4KYuslS23k62yDIDLwLFkzxOuMplDtObz0+y7VqJCaO2o+SPwHCvLFZh7xazvvoor2tA/hPz9ee7g==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.4.tgz}
@@ -21423,6 +21435,14 @@ packages:
     name: isexe
     version: 2.0.0
 
+  registry.npmjs.org/iso-3166-1-alpha-2@1.0.1:
+    resolution: {integrity: sha512-hehv4FOIieRgJ4+AOdRptTB0wD6nSX85O731hGin0ZbLCyeQ+rVMtvUPBnsnjJCDgG5jCRtU4wGHXE85lSJk9Q==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/iso-3166-1-alpha-2/-/iso-3166-1-alpha-2-1.0.1.tgz}
+    name: iso-3166-1-alpha-2
+    version: 1.0.1
+    dependencies:
+      mout: registry.npmjs.org/mout@1.2.4
+    dev: false
+
   registry.npmjs.org/iso-url@1.2.1:
     resolution: {integrity: sha512-9JPDgCN4B7QPkLtYAAOrEuAWvP9rWvR5offAr0/SeF046wIkglqH3VXgYYP6NcsKslH80UIVgmPqNe3j7tG2ng==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/iso-url/-/iso-url-1.2.1.tgz}
     name: iso-url
@@ -24858,6 +24878,12 @@ packages:
       '@motionone/types': registry.npmjs.org/@motionone/types@10.15.1
       '@motionone/utils': registry.npmjs.org/@motionone/utils@10.15.1
       '@motionone/vue': registry.npmjs.org/@motionone/vue@10.16.2
+    dev: false
+
+  registry.npmjs.org/mout@1.2.4:
+    resolution: {integrity: sha512-mZb9uOruMWgn/fw28DG4/yE3Kehfk1zKCLhuDU2O3vlKdnBBr4XaOCqVTflJ5aODavGUPqFHZgrFX3NJVuxGhQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/mout/-/mout-1.2.4.tgz}
+    name: mout
+    version: 1.2.4
     dev: false
 
   registry.npmjs.org/move-concurrently@1.0.1:
