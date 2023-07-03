@@ -1,13 +1,14 @@
-import ConnectButton from "../../components/connect";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import ConnectButton from "../../components/connect";
 import Layout from "../../components/layout";
 import PactsTable from "../../components/profile/pactsTable";
 import { useCeramicContext } from "../../context";
-import Link from "next/link";
 import ViewBox from "../../components/viewBox";
 import ProfileCard from "../../components/profile/card";
 import SignedTable from "../../components/profile/signedTable";
 import SharedTable from "../../components/profile/sharedTable";
+import MyCollection from "../../components/profile/myCollections";
 
 const MyProfileContent = () => {
   const { state: { isAuthenticated } } = useCeramicContext();
@@ -25,6 +26,9 @@ const MyProfileContent = () => {
 
     case 'shared':
       return <SharedTable />
+    
+    case 'collections':
+      return <MyCollection />
   
     default:
       return <PactsTable />
@@ -69,6 +73,12 @@ export default function MyProfile () {
                   href="/p/my-profile?tab=shared"
                 >
                   Pacts Shared
+                </Link>
+                <Link
+                  className={`tab tab-lg tab-border-none tab-lifted flex-1 ${tab === 'collections' && 'tab-active'}`}
+                  href="/p/my-profile?tab=collections"
+                >
+                  Collections
                 </Link>
               </div>
               <div className="overflow-x-auto w-full bg-white rounded-xl rounded-tl-none p-6 shadow-xl">

@@ -1,17 +1,17 @@
 
-  type CollectionPact @loadModel(id: "kjzl6hvfrbw6c8lzbfi7dowpcg6ky2r3lagri81xp2j2uldqorxydxnxf19memt") {
+  type CollectionPact @loadModel(id: "kjzl6hvfrbw6c7b18ohk5ove3ysm2lhrxjgzoho6fmw4h0nrsve4mz3ncc4ovnm") {
     id: ID!
   }
 
   type Pact @loadModel(id: "kjzl6hvfrbw6c6yeolo1iwxxk84j80fnmtkgufd5l9hibjolzcvu96ujgdm24h7") {
     id: ID!
-    collections: [CollectionPact] @relationFrom(model: "CollectionPact", property: "pactID")
-    collectionsCount: Int! @relationCountFrom(model: "CollectionPact", property: "pactID")
+    collectionsPact: [CollectionPact] @relationFrom(model: "CollectionPact", property: "pactID")
+    collectionsPactCount: Int! @relationCountFrom(model: "CollectionPact", property: "pactID")
   }
   
-  type Collection @loadModel(id: "kjzl6hvfrbw6ca8o2cwzgax8zg1yofyub4fuay3gqztsmjwgnj4ygg4j5zjvdyn") {
+  type Collection @loadModel(id: "kjzl6hvfrbw6c88ntknw9o3tqljpnvaymgnuv3kgiyj46848ffomybhrbx8ohep") {
     id: ID!
-    pacts: [CollectionPact] @relationFrom(model: "CollectionPact", property: "collectionID")
-    pactsCount: Int! @relationCountFrom(model: "CollectionPact", property: "collectionID")
+    collectionPacts: [CollectionPact] @relationFrom(model: "CollectionPact", property: "collectionID")
+    collectionPactsCount: Int! @relationCountFrom(model: "CollectionPact", property: "collectionID")
   }
   

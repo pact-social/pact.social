@@ -22,7 +22,7 @@ import { pactSignature } from '../composites/signature.mjs';
 import { signatureToPact } from '../composites/signatureToPact.mjs';
 import { profile } from '../composites/profile.mjs';
 import { collectionPacts } from '../composites/collectionPacts.mjs'
-import { collectionPactView } from '../composites/collectionPactsView.mjs';
+import { collectionPactsView } from '../composites/collectionPactsView.mjs';
 
 const spinner = ora();
 
@@ -83,7 +83,7 @@ export const writeComposite = async () => {
   const { CollectionPact } = collectionPactsComposite.toRuntime().models;
 
   // collectionPactsView
-  const collectionPactsViewSchema = collectionPactView(CollectionPact.id, Pact.id, Collection.id)
+  const collectionPactsViewSchema = collectionPactsView(CollectionPact.id, Pact.id, Collection.id)
   writeFileSync('./src/__generated__/collectionPactsViewSchema.graphql', collectionPactsViewSchema);
 
   const collectionPactsViewComposite = await createComposite(ceramic, './src/__generated__/collectionPactsViewSchema.graphql')

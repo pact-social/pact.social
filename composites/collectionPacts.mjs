@@ -8,10 +8,15 @@ export const collectionPacts = function (pactId, collectionID) {
   }
 
   type CollectionPact @createModel(accountRelation: LIST, description:"Link between collection and Pact") {
+    author: DID! @documentAccount
+
     pactID: StreamID! @documentReference(model: "Pact")
     pact: Pact @relationDocument(property: "pactID")
     collectionID: StreamID! @documentReference(model: "Collection")
-    collection: Pact @relationDocument(property: "collectionID")
+    collection: Collection @relationDocument(property: "collectionID")
+    
+    tags: [String] @list(maxLength: 20) @string(maxLength: 50)
+    deleted: Boolean
   }
   `
 }

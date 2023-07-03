@@ -1,20 +1,18 @@
 import Image from 'next/image'
 import Link from 'next/link';
-import { Pact } from '../../src/gql';
+import type { Pact } from '../../src/gql';
 import useStreamStats from '../../hooks/useStreamStats';
 import IconSig from '../svg/noun-signature';
+import CollectionButton from '../collections/collectionButton';
 
 export default function PactCard({pact}: { pact: Pact }) {
   const { data: stats, error } = useStreamStats(pact?.id);
 
   return (
-  <Link 
-    href={`/m/${pact.id}`}
-    className=""
-    >
     <div className="card card-compact bg-base-100 shadow-xl max-w-sm h-full m-auto">
+      <Link  href={`/m/${pact.id}`} className="">
       {pact.media && pact.media.length > 0 &&
-        <div className="carousel aspect-[4/3] mb-5">
+        <div className="carousel aspect-[4/3] w-full">
           {pact.media?.map((current, index) => 
             <figure 
               key={index}
@@ -32,7 +30,7 @@ export default function PactCard({pact}: { pact: Pact }) {
         </div>
       }
       {pact.media && pact.media.length === 0 &&
-        <figure className="relative w-full aspect-[4/3] mb-5">
+        <figure className="relative w-full aspect-[4/3]">
           <Image 
             src={pact?.image ? pact?.image : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
             alt={pact.title}
@@ -41,14 +39,23 @@ export default function PactCard({pact}: { pact: Pact }) {
           />
         </figure>
       }
+      </Link>
       <div className={`card-body bg-${pact.type}-light justify-between`}>
+        <Link 
+        href={`/m/${pact.id}`}
+        className="flex flex-col gap-2 flex-1"
+        >
         <div className={`label-${pact.type}`}>featured {pact.type === 'openletter' ? 'open letter' : pact.type}</div>
         <h2 className="card-title">{pact.title}</h2>
         <div className="text-sm">{pact?.topic?.name}</div>
+        </Link>
         <div className="card-actions justify-between items-baseline">
-          <div className="flex gap-3">
-            <IconSig className="w-4 h-4" />
-            <div className="text-sm">{stats?.total}</div>
+          <div className="flex items-baseline gap-6">
+            <div className="flex gap-3">
+              <IconSig className="w-4 h-4" />
+              <div className="text-sm">{stats?.total}</div>
+            </div>
+            <CollectionButton pactID={pact?.id} />
           </div>
           <div className="justify-end">
             <div className="btn btn-primary">
@@ -58,6 +65,5 @@ export default function PactCard({pact}: { pact: Pact }) {
         </div>
       </div>
     </div>
-    </Link>
   );
 }

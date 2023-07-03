@@ -1,22 +1,52 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import ViewBox from "../viewBox";
+import CollectionAdd from "./collectionAdd";
+import { BookmarkIcon } from "@heroicons/react/24/outline";
 
 export default function CollectionButton ({ pactID } : { pactID: string }) {
-  const collectionModel = useRef<HTMLDialogElement>(null);
+  const collectionModal = useRef<HTMLDialogElement>(null);
+  const [ isOpen, setOpen ] = useState<boolean>(false)
+  
+  useEffect(() => {
+    const onClose = () => setOpen(false)
+    const element = collectionModal.current
+    element?.addEventListener('close', onClose)
+    
+    return () => {
+      element?.removeEventListener('close', onClose);
+    };
+  }, []);
 
+  function openModal() {
+    collectionModal.current?.showModal()
+    setOpen(true)
+  }
   return (
     <>
-    <button className="btn" onClick={()=>collectionModel.current?.showModal()}>Save to Collection</button>
-    <dialog id="collection_save" className="modal" ref={collectionModel}>
-      <form method="dialog" className="modal-box">
-        <h3 className="font-bold text-lg">Save to collection</h3>
-        <div>no collection</div>
-        <div className="btn">create collection</div>
-        <p className="py-4">Press ESC key or click outside to close</p>
-      </form>
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
-    </dialog>
+      <div className="tooltip" data-tip="add to collection">
+        <button 
+          className="btn btn-xs btn-ghost btn-circle" 
+          onClick={openModal}
+        >
+          <BookmarkIcon className="w-4 h-4" />
+        </button>
+      </div>
+      <dialog 
+        id="collection-add-modal" 
+        className="modal modal-bottom sm:modal-middle"
+        ref={collectionModal}
+      >
+        {isOpen &&
+        <>
+          <ViewBox className="modal-box">
+            <CollectionAdd pactID={pactID} />
+          </ViewBox>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </>
+        }
+      </dialog>
     </>
   )
 }

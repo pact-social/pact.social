@@ -112,16 +112,19 @@ export type CeramicAccountTopicListArgs = {
 
 export type Collection = Node & {
   __typename?: 'Collection';
+  /** Account controlling the document */
+  author: CeramicAccount;
+  collectionPacts: CollectionPactConnection;
+  collectionPactsCount: Scalars['Int'];
+  deleted?: Maybe<Scalars['Boolean']>;
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   media?: Maybe<Array<Maybe<CollectionPublicationMetadataMedia>>>;
-  name?: Maybe<Scalars['String']>;
-  pacts: CollectionPactConnection;
-  pactsCount: Scalars['Int'];
+  name: Scalars['String'];
 };
 
 
-export type CollectionPactsArgs = {
+export type CollectionCollectionPactsArgs = {
   account?: InputMaybe<Scalars['ID']>;
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -130,7 +133,7 @@ export type CollectionPactsArgs = {
 };
 
 
-export type CollectionPactsCountArgs = {
+export type CollectionCollectionPactsCountArgs = {
   account?: InputMaybe<Scalars['ID']>;
 };
 
@@ -153,18 +156,23 @@ export type CollectionEdge = {
 };
 
 export type CollectionInput = {
+  deleted?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   media?: InputMaybe<Array<InputMaybe<CollectionPublicationMetadataMediaInput>>>;
-  name?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export type CollectionPact = Node & {
   __typename?: 'CollectionPact';
-  collection?: Maybe<Pact>;
+  /** Account controlling the document */
+  author: CeramicAccount;
+  collection?: Maybe<Collection>;
   collectionID: Scalars['CeramicStreamID'];
+  deleted?: Maybe<Scalars['Boolean']>;
   id: Scalars['ID'];
   pact?: Maybe<Pact>;
   pactID: Scalars['CeramicStreamID'];
+  tags?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 /** A connection to a list of items. */
@@ -187,7 +195,9 @@ export type CollectionPactEdge = {
 
 export type CollectionPactInput = {
   collectionID: Scalars['CeramicStreamID'];
+  deleted?: InputMaybe<Scalars['Boolean']>;
   pactID: Scalars['CeramicStreamID'];
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type CollectionPublicationMetadataMedia = {
@@ -650,8 +660,8 @@ export type Pact = Node & {
   animation_url?: Maybe<Scalars['URI']>;
   /** Account controlling the document */
   author: CeramicAccount;
-  collections: CollectionPactConnection;
-  collectionsCount: Scalars['Int'];
+  collectionsPact: CollectionPactConnection;
+  collectionsPactCount: Scalars['Int'];
   content: Scalars['String'];
   contentWarning?: Maybe<PactPublicationContentWarning>;
   createdAt: Scalars['DateTime'];
@@ -680,7 +690,7 @@ export type Pact = Node & {
 };
 
 
-export type PactCollectionsArgs = {
+export type PactCollectionsPactArgs = {
   account?: InputMaybe<Scalars['ID']>;
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -689,7 +699,7 @@ export type PactCollectionsArgs = {
 };
 
 
-export type PactCollectionsCountArgs = {
+export type PactCollectionsPactCountArgs = {
   account?: InputMaybe<Scalars['ID']>;
 };
 
@@ -957,6 +967,7 @@ export type PageInfo = {
 };
 
 export type PartialCollectionInput = {
+  deleted?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   media?: InputMaybe<Array<InputMaybe<CollectionPublicationMetadataMediaInput>>>;
   name?: InputMaybe<Scalars['String']>;
@@ -964,7 +975,9 @@ export type PartialCollectionInput = {
 
 export type PartialCollectionPactInput = {
   collectionID?: InputMaybe<Scalars['CeramicStreamID']>;
+  deleted?: InputMaybe<Scalars['Boolean']>;
   pactID?: InputMaybe<Scalars['CeramicStreamID']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type PartialEventInput = {

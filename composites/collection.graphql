@@ -7,7 +7,9 @@ type PublicationMetadataMedia {
 }
 
 type Collection @createModel(accountRelation: LIST, description:"A collection of Documents") {
-  name: String @string(maxLength: 100)
+  author: DID! @documentAccount
+  name: String! @string(maxLength: 100)
   description: String @string(maxLength: 500)
   media: [PublicationMetadataMedia] @list(maxLength: 20)
+  deleted: Boolean
 }

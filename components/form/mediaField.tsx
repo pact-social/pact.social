@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { PostPublicationMetadataMedia } from "../../src/gql";
 
-export default function MediaField () {
+export default function MediaField ({ className }: { className?: string}) {
   const ref = useRef<HTMLInputElement>(null);
   const { register, control, setValue, formState: { errors }} = useFormContext()
   const { fields, append, update, remove, move } = useFieldArray<PostPublicationMetadataMedia>({
@@ -52,36 +52,6 @@ export default function MediaField () {
       }
       const res = await Promise.all(promises);
     }
-    // if (file) {
-    //   const reader = new FileReader();
-    //   reader.readAsDataURL(file);
-    //   reader.onload = () => {
-    //     const img = new window.Image();
-    //     img.src = reader.result as string;
-    //     img.onload = () => {
-    //       if (img.width < 1200 || img.height < 825) {
-    //         // alert("The image should be at least 1200x825 pixels");
-    //       } else {
-    //         // setImage({ file, url: reader.result as string });
-    //       }
-    //     };
-    //   };
-
-    //   const formData = new FormData();
-    //   formData.append("fileInput", file);
-
-    //   const res = await fetch(
-    //     `/api/media/upload`,
-    //     {
-    //       method: 'POST',
-    //       body: formData
-    //     }
-    //   );
-    //   const { url, cid } = await res.json();
-    //   const newMedias = [...medias, { item: url, cid }]
-    //   setMedias(newMedias)
-    //   setValue("medias", newMedias);
-    // }
   };
 
   return (
@@ -97,7 +67,7 @@ export default function MediaField () {
             type="file"
             multiple
             onChange={handleFilesUpload} 
-            className="file-input w-full file-input-bordered file-input-primary"
+            className="file-input w-full file-input-bordered"
           />
           <input 
             type="hidden"
