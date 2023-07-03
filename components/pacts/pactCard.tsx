@@ -9,7 +9,7 @@ export default function PactCard({pact}: { pact: Pact }) {
   const { data: stats, error } = useStreamStats(pact?.id);
 
   return (
-    <div className="card card-compact bg-base-100 shadow-xl max-w-sm h-full m-auto">
+    <div className="card card-compact bg-base-100 shadow-xl max-w-sm h-full w-full">
       <Link  href={`/m/${pact.id}`} className="">
       {pact.media && pact.media.length > 0 &&
         <div className="carousel aspect-[4/3] w-full">
