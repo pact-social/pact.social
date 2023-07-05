@@ -37,6 +37,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
           )]: resp
         },
         collectionID,
+        title: resp.name,
+        description: resp.description,
+        image: resp.media?.at(0)?.item
       }, 
       revalidate: 30
     }
@@ -48,12 +51,19 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 }
 
-export const CollectionPage: NextPage<{fallback: Object, collectionID: string}> = ({ fallback, collectionID }) => {
+export const CollectionPage: NextPage<{
+  fallback: Object;
+  collectionID: string;
+  title?: string;
+  description?: string;
+  image?: string;
+}> = ({ fallback, collectionID, title, description, image }) => {
 
   return (
     <Layout metas={{
-      title: `${'placeholder'} collection on pact.social`,
-      description: 'decentralized petition and manifest for change and impact'
+      title: `${title} - pacts collection`,
+      description: description || 'decentralized petition and manifest for change and impact',
+      imageSrc: image,
     }}>
       <SWRConfig value={{ fallback }}>
         <div>

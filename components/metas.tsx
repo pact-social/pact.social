@@ -32,7 +32,7 @@ export const Metas: FC<MetaProps> = ({ title, description, imageSrc }) => {
         content="summary_large_image" />
       <meta
         name="twitter:site"
-        content="@doingud" />
+        content="@pactsocial0x" />
       <meta
         name="twitter:title"
         content={title} />
