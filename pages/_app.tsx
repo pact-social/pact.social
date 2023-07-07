@@ -3,7 +3,9 @@ import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app';
 import localFont from 'next/font/local'
 import { Roboto } from 'next/font/google'
-
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import {
   RainbowKitProvider,
   getDefaultWallets,
@@ -28,6 +30,9 @@ import analytics from '../context/analytics';
 import { ReactElement, ReactNode } from 'react';
 import { type NextPage } from 'next';
 import { AuthenticationProvider } from '../context/authentication';
+
+dayjs.extend(relativeTime)
+dayjs.extend(localizedFormat)
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode

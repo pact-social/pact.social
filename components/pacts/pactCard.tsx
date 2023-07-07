@@ -4,6 +4,7 @@ import type { Pact } from '../../src/gql';
 import useStreamStats from '../../hooks/useStreamStats';
 import IconSig from '../svg/noun-signature';
 import CollectionButton from '../collections/collectionButton';
+import dayjs from 'dayjs';
 
 export default function PactCard({pact}: { pact: Pact }) {
   const { data: stats, error } = useStreamStats(pact?.id);
@@ -47,7 +48,10 @@ export default function PactCard({pact}: { pact: Pact }) {
         >
         <div className={`label-${pact.type}`}>featured {pact.type === 'openletter' ? 'open letter' : pact.type}</div>
         <h2 className="card-title">{pact.title}</h2>
-        <div className="text-sm">{pact?.topic?.name}</div>
+        <div className="flex gap-2">  
+          <div className="">{dayjs(pact.createdAt).format('LL')}</div>
+          <div className="badge badge-outline badge-primary">{pact?.topic?.name}</div>
+        </div>
         </Link>
         <div className="card-actions justify-between items-baseline">
           <div className="flex items-baseline gap-6">

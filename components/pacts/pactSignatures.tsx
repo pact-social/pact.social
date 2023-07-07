@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { usePactContext } from "../../context/pact"
 import { getAddressFromDid, shortAddress } from "../../utils";
 import EmojiAvatar from "../avatar/emojiAvatar";
-
-dayjs.extend(relativeTime)
 
 const limit = 10;
 

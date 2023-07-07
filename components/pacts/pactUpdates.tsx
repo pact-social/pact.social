@@ -121,7 +121,9 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
               type="button"
               className="btn btn-secondary"
               // onClick={() => SaveDraft()}
-            >Save Draft</button>
+            >
+              Save Draft
+            </button>
         </div>
         </div>
       </form>
