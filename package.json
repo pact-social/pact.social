@@ -15,8 +15,6 @@
     "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.278.0",
-    "@ceramicnetwork/blockchain-utils-linking": "2.13.0",
     "@ceramicnetwork/common": "^2.26.0",
     "@ceramicnetwork/core": "^2.33.0",
     "@ceramicnetwork/http-client": "^2.23.0",
@@ -28,6 +26,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.16",
+    "@ipld/dag-cbor": "^9.0.3",
     "@lit-protocol/auth-browser": "^2.2.26",
     "@lit-protocol/lit-node-client": "^2.2.26",
     "@orbisclub/components": "^0.2.5",
@@ -49,6 +48,7 @@
     "key-did-provider-ed25519": "^3.0.0",
     "key-did-provider-secp256k1": "^1.0.1",
     "key-did-resolver": "^3.0.0",
+    "multiformats": "^12.0.1",
     "next": "^13.2.4",
     "node-fetch": "^3.3.1",
     "quilljs-markdown": "^1.2.0",
@@ -92,7 +92,7 @@
     "@types/react-dom": "^18.0.11",
     "@types/use-analytics": "^0.0.0",
     "autoprefixer": "^10.4.14",
-    "daisyui": "^3.1.5",
+    "daisyui": "^3.1.6",
     "eslint": "^8.3.0",
     "eslint-config-next": "^13.2.4",
     "graphql": "^16.6.0",
