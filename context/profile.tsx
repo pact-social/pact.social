@@ -51,7 +51,7 @@ export const ProfileProvider = ({
       }
     }
     setSignatures(new Map(signatures.entries()))
-  }, [pactSignatures, publicSignatures, setSignatures, signatures])
+  }, [pactSignatures, publicSignatures, setSignatures])
 
   useEffect(() => setIsLoading(isLoadingPrivate || isLoadingPublic), [isLoadingPrivate, isLoadingPublic])
 
