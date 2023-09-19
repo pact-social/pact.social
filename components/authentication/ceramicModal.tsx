@@ -31,7 +31,7 @@ export default function CeramicModal ({ onClose, open }: CeramicModalProps) {
     <div>
       {/* Open the modal using ID.showModal() method */}
       {/* <button className="btn" onClick={()=>ref.current?.showModal()}>open modal</button> */}
-      <dialog 
+      <dialog
         ref={ref}
         className="modal modal-bottom sm:modal-middle"
         data-theme="dark"

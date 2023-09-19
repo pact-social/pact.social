@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { DID } from "dids";
 import useProfile from "../hooks/useProfile";
 import usePrivateStore, { PrivateType } from "../hooks/usePrivateStore";
-import { Pact, PactProfile, PactSignature, PactSignatureVisibilityType } from "../src/gql";
+import { Mutation, Pact, PactProfile, PactSignature, PactSignatureVisibilityType } from "../src/gql";
 import useMySignatures from "../hooks/useMySignatures";
 import type { ExecutionResult } from "graphql";
 
@@ -11,7 +11,7 @@ export const ProfileContext = createContext<{
   privateStore?: PrivateType[], 
   signatures?: Map<string, PactSignature>, 
   drafts?: Pact[],
-  add?: (input: any, __typename: string, id: string) => Promise<void>
+  add?: (input: any, __typename: string, id: string) => Promise<ExecutionResult<Mutation>>
   update?: (input: any, __typename: string, id: string) => Promise<ExecutionResult>
   hasSigned?: (pactID: string) => PactSignatureVisibilityType | undefined,
   isLoading: boolean
@@ -51,7 +51,7 @@ export const ProfileProvider = ({
       }
     }
     setSignatures(new Map(signatures.entries()))
-  }, [pactSignatures, publicSignatures, setSignatures])
+  }, [pactSignatures, publicSignatures, setSignatures, signatures])
 
   useEffect(() => setIsLoading(isLoadingPrivate || isLoadingPublic), [isLoadingPrivate, isLoadingPublic])
 

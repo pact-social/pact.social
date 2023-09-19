@@ -62,9 +62,10 @@ export default function PactCard({pact}: { pact: Pact }) {
             <CollectionButton pactID={pact?.id} />
           </div>
           <div className="justify-end">
-            <div className="btn btn-primary">
+            <Link 
+              href={`/m/${pact.id}`} className="btn btn-primary">
               sign
-            </div>
+            </Link>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import Layout from '../components/layout';
 import BrandName from '../components/svg/brandName';
 import Leaderboard from '../components/leaderboard';
 import Roadmap from '../components/roadmap';
+import SpeakCTA from '../components/speakCTA';
 
 export async function getStaticProps() {
   const { getLatestPacts } = await import('../lib/getLatestPacts')
@@ -34,7 +35,26 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
       }}
     >
       <SWRConfig value={{ fallback }}>
-        <Hero />
+        <Hero 
+          title="where free voices act!"
+          description="stand up and create"
+          media={{
+            image: '/ehimetalor-akhere-unuabona-sW16rbnZHp8-unsplash.jpg',
+            alt: '',
+            title: 'featured petition',
+            subtitle: 'Help Save Grace the Ancient Tree and her friends, by ending the filling of wetlands!'
+          }}
+          extra={
+          <div className="relative overflow-hidden h-16 -ml-2">
+            <div className="message">
+              <div className="word-manifesto">manifestos</div>
+              <div className="word-petition">petitions</div>
+              <div className="word-openletter">open letters</div>
+            </div>
+          </div>
+        }
+        />
+        <SpeakCTA />
         <Highlights />
         <Leaderboard />
         {/* About pact.social */}

@@ -5,7 +5,13 @@ import { ReactNode } from 'react';
 import CollectionButton from '../collections/collectionButton';
 
 
-export default function PactHero({ children }: { children?: ReactNode}) {
+export default function PactHero({ 
+  children,
+  draft = false,
+}: { 
+  children?: ReactNode;
+  draft?: boolean;
+}) {
   const { pact } = usePactContext()
   const name = useGetName(pact?.author, null, pact?.author?.id)
   return (
@@ -66,7 +72,7 @@ export default function PactHero({ children }: { children?: ReactNode}) {
               </div>
             </div>
             
-            {pact?.id && 
+            {pact?.id && !draft && 
             <div className=" font-sans">
               <CollectionButton pactID={pact?.id} />
             </div>
