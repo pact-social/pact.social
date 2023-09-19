@@ -2,6 +2,8 @@ import { useAccount } from "wagmi";
 import { useCeramicContext } from "../context";
 import { authenticateCeramic, logoutCeramic, restoreAuth } from "../utils";
 import { useCallback, useEffect, useState } from "react";
+import { DID } from "dids";
+import { type VerifyOptions, verifyTimeChecks } from "@didtools/cacao";
 
 
 export default function useAuthCeramic () {
@@ -34,12 +36,17 @@ export default function useAuthCeramic () {
   const restoreSession = async () => {
     const sessionDID = await restoreAuth(address, ceramic, composeClient)
     if (!sessionDID) return false
-
-    dispatch({
-      type: 'setDID',
-      payload: { did: sessionDID }
-      })
-      return true
+    
+    try {
+      verifyTimeChecks(sessionDID.capability, {} as VerifyOptions)
+      dispatch({
+        type: 'setDID',
+        payload: { did: sessionDID }
+        })
+        return true
+    } catch (error) {
+      return false
+    }
   }
 
   const logout = useCallback(async () => {
