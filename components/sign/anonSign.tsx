@@ -28,11 +28,11 @@ export default function AnonSign() {
   const [ token, setToken ] = useState<string>()
   const [ burnerWallet, setBurner ] = useState<Wallet>();
   
-  const saveSignature = async (data: string, time: Date) => {
+  const saveSignature = async (time: Date) => {
     try {
       const input: CreatePactSignatureInput = {
         content: {
-          signature: data,
+          // signature: data,
           signedAt: time?.toISOString(),
           pactID: pact?.id,
           visibility: PactSignatureVisibilityType.Anon,
@@ -119,13 +119,13 @@ export default function AnonSign() {
     const signingAddress = burnerWallet || getRandomWallet() ;
     const did = await authBurnerClients(signingAddress)
     // get pact datas
-    const { message, time } = formatMessage(pact);
+    const { time } = formatMessage(pact);
 
     setTimestamp(time);
     // sign pact message
-    const sig = await signingAddress.signMessage(message);
+    // const sig = await signingAddress.signMessage(message);
     
-    await saveSignature(sig, time)
+    await saveSignature(time)
   }
   
   return (

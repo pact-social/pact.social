@@ -906,7 +906,7 @@ export type PactSignature = Node & {
   pactID: Scalars['CeramicStreamID'];
   pactVersion: Scalars['CeramicCommitID'];
   referral?: Maybe<CeramicAccount>;
-  signature: Scalars['String'];
+  signature?: Maybe<Scalars['String']>;
   signedAt: Scalars['DateTime'];
   turnToken?: Maybe<Scalars['String']>;
   visibility?: Maybe<PactSignatureVisibilityType>;
@@ -935,7 +935,7 @@ export type PactSignatureInput = {
   pactID: Scalars['CeramicStreamID'];
   pactVersion: Scalars['CeramicCommitID'];
   referral?: InputMaybe<Scalars['DID']>;
-  signature: Scalars['String'];
+  signature?: InputMaybe<Scalars['String']>;
   signedAt: Scalars['DateTime'];
   turnToken?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<PactSignatureVisibilityType>;

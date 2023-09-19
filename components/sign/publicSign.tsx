@@ -17,26 +17,26 @@ export default function PublicSign() {
   const { pact } = usePactContext()
   const [msg, setMsg] = useState<string>();
   const [ timestamp, setTimestamp ] = useState<Date | undefined>();
-  const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage({
-    message: msg,
-    onSuccess(data) {
-      saveSignature(data);
-    }
-  });
+  // const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage({
+  //   message: msg,
+  //   onSuccess(data) {
+  //     saveSignature(data);
+  //   }
+  // });
   const { composeClient, ceramic } = useCeramicContext();  
   
-  const saveSignature = async (data: string) => {
+  const saveSignature = async (time: Date) => {
     try {
       // verify message
-      const signerAddress = await ethers.utils.verifyMessage(
-        `${msg}`,
-        data
-      );
+      // const signerAddress = await ethers.utils.verifyMessage(
+      //   `${msg}`,
+      //   data
+      // );
 
       const input: CreatePactSignatureInput = {
         content: {
-          signature: data,
-          signedAt: timestamp?.toISOString(),
+          // signature: data,
+          signedAt: time?.toISOString(),
           pactID: pact?.id,
           visibility: PactSignatureVisibilityType.Public,
           pactVersion: pact?.version,
@@ -81,16 +81,19 @@ export default function PublicSign() {
     // check if user already signed
     if (!pact) return;
     // form the message
-    const { message, time } = formatMessage(pact);
+    const { time } = formatMessage(pact);
     if(!timestamp) {
       setTimestamp(time);
     }
-    setMsg(message);
+    // setMsg(message);
 
     // call wallet sign
-    signMessage({
-      message,
-    });
+    // signMessage({
+    //   message,
+    // });
+
+    // create signature on ceramic
+    await saveSignature(time);
 
   }
 
