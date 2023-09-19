@@ -40,19 +40,19 @@ export default function DraftPactPreview({}) {
       {(isLoading || !router.isReady) && <>Loading</>}
       {(!isLoading && !pact) && <>Error</>}
       {(edit && pact)&&
-        <PactForm defaultValues={pact as PactInput} />
+        <PactForm defaultValues={pact as PactInput} pactID={pact.id}/>
       }
       {(pact && !edit) && 
         <DraftPactProvider
           pact={pact}
         >
-          <PactHero>
+          <PactHero draft>
             <div>
-              <div className="badge badge-success">Draft</div>
+              <div className="badge badge-warning">Draft</div>
             </div>
-            <div className="flex gap-4">
+            <div className="flex join">
               <Link 
-                className=" btn btn-primary"
+                className=" btn btn-primary join-item"
                 href={{
                   pathname: '/p/drafts/[pactID]',
                   query: { pactID: pact.id, edit: 'draft' },
@@ -60,7 +60,7 @@ export default function DraftPactPreview({}) {
               >
                 Edit
               </Link>
-              <button className=" btn btn-secondary">
+              <button className=" btn btn-secondary join-item">
                 Publish
               </button>
             </div>

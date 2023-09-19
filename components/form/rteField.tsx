@@ -43,15 +43,11 @@ export default function RteField(args: RteFieldType) {
   useEffect(() => {
     Quill.register('modules/markdownOptions', QuillMarkdown, true);
     register(args.field || "content",{ required:true, minLength:30, maxLength: 50000});
-  },[register]);
+  }, [args.field, register]);
 
   const onEditorStateChange = (content: string) => {
     setValue(args.field || "content", content);
   };
-
-  // useEffect(() => {
-  //   console.log('quill editor updates', editorContent, getValues(args.field || 'content'))
-  // }, [editorContent])
 
   return (
     <div className="formControl">

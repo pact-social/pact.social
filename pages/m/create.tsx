@@ -4,13 +4,13 @@ import dynamic from 'next/dynamic'
 
 import Layout from "../../components/layout";
 import useTopics from "../../hooks/useTopics";
-import { useCeramicContext } from "../../context";
-import { Mutation, PactInput, PactType } from "../../src/gql";
+import { PactInput, PactType } from "../../src/gql";
 import TopicSelect from "../../components/form/topicSelect";
 import ConnectButton from "../../components/connect";
-import { useProfileContext } from "../../context/profile";
-import { htmlToMarkdown } from "../../lib/mdUtils";
+import { markdownToHtml } from "../../lib/mdUtils";
 import MediaField from "../../components/form/mediaField";
+import useMutatePact from "../../hooks/useMutatePact";
+import MarkdownField from "../../components/form/markdownField";
 
 const RteField = dynamic(() => import('../../components/form/rteField'), {
   ssr: false,
@@ -31,7 +31,10 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
   const { push } = useRouter();
   
   const methods = useForm<PactInput>({
-    defaultValues: defaultValues || {
+    defaultValues: defaultValues ? {
+      ...defaultValues,
+      content: markdownToHtml(defaultValues.content)
+    } : {
       type: PactType.Petition,
       title: ''
     }
@@ -39,82 +42,14 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
   const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = methods
 
   const { data: topics } = useTopics();
-  const { composeClient } = useCeramicContext()
-  const { add, update } = useProfileContext()
+  const { saveDraft, publish } = useMutatePact()
 
-  const watchTopicID = watch('topicID')
-
-
+  watch('topicID')
 
   const onSubmit: SubmitHandler<PactInput> = async (data) => {
-    try {
-      if(data.image === '') {
-        delete data.image;
-      }
-      data.createdAt = data.createdAt || (new Date()).toISOString()
-      data.content = htmlToMarkdown(data?.content as string)
-      
-      const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
-      mutation newPact($input: CreatePactInput!) {
-        createPact(input: $input) {
-          document {
-            id
-          }
-        }
-      }
-      `, {
-        input: {
-          content: {
-            ...data,
-            // type: PactType[data.type]
-          }
-        }
-      })
 
-      if (!errors) {
-        return push(`/m/${res?.createPact?.document.id}`)
-      }
-    } catch (error) {
-      console.log('error', error)
-    }
+    await publish(data, pactID)
   };
-
-  const SaveDraft = async () => {
-    const values = getValues();
-    try {
-      if(values.image === '') {
-        delete values.image;
-      }
-      values.createdAt = values.createdAt || (new Date()).toISOString()
-      values.content = htmlToMarkdown(values?.content as string)
-
-      const content = {
-        ...values,
-        // type: values.type,
-        author: {
-          id: composeClient.did?.parent
-        }
-      }
-      if(!add) throw new Error('profile probably not connected')
-
-      if (pactID && update) {
-        await update({content}, 'Pact', pactID)
-        // if (!errors) {
-        return push({
-          pathname: `/p/drafts/[pactID]`,
-          query: {
-            pactID: pactID
-          }
-        })
-        // }
-      } else {
-        await add({content}, 'Pact', `draft-${content.title.replace(' ', '')}`)
-      }
-    } catch (error) {
-      console.log('error', error)
-    }
-  }
-
 
 return (
   <Layout metas={{
@@ -160,7 +95,6 @@ return (
         </div>
 
         <div className="formControl">
-
           <label htmlFor="title" className="label cursor-pointer">
             Choose the title of your Pact: 
           </label>
@@ -199,7 +133,8 @@ return (
           }
         </div>
 
-        <RteField label="Post your content:" field="content" />
+          {/* <RteField label="Post your content:" field="content" /> */}
+          <MarkdownField label="Post your content:" field="content" />
         
         <MediaField />
         <div className="divider"></div>
@@ -209,7 +144,7 @@ return (
               <button 
                 type="button"
                 className="btn btn-primary join-item"
-                onClick={() => SaveDraft()}
+                  onClick={() => saveDraft(getValues(), pactID)}
               >Save Draft</button>
               <button type="submit" className="btn btn-secondary join-item">Publish Live</button>
             </div>

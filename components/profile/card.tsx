@@ -6,7 +6,7 @@ import { getAddressFromDid, shortAddress } from "../../utils";
 import EmojiAvatar from "../avatar/emojiAvatar";
 import { useViewContext } from "../viewBox";
 import ProfilEditForm from "./editForm";
-// import { UserCredentials } from "@orbisclub/components"
+// import OrbisCredentials from "../user/credentials"
 
 export default function ProfileCard() {
   const { state: { did }} = useCeramicContext();
@@ -23,7 +23,7 @@ export default function ProfileCard() {
       <div className="text-lg font-extrabold">
         {name}
       </div>
-      {/* <UserCredentials /> */}
+      {/* <OrbisCredentials did={'t'} /> */}
       <div className="text-sm text-base-content/70 text-center whitespace-pre-wrap">
         {profile?.bio && 
           <>{profile.bio}</>
