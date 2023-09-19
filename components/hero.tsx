@@ -9,7 +9,7 @@ export type HeroProps = {
     alt: string;
     title: string;
     subtitle: string;
-    ratio?: string;
+    ratio: string;
   }
   title?: string;
   description?: string;
@@ -29,7 +29,7 @@ export default function Hero({ ...props }: HeroProps) {
                 alt=""
                 width={800}
                 height={800}
-                className={`aspect-[${props.media?.ratio || '1/1'}] object-cover`}
+                className={`${props.media?.ratio ? `aspect-[${props.media?.ratio}]` : 'aspect-[1/1]'} object-cover`}
               />
             </figure>
           }
