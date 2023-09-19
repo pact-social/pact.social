@@ -66,7 +66,7 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "username": "polivy bot",
+        "username": "policy bot",
         "content": `🛑 New user policy report **${reason}** \nfrom 👉 ${decodedCacaoBlock.p.iss} \npact 👉 [${pact?.title}](${process.env.NEXT_PUBLIC_APP_DOMAIN}/m/${pact.id})`
       })
     });
