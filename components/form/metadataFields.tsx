@@ -16,7 +16,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         <input 
           id="sourceUrl" 
           type="text" 
-          className={`input input-bordered input-primary w-full max-w-xs${errors.sourceUrl && 'input-error'}`}
+          className={`input input-bordered w-full max-w-xs${errors.sourceUrl && 'input-error'}`}
           placeholder="https://..."
           {...register('sourceUrl', {required: false, maxLength: 500})}
         />
@@ -33,7 +33,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         locale:
       </label>
       <select 
-        className="select select-primary w-full max-w-xs"  
+        className="select select-bordered w-full max-w-xs"  
         placeholder="placeholder"
         multiple={false}
         defaultValue={defaultValues?.locale || 'en'}
@@ -54,7 +54,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         <input 
           id="context" 
           type="text" 
-          className={`input input-bordered input-primary w-full max-w-xs${errors.context && 'input-error'}`}
+          className={`input input-bordered w-full max-w-xs${errors.context && 'input-error'}`}
           placeholder="https://..."
           {...register('context', {required: false, maxLength: 500})}
         />
@@ -71,7 +71,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         Content Warning: 
       </label>
         <select 
-          className="select select-primary w-full max-w-xs"  
+          className="select select-bordered w-full max-w-xs"  
           placeholder="placeholder"
           multiple={false}
           defaultValue={defaultValues?.contentWarning || 'en'}
@@ -99,7 +99,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         Content Focus: 
       </label>
         <select 
-          className="select select-primary w-full max-w-xs"  
+          className="select select-bordered w-full max-w-xs"  
           placeholder="placeholder"
           multiple={false}
           defaultValue={defaultValues?.mainContentFocus || 'en'}
@@ -129,7 +129,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         <input 
           id="external_url" 
           type="text" 
-          className={`input input-bordered input-primary w-full max-w-xs${errors.external_url && 'input-error'}`}
+          className={`input input-bordered w-full max-w-xs${errors.external_url && 'input-error'}`}
           placeholder="https://..."
           {...register('external_url', {required: false, maxLength: 500})}
         />
@@ -148,7 +148,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         <input 
           id="animation_url" 
           type="text" 
-          className={`input input-bordered input-primary w-full max-w-xs${errors.animation_url && 'input-error'}`}
+          className={`input input-bordered w-full max-w-xs${errors.animation_url && 'input-error'}`}
           placeholder="https://..."
           {...register('animation_url', {required: false, maxLength: 500})}
         />
@@ -167,7 +167,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         <input 
           id="imageMimeType" 
           type="text" 
-          className={`input input-bordered input-primary w-full max-w-xs${errors.imageMimeType && 'input-error'}`}
+          className={`input input-bordered w-full max-w-xs${errors.imageMimeType && 'input-error'}`}
           placeholder="https://..."
           {...register('imageMimeType', {required: false, maxLength: 500})}
         />
@@ -186,7 +186,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         <input 
           id="image" 
           type="text" 
-          className={`input input-bordered input-primary w-full max-w-xs${errors.image && 'input-error'}`}
+          className={`input input-bordered w-full max-w-xs${errors.image && 'input-error'}`}
           placeholder="https://..."
           {...register('image', {required: false, maxLength: 500})}
         />

@@ -1,7 +1,7 @@
 import { FlagIcon, XCircleIcon } from "@heroicons/react/24/outline"
 import { useRef, useState } from "react"
 import { ReportPolicyType, reportPolicy } from "../../lib/reportPolicy"
-import { SubmitHandler, useForm } from "react-hook-form"
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import { useCeramicContext } from "../../context"
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 import SubmitButton from "../form/submitButton"
@@ -12,7 +12,8 @@ type ReportForm = {
 
 export default function ReportButton ({ pactID } : { pactID?: string }) {
   const ref = useRef<HTMLDialogElement>(null)
-  const { handleSubmit, register, formState: { errors } } = useForm<ReportForm>()
+  const methods = useForm<ReportForm>()
+  const { handleSubmit, register, formState: { errors } } = methods
   const { state: { did } } = useCeramicContext()
   const { openConnectModal } = useConnectModal()
   const [isLoading, setLoading] = useState<boolean>(false)
@@ -63,6 +64,7 @@ export default function ReportButton ({ pactID } : { pactID?: string }) {
           <p className="py-4">
             A report will be sent to the pact.social team. If it turns out that this pact does not respect our policies, it may be removed from display on pact.social
           </p>
+          <FormProvider {...methods} >
           <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4 justify-items-stretch">
             <select 
               className={`select select-bordered flex-1 ${errors.reason && ' select-error'}`}
@@ -76,6 +78,7 @@ export default function ReportButton ({ pactID } : { pactID?: string }) {
             </select>
             <SubmitButton name="Report" className="btn-secondary" />
           </form>
+          </FormProvider>
           {error &&
           <div className="alert alert-error mt-4">
             <XCircleIcon className="h-6 w-6" />

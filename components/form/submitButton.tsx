@@ -14,7 +14,6 @@ export default function SubmitButton ({
     formState: { isValid, isLoading, isSubmitting, isSubmitted, isSubmitSuccessful, errors },
   } = methods
 
-  console.log('formstate', isLoading, isSubmitting, errors)
   return (
     <button 
       type={type || "submit"}

@@ -10,7 +10,7 @@ export default function CountrySelect () {
       </label>
       <select 
         id="country" 
-        className="select select-primary w-full max-w-xs"
+        className="select select-bordered w-full max-w-xs"
         {...register('country', {required: false})}
       >
         <option disabled selected>Select a country</option>

@@ -81,7 +81,7 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
               <input 
                 id="title" 
                 type="text" 
-                className={`input input-bordered input-primary w-full max-w-xs${errors.title && 'input-error'}`}
+                className={`input input-bordered w-full max-w-xs${errors.title && 'input-error'}`}
                 placeholder="Name your post"
                 {...register('title', {required: true, minLength: 10, maxLength: 120})}
               />
@@ -100,7 +100,7 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
               <input 
                 id="description" 
                 type="text" 
-                className={`input input-bordered input-primary w-full max-w-xs${errors.description && 'input-error'}`}
+                className={`input input-bordered w-full max-w-xs${errors.description && 'input-error'}`}
                 placeholder="Description your post"
                 {...register('description', {required: false, maxLength: 500})}
               />
