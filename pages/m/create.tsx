@@ -72,7 +72,7 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
                 Choose the type of Pact:
               </label>
               <select
-                className="select select-primary w-full"
+                className="select select-bordered w-full"
                 placeholder="placeholder"
                 multiple={false}
                 {...register('type', {required: true})}
@@ -102,7 +102,7 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
               <input
                 id="title"
                 type="text"
-                className={`input input-bordered input-primary w-full max-w-xs${errors.title && 'input-error'}`}
+                className={`input input-bordered w-full max-w-xs${errors.title && 'input-error'}`}
                 placeholder="Name your Pact"
                 {...register('title', {required: true, minLength: 10, maxLength: 120})}
               />
@@ -122,7 +122,7 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
               <input
                 id="description"
                 type="text"
-                className={`input input-bordered input-primary w-full max-w-xs${errors.description && 'input-error'}`}
+                className={`input input-bordered w-full max-w-xs${errors.description && 'input-error'}`}
                 placeholder=" Summarize your Pact"
                 {...register('description', {required: false, maxLength: 500})}
               />

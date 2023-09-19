@@ -42,7 +42,8 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
             image: '/ehimetalor-akhere-unuabona-sW16rbnZHp8-unsplash.jpg',
             alt: '',
             title: 'featured petition',
-            subtitle: 'Help Save Grace the Ancient Tree and her friends, by ending the filling of wetlands!'
+            subtitle: 'Help Save Grace the Ancient Tree and her friends, by ending the filling of wetlands!',
+            ratio: '1/1'
           }}
           extra={
           <div className="relative overflow-hidden h-16 -ml-2">
