@@ -4,6 +4,7 @@ import { useViewContext } from "../viewBox";
 import MediaField from "../form/mediaField";
 import { useCeramicContext } from "../../context";
 import SubmitButton from "../form/submitButton";
+import UseCollections from "../../hooks/useCollections";
 
 export default function CollectionForm ({
   collection,
@@ -15,12 +16,14 @@ export default function CollectionForm ({
   className?: string;
 }) {
   const { previousView, setView } = useViewContext()
-  const { composeClient } = useCeramicContext()
+  const { composeClient, state: { did } } = useCeramicContext()
 
   const methods = useForm<Collection>({
     defaultValues: collection || {}
   });
   const { register, handleSubmit, formState: { errors } } = methods
+
+  const { mutate } = UseCollections(did?.parent)
 
   const onSubmit: SubmitHandler<CollectionInput> = async (data) => {
     const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
@@ -38,8 +41,10 @@ export default function CollectionForm ({
         }
       }
     })
+    await mutate()
     if(onSave) onSave()
   }
+
 
   return (
     <div className={className}>
