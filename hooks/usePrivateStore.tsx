@@ -130,6 +130,8 @@ export default function usePrivateStore() {
     const newSigs = pactSignatures ? [...pactSignatures, input] : [input];
     setPactSignatures(newSigs)
     mutate([...data, { content: input, type: __typename, id:  newClearStream.id} ])
+
+    return personalStore
   }
 
   const update = async (input: PactSignature, __typename: string, id: string) => {

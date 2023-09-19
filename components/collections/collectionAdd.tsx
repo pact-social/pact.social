@@ -6,6 +6,7 @@ import CollectionForm from "./collectionForm";
 import type { CollectionPact, CollectionPactInput, Mutation } from "../../src/gql";
 import UseMyCollectionPact from "../../hooks/useMyCollectionPact";
 import { useEffect, useState } from "react";
+import SubmitButton from "../form/submitButton";
 
 export default function CollectionAdd({ pactID } : { pactID: string }) {
   const {composeClient, state: { did }} = useCeramicContext()
@@ -89,15 +90,7 @@ export default function CollectionAdd({ pactID } : { pactID: string }) {
               <option key={collection?.node?.id} value={collection?.node?.id}>{collection?.node?.name}</option>
             )}
           </select>
-          <button
-            type="submit"
-            className={`btn btn-secondary ${saving ? 'btn-disabled' : (success ? 'btn-success' : '')}`}
-          >
-            {saving &&
-              <span className="loading loading-spinner"></span>
-            }
-            {success ? <>Success</> : <>Add</>}
-          </button>
+          <SubmitButton name="Add" className="btn-secondary" />
         </form>
         }
         {!collections &&

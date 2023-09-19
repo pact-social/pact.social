@@ -4,6 +4,7 @@ import { ReportPolicyType, reportPolicy } from "../../lib/reportPolicy"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useCeramicContext } from "../../context"
 import { useConnectModal } from "@rainbow-me/rainbowkit"
+import SubmitButton from "../form/submitButton"
 
 type ReportForm = {
   reason: ReportPolicyType;
@@ -73,10 +74,7 @@ export default function ReportButton ({ pactID } : { pactID?: string }) {
               <option key={key} value={key}>{value}</option>
               )}
             </select>
-            <button type="submit" className={`btn btn-secondary ${isLoading && 'btn-disabled'}`}>
-              {isLoading && <span className="loading loading-spinner"></span>}
-              Report
-            </button>
+            <SubmitButton name="Report" className="btn-secondary" />
           </form>
           {error &&
           <div className="alert alert-error mt-4">

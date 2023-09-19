@@ -8,6 +8,7 @@ import MetadataFields from "../form/metadataFields";
 import PostCard from "../post/postCard";
 import dynamic from "next/dynamic";
 import { htmlToMarkdown } from "../../lib/mdUtils";
+import SubmitButton from "../form/submitButton";
 
 const RteField = dynamic(() => import('../form/rteField'), {
   ssr: false,
@@ -116,7 +117,7 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
           <MetadataFields />
 
           <div className="formControl flex justify-center">
-            <button type="submit" className="btn btn-primary">Publish Live</button>
+            <SubmitButton name="Publish Live" className="btn-secondary" />
             <button 
               type="button"
               className="btn btn-secondary"

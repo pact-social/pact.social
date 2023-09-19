@@ -3,6 +3,7 @@ import { Collection, CollectionInput, Mutation } from "../../src/gql";
 import { useViewContext } from "../viewBox";
 import MediaField from "../form/mediaField";
 import { useCeramicContext } from "../../context";
+import SubmitButton from "../form/submitButton";
 
 export default function CollectionForm ({
   collection,
@@ -77,7 +78,7 @@ export default function CollectionForm ({
           </div>
           <MediaField />
           
-          <button type="submit" className="btn btn-secondary">Save</button>
+          <SubmitButton name="Save" className="btn-secondary" />
 
         </form>
         

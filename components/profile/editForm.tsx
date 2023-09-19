@@ -5,6 +5,7 @@ import { useCeramicContext } from "../../context";
 import ConnectButton from "../connect";
 import { useViewContext } from "../viewBox";
 import CountrySelect from "../form/countrySelect";
+import SubmitButton from "../form/submitButton";
 
 export default function ProfilEditForm({ 
   profile
@@ -125,7 +126,7 @@ export default function ProfilEditForm({
           <ConnectButton el={
             <>
               <button className="btn btn-outline" onClick={() => previousView()}>Cancel</button>
-              <button type="submit" className="btn btn-primary">Submit</button>
+              <SubmitButton name="Submit" className="btn-secondary" />
             </>
           } />
         </div>
