@@ -17,10 +17,11 @@ const profileQuery = (address: string) => {
         ... on CeramicAccount {
           pactProfile {
             id
-            bio
-            city
-            country
             name
+            bio
+            title
+            country
+            city
             organisation
             profilePicture
           }
