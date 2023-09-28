@@ -33,9 +33,9 @@ const Row = ({rank, streamID, stats} : { rank: number; streamID?: string; stats?
       <td className="font-alt">
         {stats?.views}
       </td>
-      <td className="font-alt text-secondary md:pr-12">
+      {/* <td className="font-alt text-secondary md:pr-12">
         4M
-      </td>
+      </td> */}
     </tr>
   )
 }
@@ -63,7 +63,7 @@ export default function Leaderboard() {
               <th>total<br/> signatures</th>
               <th>verified<br/>signatures</th>
               <th>total<br/>views</th>
-              <th className="text-secondary md:pr-12">$LOBBY<br/>volume</th>
+              {/* <th className="text-secondary md:pr-12">$LOBBY<br/>volume</th> */}
             </tr>
           </thead>
 

@@ -57,11 +57,11 @@ export default function WalletSign() {
           title="Public"
           description="Your signature document is public"
         />
-        <DescriptionButton 
+        {/* <DescriptionButton 
           onClick={privateSign}
           title="Private"
           description="You trust pact.social to hide your identity while verifying your signature"
-        />
+        /> */}
         <DescriptionButton 
           onClick={anonSign}
           title="Anon"

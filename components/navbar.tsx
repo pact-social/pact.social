@@ -26,8 +26,7 @@ export default function NavBar({ children }: NavbarProps) {
   return (
     <div className="drawer">
       <input id="main-mobile-drawer" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={toggle} /> 
-      <div className="drawer-content flex flex-col" 
-      >
+      <div className="drawer-content flex flex-col">
         <div className="navbar bg-black text-neutral-content sticky top-0 z-20 min-h-[5rem]">
           <div className="container">
             <div className="navbar-start flex lg:w-auto xl:flex-1">
@@ -41,6 +40,7 @@ export default function NavBar({ children }: NavbarProps) {
                 href="/"
               >
                 <LogoBrand height={24} white></LogoBrand>
+                <div className=" text-gray-300 font-sans text-sm font-thin">testnet</div>
               </Link>
             </div>
             <div className="flex-none hidden lg:flex lg:flex-1 lg:navbar-center justify-center">
@@ -74,6 +74,7 @@ export default function NavBar({ children }: NavbarProps) {
               onClick={toggle}
             >
               <LogoBrand height={24} white></LogoBrand>
+              <div className=" text-gray-300 font-sans text-sm font-thin">testnet</div>
             </Link>
           </li>
           <li className="block">

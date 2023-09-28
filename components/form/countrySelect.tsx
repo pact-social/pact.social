@@ -13,7 +13,7 @@ export default function CountrySelect () {
         className="select select-bordered w-full max-w-xs"
         {...register('country', {required: false})}
       >
-        <option disabled selected>Select a country</option>
+        <option disabled value="" selected>Select a country</option>
         {Object.entries(iso3311a2.getData()).map(([key, value], index) => 
           <option key={key} value={key}>
             {value}

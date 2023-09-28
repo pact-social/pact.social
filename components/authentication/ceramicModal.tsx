@@ -37,8 +37,8 @@ export default function CeramicModal ({ onClose, open }: CeramicModalProps) {
         data-theme="dark"
         id="ceramic-modal-dialog"
       >
-        <form method="dialog" id="ceramic-modal" className="modal-box">
-          <h3 className="font-bold text-xl text-white">Verify your account</h3>
+        <form method="dialog" id="ceramic-modal" className="modal-box text-white">
+          <h3 className="font-bold text-xl">Verify your account</h3>
           <p className="py-4">pact.social need access to your personal data hub, you must sign a message in your wallet to verify that you are the owner of this account.</p>
           <div className="modal-action">
             {/* if there is a button in form, it will close the modal */}

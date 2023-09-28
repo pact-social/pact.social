@@ -35,7 +35,7 @@ export default function LitModal ({ onClose, open }: LitModalProps) {
         data-theme="dark"
         id="lit-modal-dialog"
       >
-        <form method="dialog" id="lit-modal-dialog" className="modal-box">
+        <form method="dialog" id="lit-modal-dialog" className="modal-box text-white">
           <h3 className="font-bold text-xl text-white">Unlock your private storage</h3>
           <p className="py-4">To unlock your private storage, you must sign a message in your wallet to verify that you are the owner of this account.</p>
           <div className="modal-action">

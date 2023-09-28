@@ -138,9 +138,9 @@ export default function PactLayout({ children }: { children: ReactElement }) {
                     </div>
                   </Portal>
               </label>
-              <button className="btn btn-outline flex-auto">
+              {/* <button className="btn btn-outline flex-auto">
                 Chip in $
-              </button>
+              </button> */}
             </div>
           </div>
         </PactProvider>

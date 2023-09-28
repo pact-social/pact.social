@@ -85,14 +85,14 @@ export default function SignStats() {
         </div>
       </div>
       
-      <div className="stat">
+      {/* <div className="stat">
         <div className="stat-title">Position</div>
         <div className="stat-value">37th</div>
         <div className="stat-desc">↗︎ 2 (22%)</div>
         <div className="stat-actions">
           <button className="btn btn-sm btn-outline btn-block">Chip In $</button>
         </div>
-      </div>
+      </div> */}
 
     </div>
   )
