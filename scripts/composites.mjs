@@ -178,7 +178,7 @@ const authenticate = async () => {
     const seed = readFileSync('./admin_seed.txt')
 
     const key = fromString(
-      seed,
+      seed.toString().trim(),
       "base16"
     );
     const did = new DID({
