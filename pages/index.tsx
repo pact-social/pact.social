@@ -151,7 +151,7 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
         </section>
 
         {/* Roadmap */}
-        <Roadmap />
+        {/* <Roadmap /> */}
       </SWRConfig>
     </Layout>
   );
