@@ -1,9 +1,15 @@
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
-import type { AuthSig } from '@lit-protocol/types'
+import { AuthMethodType, ProviderType } from '@lit-protocol/constants';
+import type { AuthMethod, AuthSig, ExecuteJsProps } from '@lit-protocol/types'
+import { PKPClient } from '@lit-protocol/pkp-client';
+import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
+import { PKPWalletConnect } from '@lit-protocol/pkp-walletconnect';
 import { ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers"
 import { ethConnect } from '@lit-protocol/auth-browser';
 import { Store } from './store';
 import { SESSION_DAYS } from './constants';
+import { LitAuthClient, GoogleProvider, isSignInRedirect, BaseProvider } from '@lit-protocol/lit-auth-client';'@lit-protocol/lit-auth-client';
+import AuthClient, { generateNonce } from '@walletconnect/auth-client'
 
 export function decodeb64(b64String: string) {
   return new Uint8Array(Buffer.from(b64String, "base64"));
@@ -37,14 +43,196 @@ export function buf2hex(buffer: ArrayBuffer) { // buffer is an ArrayBuffer
 
 export class Lit {
   private litNodeClient: LitJsSdk.LitNodeClient
+  private litAuthClient: LitAuthClient
   public account?: string
+  private redirectUri: string = 'http://localhost:3000/auth/lit'
+  private store?: Store;
+  private provider: GoogleProvider;
+  private pkps?: string;
+  private pkpWallet?: PKPEthersWallet;
 
   constructor() {
+    if (typeof window !== 'undefined') {
+      this.store = new Store()
+    }
     const client = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: true,
       debug: false,
+      // litNetwork: "cayenne",
     })
     this.litNodeClient = client
+    const authClient = new LitAuthClient({
+      litRelayConfig: {
+        relayUrl: 'https://relay-server-staging.herokuapp.com',
+         // Request a Lit Relay Server API key here: https://forms.gle/RNZYtGYTY9BcD9MEA
+        relayApiKey: '1234567890',
+      },
+      litNodeClient: client,
+    })
+    this.litAuthClient = authClient
+    // Initialize Google provider
+    this.litAuthClient.initProvider(ProviderType.Google, {
+      // The URL of your web app where users will be redirected after authentication
+      redirectUri: this.redirectUri,
+    })
+
+    const provider = this.litAuthClient.getProvider(
+      ProviderType.Google,
+    ) as GoogleProvider;
+    this.provider = provider
+  }
+  
+  async googleLogin() {    
+    await this.provider.signIn();
+  }
+
+  getPKPProvider() {
+    return this.provider
+  }
+
+  async handleGoogleRedirect() {
+    if (isSignInRedirect(this.redirectUri)) {
+      if (!this.store) this.store = new Store()
+      // Get the provider that was used to sign in
+
+      // Get auth method object that has the OAuth token from redirect callback
+      const authMethod: AuthMethod = await this.provider.authenticate();
+      console.log('authMethod', authMethod, this.provider)
+      this.store.setItem("lit-auth-signature", JSON.stringify(authMethod));
+      const pkp = await this.mintPKP()
+      this.pkps = pkp
+      // await this.getPKPWalletConnect()
+      await this.createPKPWallet()
+      // return authMethod;
+      // Get session signatures for the given PKP public key and auth method
+      // const sessionSigs = await provider.getSessionSigs({
+      //   authMethod: authMethod,
+      //   sessionSigsParams: {
+      //     chain: 'ethereum',
+      //     resourceAbilityRequests: [
+      //       resource: litResource,
+      //       ability: LitAbility.AccessControlConditionDecryption
+      //     ],
+      //   },
+      // });
+      }
+
+
+
+  }
+
+  async mintPKP() {
+    let authSig = await this.getAuthSig()
+    if(authSig && authSig != "") {
+      // const authSig = JSON.parse(_authSig);
+
+      const existingPKP = await this.provider?.fetchPKPsThroughRelayer(authSig)
+
+      if (!existingPKP || existingPKP?.length === 0) {
+        const tx = await this.provider?.mintPKPThroughRelayer(authSig)
+        console.log('new pkp tx', tx)
+        const newPKP = await this.provider?.fetchPKPsThroughRelayer(authSig)
+        // this.pkps = newPKP[newPKP.length - 1].publicKey
+        this.pkps = newPKP[0].publicKey
+        return this.pkps
+      }
+      // console.log('old pkp', existingPKP)
+      // this.pkps = existingPKP[0].publicKey
+      return existingPKP[0].publicKey
+      // return authSig;
+    }
+  }
+
+  // async getPKPWalletConnect () {
+  //   const authSig = await this.store?.getItem("lit-auth-signature");
+  //   if (!authSig || !this.pkps) throw new Error('you must authenticate first')
+  //   const pkpClient = new PKPClient({
+  //     controllerAuthSig: JSON.parse(authSig),
+  //     // Or you can also pass in controllerSessionSigs
+  //     pkpPubKey: this.pkps,
+  //   });
+  //   await pkpClient.connect();
+  //   const config = {
+  //     projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
+  //     metadata: {
+  //       name: 'pact.social',
+  //       description: 'A dapp using WalletConnect AuthClient',
+  //       url: 'localhost:3000',
+  //       icons: ['https://litprotocol.com/favicon.png'],
+  //     },
+  //   };
+  //   const pkpWalletConnect = new PKPWalletConnect();
+  //   await pkpWalletConnect.initWalletConnect(config);
+  //   pkpWalletConnect.addPKPClient(pkpClient)
+  //   console.log('pkp connector wc', pkpWalletConnect.getPendingSessionRequests())
+
+  //   pkpWalletConnect.on('session_proposal', async (proposal) => {
+  //     console.log('Received session proposal: ', proposal);
+    
+  //     // Accept session proposal
+  //     await pkpWalletConnect.approveSessionProposal(proposal);
+    
+  //     // Log active sessions
+  //     const sessions = Object.values(pkpWalletConnect.getActiveSessions());
+  //     for (const session of sessions) {
+  //       const { name, url } = session.peer.metadata;
+  //       console.log(`Active Session: ${name} (${url})`);
+  //     }
+  //   });
+
+  //   // const uri = ''
+    
+  //   const authClient = await AuthClient.init({
+  //     projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
+  //     metadata: {
+  //       name: 'pact.social',
+  //       description: 'A dapp using WalletConnect AuthClient',
+  //       url: 'localhost:3000',
+  //       icons: ['https://litprotocol.com/favicon.png'],
+  //     }
+  //   })
+  //   try {
+
+  //     console.log('pkp wc pending req', await authClient.getPendingRequests())
+  //     console.log('pkp wc pending req', await pkpWalletConnect.getPendingSessionRequests())
+  //     console.log('pkp wc pending req', pkpWalletConnect, authClient)
+
+  //     // const { topic, uri } = await authClient.core.pairing.create()
+  //     // const resp = authClient.request({
+  //     //   aud: 'http://localhost:3000',
+  //     //   domain: 'localhost:3000',
+  //     //   chainId: 'eip155:1',
+  //     //   type: 'eip4361',
+  //     //   nonce: generateNonce()
+  //     // })
+  //     // console.log('pkp resp', uri)
+  //     // console.log('pkp wc uri', uri, topic)
+  //     // await pkpWalletConnect.pair({ uri: uri });
+  //     // a
+  //   } catch (error) {
+  //     console.log('error wc uri', error)
+  //   }
+  // }
+
+  async createPKPWallet() {
+    if (this.pkpWallet) return this.pkpWallet
+    const authSig = await this.getAuthSig()
+    if (!authSig || !this.pkps) throw new Error('you must authenticate first')
+    const pkpWallet = new PKPEthersWallet({
+      controllerAuthSig: authSig,
+      // Or you can also pass in controllerSessionSigs
+      pkpPubKey: this.pkps,
+      rpc: "https://chain-rpc.litprotocol.com/http",
+      // rpc: 'https://eth-mainnet.g.alchemy.com/v2/IDWVV0sgoqdHQAgWzE0-BWs3088ibvJH',
+    });
+    await pkpWallet.init();
+    console.log('pkpWallet', pkpWallet)
+    this.pkpWallet = pkpWallet;
+    return pkpWallet;
+  }
+
+  getPKPWallet () {
+    return this.pkpWallet
   }
 
   async connect() {
@@ -57,6 +245,10 @@ export class Lit {
 
   getClient() {
     return this.litNodeClient;
+  }
+
+  getAuthClient() {
+    return this.litAuthClient;
   }
 
   isValid(authSig: AuthSig) {
@@ -90,8 +282,8 @@ export class Lit {
       }
       
       /** Step 3: Save signature in local storage while referencing address */
-      // let __authSig = await Lit.getAuthSig(store)
-      // store.setItem("lit-auth-signature-" + account, JSON.stringify(__authSig));
+      const __authSig = await Lit.getAuthSig(store)
+      store.setItem("lit-auth-signature-" + account, JSON.stringify(__authSig));
       this.account = account;
   
     /** Step 3: Return results */
@@ -101,15 +293,23 @@ export class Lit {
     }
   }
 
+  async getAuthSig() {
+    if (!this.store) return
+    return Lit.getAuthSig(this.store)
+  }
+
   /** Retrieve user's authsig from localStorage */
   static async getAuthSig(store: Store) {
     let _authSig = await store.getItem("lit-auth-signature")
     if(_authSig && _authSig != "") {
       const authSig = JSON.parse(_authSig);
       return authSig;
+    // } 
+    // else if (false) {
+
     } else {
-      console.log("User not authenticated to Lit Protocol for messages")
-      throw new Error("User not authenticated to Lit Protocol for messages");
+      console.error("User not authenticated to Lit Protocol for messages")
+      // throw new Error("User not authenticated to Lit Protocol for messages");
     }
   }
 
@@ -397,8 +597,17 @@ export function generateAccessControlConditionsForRecipients(recipients: any[]) 
   };
 }
 
-// export const litClient = Lit;
-
+ /** This function will execute a Lit Action and return the results */
+export const executeLitAction = async (litClient: LitJsSdk.LitNodeClient, action: ExecuteJsProps) => {
+  let results;
+  try {
+    results = await litClient.executeJs(action);
+  } catch(e) {
+    console.log("Error running Lit Action: ", e);
+    return;
+  }
+  return results;
+}
 
 /** Default AuthSig to be used to write content */
 export const evmEmptyAuthSig = {

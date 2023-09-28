@@ -30,7 +30,8 @@ export default function useLit() {
 
     } catch(error: any) {
       if (address && provider) {
-        await litClient.generateLitSignatureV2(provider, address.toLowerCase(), 'ethereum', store)
+        // await litClient.generateLitSignatureV2(provider, address.toLowerCase(), 'ethereum', store)
+        await litClient.googleLogin()
       }
 
       setLoading(false)

@@ -9,8 +9,8 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import {
   RainbowKitProvider,
   getDefaultWallets,
-  RainbowKitAuthenticationProvider,
   darkTheme,
+  connectorsForWallets,
 } from '@rainbow-me/rainbowkit';
 // import {
 //   argentWallet,
@@ -25,11 +25,12 @@ import { AnalyticsProvider } from 'use-analytics'
 
 import {CeramicWrapper} from "../context";
 import NavBar from '../components/navbar';
-import { LitProvider } from '../context/lit';
+import { LitProvider, litClient } from '../context/lit';
 import analytics from '../context/analytics';
 import { ReactElement, ReactNode } from 'react';
 import { type NextPage } from 'next';
 import { AuthenticationProvider } from '../context/authentication';
+import { PKPConnector } from '../lib/pkpConnector';
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -42,6 +43,8 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
+const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string
+
 const { chains, publicClient } = configureChains(
   [
     mainnet,
@@ -53,9 +56,9 @@ const { chains, publicClient } = configureChains(
   [publicProvider()]
 );
 
-const { connectors } = getDefaultWallets({
+const { wallets } = getDefaultWallets({
   appName: 'pact.social',
-  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
+  projectId,
   chains,
 });
 
@@ -63,17 +66,69 @@ const appInfo = {
   appName: 'pact.social',
 };
 
-// const connectors = connectorsForWallets([
-//   ...wallets,
-//   {
-//     groupName: 'Other',
-//     wallets: [
-//       argentWallet({ chains }),
-//       trustWallet({ chains }),
-//       ledgerWallet({ chains }),
-//     ],
-//   },
-// ]);
+const connectors = connectorsForWallets([
+  ...wallets,
+  {
+    groupName: 'Other',
+    wallets: [
+      // argentWallet({ projectId, chains }),
+      // trustWallet({ projectId, chains }),
+      // ledgerWallet({ projectId, chains }),
+      {
+        id: 'google-pkp',
+        name: 'Connect Google',
+        iconUrl: 'https://my-image.xyz',
+        iconBackground: '#0c2f78',
+        downloadUrls: {
+          // android: 'https://play.google.com/store/apps/details?id=my.wallet',
+          // ios: 'https://apps.apple.com/us/app/my-wallet',
+          chrome: 'https://chrome.google.com/webstore/detail/my-wallet',
+          // qrCode: 'https://my-wallet/qr',
+        },
+        installed: true,
+        createConnector: () => {
+          console.log('create pkpConnector')
+          return {
+            connector: new PKPConnector({
+              chains,
+              options: {
+                // name: 'google',
+                // getProvider: () => {
+
+                // }
+                lit: litClient
+              },
+            }),
+            mobile: {
+              getUri: async () => {
+                console.log('pkpConnector mobile uri')
+                litClient.googleLogin()
+                return ''
+              },
+            },
+            desktop: {
+              getUri: async () => {
+                console.log('pkpConnector desktop uri')
+                litClient.googleLogin()
+                return ''
+              },
+            },
+            qrCode: {
+              getUri: async () => {
+                console.log('pkpConnector QR uri')
+                litClient.googleLogin()
+                return ''
+              },
+            },
+            // mobile: {},
+            // chrome: {},
+            // qrCode: undefined,
+          }
+        }
+      }
+    ],
+  },
+]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,

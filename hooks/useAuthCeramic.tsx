@@ -4,6 +4,7 @@ import { authenticateCeramic, logoutCeramic, restoreAuth } from "../utils";
 import { useCallback, useEffect, useState } from "react";
 import { DID } from "dids";
 import { type VerifyOptions, verifyTimeChecks } from "@didtools/cacao";
+import { authenticatePkp } from "../utils/pkpCeramic";
 
 
 export default function useAuthCeramic () {
@@ -15,8 +16,24 @@ export default function useAuthCeramic () {
     dispatch({
       type: 'toggleIsAuthenticating',
     })
-    const provider = await connector?.getProvider()
+    // console.log('connector', connector)
+
+    // if (connector?.id === 'pkp') {
+    //   const { status, session, error } = authenticatePkp(
+    //     connector.getLitClient(),
+    //     {
+    //       address: '',
+    //       ipfs: '',
+    //       accessToken: '',
+    //       authMethodType
+    //       userId: 
+    //     }
+    //   )
+    // } else {
+
+    // }
     try {
+      const provider = await connector?.getProvider()
       const did = await authenticateCeramic(address, provider, ceramic, composeClient)
       dispatch({
         type: 'setDID',
@@ -34,6 +51,8 @@ export default function useAuthCeramic () {
   }, [address, ceramic, composeClient, connector, dispatch])
 
   const restoreSession = async () => {
+    const provider = await connector?.getProvider()
+    // if (provider && provider.)
     const sessionDID = await restoreAuth(address, ceramic, composeClient)
     if (!sessionDID) return false
     

@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect } from "react";
 import { Lit } from "../lib/litUtils";
 
-const litClient = new Lit();
+export const litClient = new Lit();
 export const LitContext = createContext<{litClient: Lit;}>({
   litClient,
 });

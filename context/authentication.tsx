@@ -6,7 +6,7 @@ import useLit from "../hooks/useLit";
 import { useAccount } from "wagmi";
 import LitModal from "../components/authentication/litModal";
 
-function useModalStateValue() {
+export function useModalStateValue() {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return {
