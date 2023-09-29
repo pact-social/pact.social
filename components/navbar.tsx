@@ -40,7 +40,6 @@ export default function NavBar({ children }: NavbarProps) {
                 href="/"
               >
                 <LogoBrand height={24} white></LogoBrand>
-                <div className=" text-gray-300 font-sans text-sm font-thin">testnet</div>
               </Link>
             </div>
             <div className="flex-none hidden lg:flex lg:flex-1 lg:navbar-center justify-center">
@@ -74,7 +73,6 @@ export default function NavBar({ children }: NavbarProps) {
               onClick={toggle}
             >
               <LogoBrand height={24} white></LogoBrand>
-              <div className=" text-gray-300 font-sans text-sm font-thin">testnet</div>
             </Link>
           </li>
           <li className="block">

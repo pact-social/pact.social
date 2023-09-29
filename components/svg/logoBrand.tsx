@@ -3,7 +3,9 @@ type SvgType = {
   white?: boolean;
 }
 export default function LogoBrand({height = 26, white = true, ...rest}: SvgType) {
+  const isTestnet = process.env.NEXT_PUBLIC_NETWORK === 'testnet'
   return (
+    <>
     <svg height={height} width={height * 183 / 26} viewBox="0 0 183 26" xmlns="http://www.w3.org/2000/svg">
       <g fill="none">
         <g fillRule="evenodd" fill={white ? '#ffffff' : '#000000'}>
@@ -27,6 +29,7 @@ export default function LogoBrand({height = 26, white = true, ...rest}: SvgType)
         <path d="M20.331 26C21.793 26 23 24.765 23 23.237c0-1.528-1.175-2.73-2.669-2.73-1.524 0-2.7 1.202-2.7 2.73S18.838 26 20.331 26z" fill="#F000B8"/>
       </g>
     </svg>
-
+    {isTestnet && <div className=" text-gray-300 font-sans text-sm font-thin">testnet</div>}
+    </>
   )
 }
