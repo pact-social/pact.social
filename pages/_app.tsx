@@ -12,11 +12,6 @@ import {
   darkTheme,
   connectorsForWallets,
 } from '@rainbow-me/rainbowkit';
-// import {
-//   argentWallet,
-//   trustWallet,
-//   ledgerWallet,
-// } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -67,24 +62,14 @@ const appInfo = {
 };
 
 const connectors = connectorsForWallets([
-  ...wallets,
   {
-    groupName: 'Other',
+    groupName: 'Easy',
     wallets: [
-      // argentWallet({ projectId, chains }),
-      // trustWallet({ projectId, chains }),
-      // ledgerWallet({ projectId, chains }),
       {
         id: 'google-pkp',
-        name: 'Connect Google',
-        iconUrl: 'https://my-image.xyz',
-        iconBackground: '#0c2f78',
-        downloadUrls: {
-          // android: 'https://play.google.com/store/apps/details?id=my.wallet',
-          // ios: 'https://apps.apple.com/us/app/my-wallet',
-          chrome: 'https://chrome.google.com/webstore/detail/my-wallet',
-          // qrCode: 'https://my-wallet/qr',
-        },
+        name: 'sign-in with Google',
+        iconUrl: '/google.svg',
+        iconBackground: '',
         installed: true,
         createConnector: () => {
           console.log('create pkpConnector')
@@ -92,42 +77,33 @@ const connectors = connectorsForWallets([
             connector: new PKPConnector({
               chains,
               options: {
-                // name: 'google',
-                // getProvider: () => {
-
-                // }
                 lit: litClient
               },
             }),
             mobile: {
               getUri: async () => {
-                console.log('pkpConnector mobile uri')
                 litClient.googleLogin()
                 return ''
               },
             },
             desktop: {
               getUri: async () => {
-                console.log('pkpConnector desktop uri')
                 litClient.googleLogin()
                 return ''
               },
             },
             qrCode: {
               getUri: async () => {
-                console.log('pkpConnector QR uri')
                 litClient.googleLogin()
                 return ''
               },
             },
-            // mobile: {},
-            // chrome: {},
-            // qrCode: undefined,
           }
         }
       }
     ],
   },
+  ...wallets,
 ]);
 
 const wagmiConfig = createConfig({

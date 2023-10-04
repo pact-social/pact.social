@@ -27,6 +27,7 @@
     "@heroicons/react": "^2.0.16",
     "@ipld/dag-cbor": "^9.0.3",
     "@lit-protocol/auth-browser": "^2.2.54",
+    "@lit-protocol/auth-helpers": "^2.2.54",
     "@lit-protocol/constants": "^2.2.54",
     "@lit-protocol/lit-auth-client": "^2.2.54",
     "@lit-protocol/lit-node-client": "^2.2.54",

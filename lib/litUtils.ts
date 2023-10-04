@@ -1,15 +1,13 @@
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
-import { AuthMethodType, ProviderType } from '@lit-protocol/constants';
-import type { AuthMethod, AuthSig, ExecuteJsProps } from '@lit-protocol/types'
-import { PKPClient } from '@lit-protocol/pkp-client';
+import { ProviderType } from '@lit-protocol/constants';
+import type { AuthMethod, AuthSig, ExecuteJsProps, GetSessionSigsProps, SessionSigs } from '@lit-protocol/types'
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
-import { PKPWalletConnect } from '@lit-protocol/pkp-walletconnect';
 import { ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers"
 import { ethConnect } from '@lit-protocol/auth-browser';
 import { Store } from './store';
 import { SESSION_DAYS } from './constants';
-import { LitAuthClient, GoogleProvider, isSignInRedirect, BaseProvider } from '@lit-protocol/lit-auth-client';'@lit-protocol/lit-auth-client';
-import AuthClient, { generateNonce } from '@walletconnect/auth-client'
+import { LitAuthClient, GoogleProvider, isSignInRedirect } from '@lit-protocol/lit-auth-client';'@lit-protocol/lit-auth-client';
+import { LitAbility, LitActionResource } from '@lit-protocol/auth-helpers';
 
 export function decodeb64(b64String: string) {
   return new Uint8Array(Buffer.from(b64String, "base64"));
@@ -45,11 +43,12 @@ export class Lit {
   private litNodeClient: LitJsSdk.LitNodeClient
   private litAuthClient: LitAuthClient
   public account?: string
-  private redirectUri: string = 'http://localhost:3000/auth/lit'
+  private redirectUri: string = `${process.env.NEXT_PUBLIC_APP_DOMAIN}/auth/lit`
   private store?: Store;
   private provider: GoogleProvider;
-  private pkps?: string;
+  private pkp?: string;
   private pkpWallet?: PKPEthersWallet;
+  private sessionSigs?: SessionSigs;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -58,7 +57,7 @@ export class Lit {
     const client = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: true,
       debug: false,
-      // litNetwork: "cayenne",
+      litNetwork: "serrano",
     })
     this.litNodeClient = client
     const authClient = new LitAuthClient({
@@ -74,12 +73,17 @@ export class Lit {
     this.litAuthClient.initProvider(ProviderType.Google, {
       // The URL of your web app where users will be redirected after authentication
       redirectUri: this.redirectUri,
+
     })
 
     const provider = this.litAuthClient.getProvider(
       ProviderType.Google,
     ) as GoogleProvider;
     this.provider = provider
+  }
+
+  getPublicKey() {
+    return this.pkp || 'undefined'
   }
   
   async googleLogin() {    
@@ -97,136 +101,100 @@ export class Lit {
 
       // Get auth method object that has the OAuth token from redirect callback
       const authMethod: AuthMethod = await this.provider.authenticate();
-      console.log('authMethod', authMethod, this.provider)
-      this.store.setItem("lit-auth-signature", JSON.stringify(authMethod));
+
+      this.store.setItem("lit-auth-method", JSON.stringify(authMethod));
       const pkp = await this.mintPKP()
-      this.pkps = pkp
-      // await this.getPKPWalletConnect()
+      this.pkp = pkp
       await this.createPKPWallet()
-      // return authMethod;
-      // Get session signatures for the given PKP public key and auth method
-      // const sessionSigs = await provider.getSessionSigs({
-      //   authMethod: authMethod,
-      //   sessionSigsParams: {
-      //     chain: 'ethereum',
-      //     resourceAbilityRequests: [
-      //       resource: litResource,
-      //       ability: LitAbility.AccessControlConditionDecryption
-      //     ],
-      //   },
-      // });
       }
-
-
 
   }
+  // Get session signatures for the given PKP public key and auth method
+  async getSessionSigs({
+    pkpPublicKey,
+    authMethod,
+    sessionSigsParams,
+  }: {
+    pkpPublicKey: string;
+    authMethod: AuthMethod;
+    sessionSigsParams: GetSessionSigsProps;
+  }) {
+    const sessionSigs = await this.provider.getSessionSigs({
+      pkpPublicKey,
+      authMethod,
+      sessionSigsParams,
+      litNodeClient: this.litNodeClient,
+    });
+    return sessionSigs;
+  } 
 
   async mintPKP() {
-    let authSig = await this.getAuthSig()
-    if(authSig && authSig != "") {
-      // const authSig = JSON.parse(_authSig);
+    let authMethod = await this.getAuthMethod()
+    if(authMethod) {
+      // const exp = this.litNodeClient.getExpiration()
 
-      const existingPKP = await this.provider?.fetchPKPsThroughRelayer(authSig)
+      const existingPKP = await this.provider?.fetchPKPsThroughRelayer(authMethod)
 
       if (!existingPKP || existingPKP?.length === 0) {
-        const tx = await this.provider?.mintPKPThroughRelayer(authSig)
-        console.log('new pkp tx', tx)
-        const newPKP = await this.provider?.fetchPKPsThroughRelayer(authSig)
-        // this.pkps = newPKP[newPKP.length - 1].publicKey
-        this.pkps = newPKP[0].publicKey
-        return this.pkps
+        const tx = await this.provider?.mintPKPThroughRelayer(authMethod)
+
+        const newPKP = await this.provider?.fetchPKPsThroughRelayer(authMethod)
+        this.pkp = newPKP[0].publicKey
+        return this.pkp
       }
-      // console.log('old pkp', existingPKP)
-      // this.pkps = existingPKP[0].publicKey
+      this.pkp = existingPKP[0].publicKey
       return existingPKP[0].publicKey
-      // return authSig;
     }
   }
 
-  // async getPKPWalletConnect () {
-  //   const authSig = await this.store?.getItem("lit-auth-signature");
-  //   if (!authSig || !this.pkps) throw new Error('you must authenticate first')
-  //   const pkpClient = new PKPClient({
-  //     controllerAuthSig: JSON.parse(authSig),
-  //     // Or you can also pass in controllerSessionSigs
-  //     pkpPubKey: this.pkps,
-  //   });
-  //   await pkpClient.connect();
-  //   const config = {
-  //     projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
-  //     metadata: {
-  //       name: 'pact.social',
-  //       description: 'A dapp using WalletConnect AuthClient',
-  //       url: 'localhost:3000',
-  //       icons: ['https://litprotocol.com/favicon.png'],
-  //     },
-  //   };
-  //   const pkpWalletConnect = new PKPWalletConnect();
-  //   await pkpWalletConnect.initWalletConnect(config);
-  //   pkpWalletConnect.addPKPClient(pkpClient)
-  //   console.log('pkp connector wc', pkpWalletConnect.getPendingSessionRequests())
+  async getPkpSessionSigs() {
+    const authMethod = await this.getAuthMethod()
+    if(!this.pkp || !authMethod) return
 
-  //   pkpWalletConnect.on('session_proposal', async (proposal) => {
-  //     console.log('Received session proposal: ', proposal);
-    
-  //     // Accept session proposal
-  //     await pkpWalletConnect.approveSessionProposal(proposal);
-    
-  //     // Log active sessions
-  //     const sessions = Object.values(pkpWalletConnect.getActiveSessions());
-  //     for (const session of sessions) {
-  //       const { name, url } = session.peer.metadata;
-  //       console.log(`Active Session: ${name} (${url})`);
-  //     }
-  //   });
-
-  //   // const uri = ''
-    
-  //   const authClient = await AuthClient.init({
-  //     projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
-  //     metadata: {
-  //       name: 'pact.social',
-  //       description: 'A dapp using WalletConnect AuthClient',
-  //       url: 'localhost:3000',
-  //       icons: ['https://litprotocol.com/favicon.png'],
-  //     }
-  //   })
-  //   try {
-
-  //     console.log('pkp wc pending req', await authClient.getPendingRequests())
-  //     console.log('pkp wc pending req', await pkpWalletConnect.getPendingSessionRequests())
-  //     console.log('pkp wc pending req', pkpWalletConnect, authClient)
-
-  //     // const { topic, uri } = await authClient.core.pairing.create()
-  //     // const resp = authClient.request({
-  //     //   aud: 'http://localhost:3000',
-  //     //   domain: 'localhost:3000',
-  //     //   chainId: 'eip155:1',
-  //     //   type: 'eip4361',
-  //     //   nonce: generateNonce()
-  //     // })
-  //     // console.log('pkp resp', uri)
-  //     // console.log('pkp wc uri', uri, topic)
-  //     // await pkpWalletConnect.pair({ uri: uri });
-  //     // a
-  //   } catch (error) {
-  //     console.log('error wc uri', error)
-  //   }
-  // }
+    const sessionSigs = await this.getSessionSigs({
+      pkpPublicKey: this.pkp,
+      authMethod: authMethod,
+      sessionSigsParams: {
+        chain: 'ethereum',
+        expiration: new Date(Date.now() + 1000 * 60 * 60 * 24 * SESSION_DAYS).toISOString(), // 1 week    
+        resourceAbilityRequests: [
+          {
+            resource: new LitActionResource('*'),
+            ability: LitAbility.PKPSigning,
+          },
+        ]
+      }
+    })
+    this.sessionSigs = sessionSigs
+    return sessionSigs
+  }
 
   async createPKPWallet() {
     if (this.pkpWallet) return this.pkpWallet
-    const authSig = await this.getAuthSig()
-    if (!authSig || !this.pkps) throw new Error('you must authenticate first')
+    const authSig = await this.getWalletSig()
+    if(!authSig && this.pkp) {
+      const sessionSigs = await this.getPkpSessionSigs()
+      const pkpWallet = new PKPEthersWallet({
+        controllerSessionSigs: sessionSigs,
+        // Or you can also pass in controllerSessionSigs
+        pkpPubKey: this.pkp,
+        rpc: "https://chain-rpc.litprotocol.com/http",
+        // rpc: 'https://eth-mainnet.g.alchemy.com/v2/',
+      });
+      await pkpWallet.init();
+      this.pkpWallet = pkpWallet;
+      return pkpWallet;
+    }
+    // const authMethod = await this.getAuthMethod()
+    if (!authSig || !this.pkp) throw new Error('you must authenticate first')
     const pkpWallet = new PKPEthersWallet({
       controllerAuthSig: authSig,
       // Or you can also pass in controllerSessionSigs
-      pkpPubKey: this.pkps,
+      pkpPubKey: this.pkp,
       rpc: "https://chain-rpc.litprotocol.com/http",
-      // rpc: 'https://eth-mainnet.g.alchemy.com/v2/IDWVV0sgoqdHQAgWzE0-BWs3088ibvJH',
+      // rpc: 'https://eth-mainnet.g.alchemy.com/v2/',
     });
     await pkpWallet.init();
-    console.log('pkpWallet', pkpWallet)
     this.pkpWallet = pkpWallet;
     return pkpWallet;
   }
@@ -240,6 +208,7 @@ export class Lit {
   }
 
   async disconnect() {
+    await this.store?.removeItem('lit-auth-method')
     ethConnect.disconnectWeb3();
   }
 
@@ -251,7 +220,8 @@ export class Lit {
     return this.litAuthClient;
   }
 
-  isValid(authSig: AuthSig) {
+  isValid(authSig?: AuthSig) {
+    if (!authSig) return false
     return !ethConnect.getMustResign(authSig, null)
   }
 
@@ -298,18 +268,53 @@ export class Lit {
     return Lit.getAuthSig(this.store)
   }
 
+  async getAuthMethod() {
+    if (!this.store) return
+    return Lit.getAuthMethod(this.store)
+  }
+  
+  async getWalletSig() {
+    if (!this.store) return
+    return Lit.getWalletSig(this.store)
+  }
+
   /** Retrieve user's authsig from localStorage */
-  static async getAuthSig(store: Store) {
+  static async getAuthSig(store: Store): Promise<AuthSig | undefined> {
     let _authSig = await store.getItem("lit-auth-signature")
     if(_authSig && _authSig != "") {
-      const authSig = JSON.parse(_authSig);
+      let authSig = JSON.parse(_authSig);
+      // if(authSig?.authMethodType === 6) {
+      //   authSig = JSON.parse(await store.getItem("lit-wallet-sig") || '') as AuthMethod
+      // }
       return authSig;
-    // } 
-    // else if (false) {
-
+    } 
+    else if (_authSig === "" || !_authSig) {
+      const _authSig = await store.getItem("lit-wallet-sig")
+      if (_authSig) return JSON.parse(_authSig)
     } else {
       console.error("User not authenticated to Lit Protocol for messages")
+
       // throw new Error("User not authenticated to Lit Protocol for messages");
+    }
+  }
+  
+  static async getAuthMethod(store: Store): Promise<AuthMethod | undefined> {
+    let _authMethod = await store.getItem("lit-auth-method")
+    if(_authMethod && _authMethod != "") {
+      let authMethod = JSON.parse(_authMethod);
+      return authMethod;
+    } else {
+      console.error("User not authenticated to Lit Protocol for messages")
+    }
+  }
+  
+  static async getWalletSig(store: Store): Promise<AuthSig | undefined> {
+    let _authSig = await store.getItem("lit-wallet-sig")
+    if(_authSig && _authSig != "") {
+      let authSig = JSON.parse(_authSig);
+      return authSig;
+    } else {
+      console.error("User not authenticated to Lit Protocol for messages")
     }
   }
 

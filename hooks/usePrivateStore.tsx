@@ -106,6 +106,7 @@ export default function usePrivateStore() {
   }
 
   const add = async (input: PactSignature, __typename: string, id: string) => {
+    await connect()
     const {accessControlConditions} = generateAccessControlConditionsForRecipients([did?.parent])
     const newClearStream = {...input, __typename, id}
     const encryptedContent = await lit.encryptString(JSON.stringify(newClearStream), 'ethereum', accessControlConditions)

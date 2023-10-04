@@ -21,7 +21,8 @@ export default function useLit() {
     const store = new Store()
     try {
       const auth = await Lit.getAuthSig(store);
-      if ((auth.address !== address?.toLowerCase() && provider) || !litClient.isValid(auth)) {
+
+      if ((auth?.address.toLowerCase() !== address?.toLowerCase() && provider) || !litClient.isValid(auth)) {
         throw new Error('invalid lit auth')
       }
       setLoading(false)
@@ -29,9 +30,9 @@ export default function useLit() {
       return litClient
 
     } catch(error: any) {
+
       if (address && provider) {
-        // await litClient.generateLitSignatureV2(provider, address.toLowerCase(), 'ethereum', store)
-        await litClient.googleLogin()
+        await litClient.generateLitSignatureV2(provider, address.toLowerCase(), 'ethereum', store)
       }
 
       setLoading(false)
@@ -41,12 +42,16 @@ export default function useLit() {
   }
 
   const restoreLit = async () => {
+    setLoading(true)
+    setConnected(false)
     const store = new Store()
     try {
       const authSig = await Lit.getAuthSig(store);
-      if(authSig.address !== address?.toLowerCase() || !litClient.isValid(authSig)) {
+      if(authSig?.address.toLowerCase() !== address?.toLowerCase() || !litClient.isValid(authSig)) {
+        setLoading(false)
         throw new Error('auth invalid')
       }
+      setLoading(false)
       setConnected(true)
       return true
     } catch (error) {

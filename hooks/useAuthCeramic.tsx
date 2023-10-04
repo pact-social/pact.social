@@ -2,36 +2,22 @@ import { useAccount } from "wagmi";
 import { useCeramicContext } from "../context";
 import { authenticateCeramic, logoutCeramic, restoreAuth } from "../utils";
 import { useCallback, useEffect, useState } from "react";
-import { DID } from "dids";
 import { type VerifyOptions, verifyTimeChecks } from "@didtools/cacao";
 import { authenticatePkp } from "../utils/pkpCeramic";
+import { useLitContext } from "../context/lit";
 
 
 export default function useAuthCeramic () {
   const { connector, address } = useAccount();
-  const { ceramic, composeClient, dispatch, state: { isAuthenticated, isAuthenticating } } = useCeramicContext();
+  const { ceramic, composeClient, dispatch } = useCeramicContext();
   const [ authRequested, setAuthRequested ] = useState<boolean>(false);
+  const { litClient: lit } = useLitContext()
 
   const connectCeramic = useCallback(async () => {
     dispatch({
       type: 'toggleIsAuthenticating',
     })
-    // console.log('connector', connector)
 
-    // if (connector?.id === 'pkp') {
-    //   const { status, session, error } = authenticatePkp(
-    //     connector.getLitClient(),
-    //     {
-    //       address: '',
-    //       ipfs: '',
-    //       accessToken: '',
-    //       authMethodType
-    //       userId: 
-    //     }
-    //   )
-    // } else {
-
-    // }
     try {
       const provider = await connector?.getProvider()
       const did = await authenticateCeramic(address, provider, ceramic, composeClient)
@@ -51,10 +37,24 @@ export default function useAuthCeramic () {
   }, [address, ceramic, composeClient, connector, dispatch])
 
   const restoreSession = async () => {
-    const provider = await connector?.getProvider()
-    // if (provider && provider.)
     const sessionDID = await restoreAuth(address, ceramic, composeClient)
-    if (!sessionDID) return false
+    if (!sessionDID) {
+      const pkpWallet = lit.getPKPWallet()
+      if(pkpWallet) {
+        const address = await pkpWallet.getAddress()
+        const { session, status } = await authenticatePkp(pkpWallet, {
+          address,
+        })
+        if (!session) return false
+        await restoreAuth(address, ceramic, composeClient)
+        dispatch({
+          type: 'setDID',
+          payload: { did: session.did }
+        })
+        return true
+      }
+      return false
+    }
     
     try {
       verifyTimeChecks(sessionDID.capability, {} as VerifyOptions)
@@ -80,7 +80,7 @@ export default function useAuthCeramic () {
       connectCeramic()
       setAuthRequested(false);
     }
-  }, [connector, authRequested, setAuthRequested, connectCeramic])
+  }, [authRequested, connectCeramic, connector, setAuthRequested])
 
   return {
     connectCeramic,

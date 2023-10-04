@@ -37,6 +37,9 @@ dependencies:
   '@lit-protocol/auth-browser':
     specifier: ^2.2.54
     version: registry.npmjs.org/@lit-protocol/auth-browser@2.2.54(@ethersproject/contracts@5.7.0)(@ethersproject/hash@5.7.0)(@ethersproject/providers@5.7.2)(@ethersproject/wallet@5.7.0)(react@18.2.0)
+  '@lit-protocol/auth-helpers':
+    specifier: ^2.2.54
+    version: registry.npmjs.org/@lit-protocol/auth-helpers@2.2.54(ethers@5.0.0)
   '@lit-protocol/constants':
     specifier: ^2.2.54
     version: registry.npmjs.org/@lit-protocol/constants@2.2.54
@@ -7147,6 +7150,19 @@ packages:
       - lokijs
       - react
       - utf-8-validate
+    dev: false
+
+  registry.npmjs.org/@lit-protocol/auth-helpers@2.2.54(ethers@5.0.0):
+    resolution: {integrity: sha512-moaPHLNUsyZbKD63ylb9dmBAIEvJP7VY7pufZJkavx+quakjA6pgy8+6PcPqi+JuAo6vOqwIYNt4G66rrKYfEA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@lit-protocol/auth-helpers/-/auth-helpers-2.2.54.tgz}
+    id: registry.npmjs.org/@lit-protocol/auth-helpers/2.2.54
+    name: '@lit-protocol/auth-helpers'
+    version: 2.2.54
+    dependencies:
+      siwe: registry.npmjs.org/siwe@2.1.4(ethers@5.0.0)
+      siwe-recap: registry.npmjs.org/siwe-recap@0.0.2-alpha.0(ethers@5.0.0)
+      tslib: registry.npmjs.org/tslib@2.6.2
+    transitivePeerDependencies:
+      - ethers
     dev: false
 
   registry.npmjs.org/@lit-protocol/auth-helpers@2.2.54(ethers@5.7.2):
@@ -32094,6 +32110,20 @@ packages:
     version: 1.0.5
     dev: false
 
+  registry.npmjs.org/siwe-recap@0.0.2-alpha.0(ethers@5.0.0):
+    resolution: {integrity: sha512-xqFUnvrACWW/Q4s5HQ02avg8IyH2RcgkUzfvN4scYaaHErotLVtTGDZkSS0sn/oNK4MXRt83lTqredsvXgt8iA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/siwe-recap/-/siwe-recap-0.0.2-alpha.0.tgz}
+    id: registry.npmjs.org/siwe-recap/0.0.2-alpha.0
+    name: siwe-recap
+    version: 0.0.2-alpha.0
+    peerDependencies:
+      ethers: ^5.5.1
+    dependencies:
+      canonicalize: registry.npmjs.org/canonicalize@2.0.0
+      ethers: registry.npmjs.org/ethers@5.0.0
+      multiformats: registry.npmjs.org/multiformats@11.0.2
+      siwe: registry.npmjs.org/siwe@2.1.4(ethers@5.0.0)
+    dev: false
+
   registry.npmjs.org/siwe-recap@0.0.2-alpha.0(ethers@5.7.2):
     resolution: {integrity: sha512-xqFUnvrACWW/Q4s5HQ02avg8IyH2RcgkUzfvN4scYaaHErotLVtTGDZkSS0sn/oNK4MXRt83lTqredsvXgt8iA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/siwe-recap/-/siwe-recap-0.0.2-alpha.0.tgz}
     id: registry.npmjs.org/siwe-recap/0.0.2-alpha.0
@@ -32106,6 +32136,21 @@ packages:
       ethers: registry.npmjs.org/ethers@5.7.2
       multiformats: registry.npmjs.org/multiformats@11.0.2
       siwe: registry.npmjs.org/siwe@2.1.4(ethers@5.7.2)
+
+  registry.npmjs.org/siwe@2.1.4(ethers@5.0.0):
+    resolution: {integrity: sha512-Dke1Qqa3mgiLm3vjqw/+SQ7dl8WV/Pfk3AlQBF94cBFydTYhztngqYrikzE3X5UTsJ6565dfVbQptszsuYZNYg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/siwe/-/siwe-2.1.4.tgz}
+    id: registry.npmjs.org/siwe/2.1.4
+    name: siwe
+    version: 2.1.4
+    peerDependencies:
+      ethers: ^5.6.8 || ^6.0.8
+    dependencies:
+      '@spruceid/siwe-parser': registry.npmjs.org/@spruceid/siwe-parser@2.0.2
+      '@stablelib/random': registry.npmjs.org/@stablelib/random@1.0.2
+      ethers: registry.npmjs.org/ethers@5.0.0
+      uri-js: registry.npmjs.org/uri-js@4.4.1
+      valid-url: registry.npmjs.org/valid-url@1.0.9
+    dev: false
 
   registry.npmjs.org/siwe@2.1.4(ethers@5.7.2):
     resolution: {integrity: sha512-Dke1Qqa3mgiLm3vjqw/+SQ7dl8WV/Pfk3AlQBF94cBFydTYhztngqYrikzE3X5UTsJ6565dfVbQptszsuYZNYg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/siwe/-/siwe-2.1.4.tgz}
