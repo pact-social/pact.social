@@ -22,8 +22,8 @@ export default function AuthLit () {
       }}
     >
       <div className="flex items-center justify-center h-full">
-        <div className="flex gap-3">
-          <span className="loading loading-ring loading-xs"></span>
+        <div className="flex gap-3 items-center">
+          <span className="loading loading-ring loading-lg"></span>
           <span>Securing your account</span>
         </div>
       </div>

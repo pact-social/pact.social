@@ -1,9 +1,7 @@
-import type * as LitJsSdk from '@lit-protocol/lit-node-client';
-import { Cacao, SiweMessage } from '@didtools/cacao';
-import { randomBytes, randomString } from '@stablelib/random';
+import { Cacao, SiweMessage } from '@didtools/cacao'
+import { randomBytes, randomString } from '@stablelib/random'
 import { DIDSession, createDIDKey, createDIDCacao } from 'did-session'
-import { evmEmptyAuthSig, executeLitAction } from "../lib/litUtils";
-import { PKPEthersWallet } from '@lit-protocol/pkp-ethers';
+import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
 
 export async function authenticatePkp(
   wallet: PKPEthersWallet,

@@ -9,7 +9,6 @@ export default function ConnectButton({ el }: {el?: ReactNode}) {
   const { isConnected } = useAccount();
   const { state: { isAuthenticated, isAuthenticating } } = useCeramicContext();
   
-  
   if (!isConnected) {
     return (
       <RainbowConnect />

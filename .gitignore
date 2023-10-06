@@ -1,5 +1,5 @@
 .next
-node_modules/*
+node_modules
 composedb.config.json
 admin_seed.txt
 .env

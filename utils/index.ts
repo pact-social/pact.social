@@ -1,9 +1,9 @@
-import { DIDSession } from "did-session";
-import { EthereumWebAuth, getAccountId } from "@didtools/pkh-ethereum";
-import type { CeramicApi } from "@ceramicnetwork/common"
-import type { ComposeClient } from "@composedb/client";
-import { DID } from "dids";
-import { SESSION_DAYS } from "../lib/constants";
+import { DIDSession } from 'did-session'
+import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum'
+import type { CeramicApi } from '@ceramicnetwork/common'
+import type { ComposeClient } from '@composedb/client'
+import { DID } from 'dids'
+import { SESSION_DAYS } from '../lib/constants'
 
 export const restoreAuth = async (address: any, ceramic: CeramicApi, compose: ComposeClient) => {
   const sessionStr = localStorage.getItem('ceramic-session') // for production you will want a better place than localStorage for your sessions.
