@@ -72,7 +72,6 @@ const connectors = connectorsForWallets([
         iconBackground: '',
         installed: true,
         createConnector: () => {
-          console.log('create pkpConnector')
           return {
             connector: new PKPConnector({
               chains,

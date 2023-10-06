@@ -9,6 +9,7 @@ import { useViewContext } from "../signBox";
 import VerifiedSign from "./verifiedSign";
 import { formatMessage } from "../../lib/pact-utils";
 import { CreatePactSignatureInput, PactSignatureVisibilityType } from "../../src/gql";
+import ShareView from "./share";
 
 export default function PublicSign() {
   const { address, connector, status } = useAccount()
@@ -59,7 +60,15 @@ export default function PublicSign() {
       `, {
         input
       });
-
+      // if signed with pkp, skip gitcoin passport
+      if (connector?.id === 'pkp') {
+        setView(
+          <>
+            <ShareView/>
+          </>
+        );
+        return
+      }
       setView(
         <>
           <VerifiedSign/>
