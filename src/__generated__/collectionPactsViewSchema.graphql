@@ -1,15 +1,15 @@
 
-  type CollectionPact @loadModel(id: "kjzl6hvfrbw6c7b18ohk5ove3ysm2lhrxjgzoho6fmw4h0nrsve4mz3ncc4ovnm") {
+  type CollectionPact @loadModel(id: "kjzl6hvfrbw6c7aya4dngb34ui7ig577c88hgx8nvwv9m6jhrz8t5lltmpp4bnu") {
     id: ID!
   }
 
-  type Pact @loadModel(id: "kjzl6hvfrbw6c6yeolo1iwxxk84j80fnmtkgufd5l9hibjolzcvu96ujgdm24h7") {
+  type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
     id: ID!
     collectionsPact: [CollectionPact] @relationFrom(model: "CollectionPact", property: "pactID")
     collectionsPactCount: Int! @relationCountFrom(model: "CollectionPact", property: "pactID")
   }
   
-  type Collection @loadModel(id: "kjzl6hvfrbw6c88ntknw9o3tqljpnvaymgnuv3kgiyj46848ffomybhrbx8ohep") {
+  type Collection @loadModel(id: "kjzl6hvfrbw6casztfoh45oath53d1fcpc4fyfx2nz93bgbt2re9yzv8pr5ucrh") {
     id: ID!
     collectionPacts: [CollectionPact] @relationFrom(model: "CollectionPact", property: "collectionID")
     collectionPactsCount: Int! @relationCountFrom(model: "CollectionPact", property: "collectionID")

@@ -16,8 +16,10 @@ export default function EmojiAvatar({
     <div
       className="avatar placeholder"
     >
-      <div className={"text-neutral-content ".concat(className || ' rounded-full w-8')} style={{backgroundColor}}>
-        <span className="text-md">{emoji}</span>
+      <div 
+        className={"text-neutral-content ".concat(className || ' rounded-full w-8')} style={{backgroundColor}}
+      >
+        <span className="">{emoji}</span>
       </div>
     </div>
   )

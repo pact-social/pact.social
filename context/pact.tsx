@@ -2,7 +2,12 @@ import { createContext, ReactNode, useContext } from "react";
 import usePact from "../hooks/usePact";
 import { Pact } from "../src/gql";
 
-export const PactContext = createContext<{pact?: Pact}>({});
+export const PactContext = createContext<{
+  pact?: Pact,
+  isLoading: boolean
+}>({ 
+  isLoading: false 
+});
 
 export const PactProvider = ({ 
   pactId, 
@@ -13,10 +18,11 @@ export const PactProvider = ({
 }) => {
   const {
     data,
+    isLoading,
   } = usePact({ stream: pactId })
 
   return (
-    <PactContext.Provider value={{pact: data}}>
+    <PactContext.Provider value={{pact: data, isLoading}}>
       {children}
     </PactContext.Provider>
   );
@@ -30,7 +36,7 @@ export const DraftPactProvider = ({
   children: ReactNode;
 }) => {
   return (
-    <PactContext.Provider value={{pact}}>
+    <PactContext.Provider value={{pact, isLoading: false}}>
       {children}
     </PactContext.Provider>
   )

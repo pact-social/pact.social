@@ -3,14 +3,14 @@ import { Connector } from 'wagmi/connectors'
 import { Lit } from './litUtils'
 import { WalletClient } from 'wagmi'
 
-export type PKPConnectorOptions = {
+export type PKPGoogleConnectorOptions = {
   /**
    * While "disconnected" with `shimDisconnect`, allows user to select a different PKP account (than the currently connected account) when trying to connect.
    */
   lit: Lit
 }
 
-export class PKPConnector extends Connector {
+export class PKPGoogleConnector extends Connector {
   name: string
   ready: boolean
 
@@ -23,7 +23,7 @@ export class PKPConnector extends Connector {
     options: options_,
   }: {
     chains?: Chain[]
-    options?: PKPConnectorOptions
+    options?: PKPGoogleConnectorOptions
   } = {}) {
     
     const options = {
@@ -94,7 +94,6 @@ export class PKPConnector extends Connector {
     const authSig = await this.lit?.getWalletSig()
     
     const pkp = await this.lit?.mintPKP()
-    
     // create wallet and get provider
     if (!authSig || !pkp) throw new Error('you must authenticate first')
     const pkpWallet = await this.lit?.createPKPWallet()

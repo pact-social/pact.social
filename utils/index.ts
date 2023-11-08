@@ -74,6 +74,8 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
 
 export const logoutCeramic = async (ceramic: CeramicApi, compose: ComposeClient) => {
   localStorage.removeItem('ceramic-session');
+  localStorage.removeItem('ceramicSeed');
+  localStorage.removeItem('authenticatedDID');
   const did = new DID()
   compose.setDID(did)
   ceramic.did = undefined

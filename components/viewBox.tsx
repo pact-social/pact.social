@@ -17,12 +17,12 @@ export interface ViewBoxAttr {
 
 export type IViewContext = {
   setView: (_view?: ReactNode) => void;
-  previousView: () => void;
+  previousView: () => boolean;
 }
 
 export const ViewContext = createContext<IViewContext>({
   setView: (_view?: ReactNode) => {},
-  previousView: () => {},
+  previousView: () => false,
 });
 
 export const useViewContext = () => useContext(ViewContext)
@@ -35,13 +35,21 @@ export const ViewProvider: FC<{ children: ReactNode, refNode: RefObject<ViewBoxA
     setPrevious([...previous, current]);
     setCurrent(_view);
     refNode.current?.nextView(_view);
+
   }
   
   const previousView = () => {
-    const previousView = previous.pop();
-    setPrevious([...previous]);
-    setCurrent(previousView);
-    refNode.current?.nextView(previousView);
+    
+    try {
+      const previousView = previous.pop();
+      setPrevious([...previous]);
+      setCurrent(previousView);
+      refNode.current?.nextView(previousView);
+      return true
+    } catch (error) {
+
+      return false
+    }
   }
   
   const value = {

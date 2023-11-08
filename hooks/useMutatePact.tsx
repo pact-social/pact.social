@@ -43,45 +43,77 @@ export default function useMutatePact () {
     }
   }
 
-  const publish = async (data: PactInput, pactID?: string) => {
+  const publish = async (data: PactInput, pactID?: string, create: boolean = false) => {
     try {
       if(data.image === '') {
         delete data.image;
       }
-      data.createdAt = (new Date()).toISOString()
-      data.content = htmlToMarkdown(data?.content as string)
-      
-      const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
-      mutation newPact($input: CreatePactInput!) {
-        createPact(input: $input) {
-          document {
-            id
+      if (create) {
+        data.createdAt = (new Date()).toISOString()
+        data.content = htmlToMarkdown(data?.content as string)
+        
+        const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
+        mutation newPact($input: CreatePactInput!) {
+          createPact(input: $input) {
+            document {
+              id
+            }
           }
         }
-      }
-      `, {
-        input: {
-          content: {
-            ...{
-              content: data.content,
-              description: data.description,
-              media: data.media,
-              title: data.title,
-              topicID: data.topicID,
-              type: data.type,
-              createdAt: data.createdAt,
-            },
-            // type: PactType[data.type]
+        `, {
+          input: {
+            content: {
+              ...{
+                content: data.content,
+                description: data.description,
+                media: data.media,
+                title: data.title,
+                topicID: data.topicID,
+                type: data.type,
+                createdAt: data.createdAt,
+              },
+              // type: PactType[data.type]
+            }
+          }
+        })
+  
+        if(pactID && update) {
+          await update({}, 'Pact', pactID, true)
+          // put draft as archive
+        }
+  
+        if (!errors) {
+          return push(`/m/${res?.createPact?.document.id}`)
+        }
+      } else {
+        const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
+        mutation update($input: UpdatePactInput!) {
+          updatePact(input: $input) {
+            document {
+              id
+            }
           }
         }
-      })
-
-      if(pactID) {
-        // put draft as archive
-      }
-
-      if (!errors) {
-        return push(`/m/${res?.createPact?.document.id}`)
+        `, {
+          input: {
+            id: pactID,
+            content: {
+              ...{
+                content: data.content,
+                description: data.description,
+                media: data.media,
+                title: data.title,
+                topicID: data.topicID,
+                type: data.type,
+                createdAt: data.createdAt,
+              },
+              // type: PactType[data.type]
+            }
+          }
+        })
+        if (!errors) {
+          return push(`/m/${res?.updatePact?.document.id}`)
+        }
       }
     } catch (error) {
       console.log('error', error)

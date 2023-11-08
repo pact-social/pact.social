@@ -7,11 +7,11 @@
   border-color: black;
 } */
 
-/* @layer base {
+@layer base {
   html {
     @apply scroll-smooth;
   }
-} */
+}
 
 /* Card component */
 [data-theme="pacttheme"] .card {

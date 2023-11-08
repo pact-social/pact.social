@@ -27,12 +27,12 @@ export const post = function (pactId) {
     EMBED
   }
   
-  type Post @createModel(accountRelation: LIST, description:"A Post on a pact or a blog") {
+  type Post @createModel(accountRelation: LIST, description: "A Post on a pact or a blog") {
     author: DID! @documentAccount
     createdAt: DateTime!
+    updatedAt: DateTime
     
     title: String! @string(maxLength: 500)
-    name: String @string(maxLength: 500)
     description: String @string(maxLength: 500)
     content: String @string(maxLength: 50000)
     
@@ -40,7 +40,6 @@ export const post = function (pactId) {
     pact: Pact @relationDocument(property: "pactID")
     
     tags: [String] @list(maxLength: 20) @string(maxLength: 50)
-    context: String @string(maxLength: 500)
     sourceUrl: URI
     locale: Locale
     contentWarning: PublicationContentWarning
@@ -50,6 +49,7 @@ export const post = function (pactId) {
     image: URI
     imageMimeType: String @string(maxLength: 50)
     animation_url: URI
+    metadata: String @string(maxLength: 10000)
   }
   
   `

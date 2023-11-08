@@ -1,8 +1,10 @@
+import useSWR from 'swr'
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { usePactContext } from "../../context/pact"
 import { getAddressFromDid, shortAddress } from "../../utils";
 import EmojiAvatar from "../avatar/emojiAvatar";
+import { useProfileContext } from "../../context/profile";
 
 const limit = 10;
 
@@ -25,11 +27,15 @@ function SignatureList({data, count}: {data: any[], count: number}) {
     <>
       <SignatureListPage page={currentPage.number} />
       {allPages.length > 1 && (
-        <SignaturePaginationPanel
-          allPages={allPages}
-          currentPage={currentPage}
-          setCurrentPageNumber={setCurrentPageNumber}
-        />
+        <div
+          className="flex justify-end w-full my-5"
+        >
+          <SignaturePaginationPanel
+            allPages={allPages}
+            currentPage={currentPage}
+            setCurrentPageNumber={setCurrentPageNumber}
+          />
+        </div>
       )}
     </>
   )
@@ -53,7 +59,7 @@ function SignatureListPage({ page }: { page: number | undefined }) {
         </div>
       </div>
       <div className="grid">
-        {data && data?.map((signature: any, index) => (
+        {data && data?.map((signature: any, index: any) => (
           <SignatureRow
             key={`signatures-${index}`}
             signature={signature}
@@ -159,7 +165,7 @@ function SignaturePaginationPanel({
         ) : (
           <button
             key={index}
-            className={`btn ${ page.number === currentPage.number ? 'btn-active' : ''}`}
+            className={`btn ${ page.number === currentPage.number ? 'btn-neutral' : ''}`}
             onClick={() => setCurrentPageNumber(page.number)}
           >
             {page.number}
@@ -207,40 +213,44 @@ function ellipsizePages(
 }
 
 
-export function useSignatureListPage(page: number | undefined) {
-  const { pact } = usePactContext();
-  const [ data, setData ] = useState<any[] | null>(null);
-  const [ count, setCount ] = useState<number>(0);
-
-  async function getSignatures(streamID: string, page?: number) {
-    const params = {
-      streamID,
-      page,
-      limit,
-    }
-    const res = await fetch('/api/pacts/signatures', {
+export function useSignatureListPage(page: number = 1) {
+  const { pact } = usePactContext()
+  const [ data, setData ] = useState<any[] | null>(null)
+  const [ count, setCount ] = useState<number>(0)
+  const [ loading, setLoading ] = useState<boolean>(false)
+  const { signatures: mySignatures } = useProfileContext()
+  const fetcher = async ({uri, pactID, page}: {uri: string; pactID: string; page: number}) => {
+    const res = await fetch(uri, {
       method: 'POST',
-      body: JSON.stringify(params),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-    });
-    const {count, data } = await res.json();
-    if (data) {
-      setData(data);
-      setCount(count);
-    }
+      body: JSON.stringify({
+        streamID: pactID,
+        page,
+        limit,
+      })
+    })
+    const body =  await res.json()
+    return body
   }
+  const { data: list, error, isLoading, mutate } = useSWR(
+    { 
+      uri: `/api/pacts/signatures`,
+      pactID: pact?.id, 
+      page
+    }, 
+    fetcher
+  )
 
   useEffect(() => {
-    if (pact) {
-      getSignatures(pact?.id, page)
+    if (mySignatures && mySignatures.size > 0 && !isLoading && !error) {
+      mutate()
     }
-  }, [pact, page])
+  }, [mySignatures?.size])
 
   return {
-    data,
-    count,
+    ...list,
   }
 }

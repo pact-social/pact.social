@@ -2,9 +2,9 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, 
 import CeramicModal from "../components/authentication/ceramicModal";
 import { useCeramicContext } from ".";
 import useAuthCeramic from "../hooks/useAuthCeramic";
-import useLit from "../hooks/useLit";
 import { useAccount } from "wagmi";
 import LitModal from "../components/authentication/litModal";
+import { useLitContext } from "./lit";
 
 export function useModalStateValue() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -36,7 +36,7 @@ export const AuthenticationProvider = ({
 
   const { state: { isAuthenticated, isAuthenticating } } = useCeramicContext()
   const { logout: logoutCeramic, restoreSession } = useAuthCeramic()
-  const { restoreLit, logoutLit, isConnected: isLitConnected, isLoading: isLitLoading } = useLit()
+  const { restore: restoreLit, logout: logoutLit, isConnected: isLitConnected, isLoading: isLitLoading} = useLitContext()
 
   const { isConnected, address } = useAccount({
     async onDisconnect() {
@@ -45,6 +45,7 @@ export const AuthenticationProvider = ({
       closeCeramicModal()
     },
   });
+  const [ currentAddress, setCurrentAddress] = useState<string>(address as string);
 
   const {
     closeModal: closeCeramicModal,
@@ -88,6 +89,19 @@ export const AuthenticationProvider = ({
     openLitModal,
     restoreLit
   ])
+
+  const switchAccount = useCallback(() => {
+    logoutCeramic()
+    logoutLit()
+    closeCeramicModal()
+  }, [currentAddress])
+
+  useEffect(() => {
+    if (address && currentAddress && address !== currentAddress) {
+      switchAccount()
+      setCurrentAddress(address)
+    }
+  }, [address])
 
   return (
     <AuthenticationContext.Provider value={useMemo(

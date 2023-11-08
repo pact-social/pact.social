@@ -10,6 +10,7 @@ import SignBox from "../../../components/signBox";
 import SignStats from "../../../components/sign/stats";
 import PactForm from "../../m/create";
 import Link from "next/link";
+import useMutatePact from "../../../hooks/useMutatePact";
 
 export default function DraftPactPreview({}) {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function DraftPactPreview({}) {
   const edit = router.query.edit as string;
   const { drafts, isLoading } = useProfileContext();
   const [pact, setPact] = useState<Pact>();
+  const { publish } = useMutatePact()
   
   useEffect(() => {
     if (drafts) {
@@ -27,6 +29,16 @@ export default function DraftPactPreview({}) {
       }
     }
   }, [drafts])
+
+  
+  const publishDraft = async () => {
+    if (pact) {
+      await publish({
+        ...pact,
+        content: pact?.content as string,
+      }, pact.id)
+    }
+  }
 
   return (
     <Layout
@@ -60,7 +72,10 @@ export default function DraftPactPreview({}) {
               >
                 Edit
               </Link>
-              <button className=" btn btn-secondary join-item">
+              <button 
+                className=" btn btn-secondary join-item"
+                onClick={() => publishDraft()}
+              >
                 Publish
               </button>
             </div>
@@ -74,7 +89,7 @@ export default function DraftPactPreview({}) {
             <div className="hidden md:block right-0 top-28 w-80 lg:w-80 md:sticky">
               <div className="flex justify-end my-16 ">
                 <SignBox className="stats shadow-xl stats-vertical w-full min-h-[18rem]">
-                  <SignStats />  
+                  <SignStats disabled={true} />  
                 </SignBox>
               </div>
             </div>

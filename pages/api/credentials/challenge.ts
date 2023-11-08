@@ -16,6 +16,7 @@ export type ScorerResponse = {
   status: string | null;
   last_score_timestamp: string | null;
   evidence: string | null;
+  stamp_scores?: any[] | null;
   error: string | null;
 }
 
@@ -34,7 +35,7 @@ async function getChallenge (
     const body = await response.json() as ChallengeResponse;
 
     if (!body) {
-      console.log('error', response)
+      console.log('empty response from challenge')
       return res.status(500).end();
     }
     return res.send(body)
@@ -62,15 +63,17 @@ async function validateChallenge(
         community: GPScorer,
       })
     });
-
+    if (response.status !== 200) return res.status(response.status).end()
     const data = await response.json() as ScorerResponse;
+    
     if (!data) {
-      console.log('error', response)
+      console.log('challenge error - no data')
       return res.status(500).end();
     }
-
+    const score = data
     // set current cache state to requested
     const {data: dbRecord} = await getDBScore(body.address);
+
     if (dbRecord) {
       await supabase
         .from('passport_sybil_scorer')
@@ -81,11 +84,11 @@ async function validateChallenge(
         .eq('scorer', GPScorer)
       ;
     } else {
-      await supabase
+      const res = await supabase
         .from('passport_sybil_scorer')
         .insert({
-          ...data,
-          score: null,
+          ...score,
+          score: parseFloat(body.score),
           scorer: GPScorer,
         })
       ;

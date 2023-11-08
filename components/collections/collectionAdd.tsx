@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { useCeramicContext } from "../../context";
 import UseCollections from "../../hooks/useCollections";
 import { useViewContext } from "../viewBox";
@@ -13,7 +13,8 @@ export default function CollectionAdd({ pactID } : { pactID: string }) {
   const { isLoading: isCollectionsLoading, mutate: mutateCollections, data: collections } = UseCollections(did?.parent, true)
   const { isLoading: isAddedLoading, mutate: mutatePactCollections, data: collectionsAdded } = UseMyCollectionPact(pactID)
   const { setView } = useViewContext()
-  const { handleSubmit, register } = useForm<CollectionPact>()
+  const methods = useForm<CollectionPact>()
+  const { handleSubmit, register } = methods
   
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -66,6 +67,11 @@ export default function CollectionAdd({ pactID } : { pactID: string }) {
     setTimeout(() => setSuccess(false), 3000)
   }
 
+  if (collections && collections.length === 0) {
+    // setView(<CollectionForm />)
+    // return <></>
+  }
+
   return (
     <>
       <h4 className="font-bold text-xl">Save to collection</h4>
@@ -80,20 +86,22 @@ export default function CollectionAdd({ pactID } : { pactID: string }) {
             </ul>
           </>
         }
-        {collections &&
-        <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4 mt-4">
-          <select 
-            className="select select-bordered w-full max-w-xs"
-            {...register('collectionID', {required: true})}
-          >
-            {collections?.map((collection) => 
-              <option key={collection?.node?.id} value={collection?.node?.id}>{collection?.node?.name}</option>
-            )}
-          </select>
-          <SubmitButton name="Add" className="btn-secondary" />
-        </form>
+        {collections && collections.length > 0 &&
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4 mt-4">
+            <select 
+              className="select select-bordered w-full max-w-xs"
+              {...register('collectionID', {required: true})}
+            >
+              {collections?.map((collection) => 
+                <option key={collection?.node?.id} value={collection?.node?.id}>{collection?.node?.name}</option>
+              )}
+            </select>
+            <SubmitButton name="Add" className="btn-secondary" />
+          </form>
+        </FormProvider>
         }
-        {!collections &&
+        {(!collections || collections.length === 0) &&
           <div>you don&apos;t collections yet</div>
         }
       </div>

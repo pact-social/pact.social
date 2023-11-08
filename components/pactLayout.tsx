@@ -1,8 +1,8 @@
 import { SWRConfig } from "swr";
 import Layout from "./layout";
-import { PactProvider } from "../context/pact";
+import { PactProvider, usePactContext } from "../context/pact";
 import PactHero from "./pacts/pactHero";
-import { ReactElement, useEffect } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import analytics from "../context/analytics";
 import SignBox from "./signBox";
@@ -12,6 +12,9 @@ import WalletSign from "./sign/wallet";
 import ShareView from "./sign/share";
 import Highlights from "./highlights";
 import Link from "next/link";
+import { useProfileContext } from "../context/profile";
+import { PactSignatureVisibilityType } from "../src/gql";
+import { useCeramicContext } from "../context";
 
 type Tab = {
   name: string,
@@ -22,20 +25,22 @@ export default function PactLayout({ children }: { children: ReactElement }) {
   const router = useRouter()
   const streamID = router.query.streamID as string;
   const { fallback, title, pactID } = children?.props;
-  
+
   useEffect(() => {
     const url = new URL(location.href);
     const ref = url.searchParams.get('ref')
     let args: any = {}
     if (ref) {
-      args.ref = ref
-      localStorage.setItem(`ref_${streamID}`, JSON.stringify({
+      args.refferal = ref
+      localStorage.setItem(`refferal_${streamID}`, JSON.stringify({
         ref,
         createdAt: (new Date()).toISOString()
       }));
     }
     analytics.page(args)
   }, []);
+
+  
 
   const tabList: Tab[] = [
     {
@@ -50,8 +55,9 @@ export default function PactLayout({ children }: { children: ReactElement }) {
       name: 'Updates',
       pathname: '/m/[streamID]/updates',
     
-    }
+    },
   ]
+
   return (
     <Layout
       // noContainer
@@ -102,50 +108,87 @@ export default function PactLayout({ children }: { children: ReactElement }) {
               </div>
             </div>
           </div>
-
-          <div className="md:hidden">
-            <div className="btm-nav z-10 px-8 gap-8 border-t-2">
-              <label htmlFor="sign-modal" className="btn btn-secondary flex-auto">
-                  Sign
-                  <Portal>
-                    <input type="checkbox" id="sign-modal" className="modal-toggle" />
-                    <div className="modal modal-bottom">
-                      <div className="modal-box">
-                        <SignBox>
-                          <WalletSign />  
-                        </SignBox>
-                        <div className="modal-action">
-                          <label htmlFor="sign-modal" className="btn">Yay!</label>
-                        </div>
-                      </div>
-                      <label className="modal-backdrop" htmlFor="sign-modal">Close</label>
-                    </div>
-                  </Portal>
-              </label>
-              <label className="btn btn-success flex-auto" htmlFor="share-modal">
-                Share
-                <Portal>
-                    <input type="checkbox" id="share-modal" className="modal-toggle" />
-                    <div className="modal modal-bottom">
-                      <div className="modal-box">
-                      <SignBox>
-                        <ShareView />
-                      </SignBox>
-                        <div className="modal-action">
-                          <label htmlFor="share-modal" className="btn">Yay!</label>
-                        </div>
-                      </div>
-                    </div>
-                  </Portal>
-              </label>
-              {/* <button className="btn btn-outline flex-auto">
-                Chip in $
-              </button> */}
-            </div>
-          </div>
+          <PactSignMobile />
         </PactProvider>
       </SWRConfig>
       <Highlights />
     </Layout>
+  )
+}
+
+function PactSignMobile() {
+  const { pact } = usePactContext()
+  const { state: { isAuthenticated, did } } = useCeramicContext();
+  const { hasSigned, signatures, privateStore, isLoading } = useProfileContext()
+  const [ signedType, setSignedType ] = useState<PactSignatureVisibilityType>()
+  
+
+  async function fetchSigningStatus () {
+    if (!pact || !did || !hasSigned) {
+      setSignedType(undefined)
+      return;
+    }
+    // check PUBLIC and ANON
+
+    const signedType = hasSigned(pact?.id);
+    setSignedType(signedType)
+  }
+
+  useEffect(() => {
+    if (isAuthenticated && signatures && signatures.size > 0) {
+      fetchSigningStatus()
+    }
+    // fetchStats()
+  }, [isAuthenticated, pact?.id, signatures])
+
+
+  return (
+    <div className="md:hidden">
+      <div className="btm-nav z-10 px-8 gap-8 border-t-2">
+        {signedType && 
+          <span 
+            className="text-xs btn btn-outline btn-info flex-1"
+          >Thank you! ({signedType})</span>
+        }
+        {!signedType && 
+          <label htmlFor="sign-modal" className="btn btn-secondary flex-1">
+            Sign
+          </label>
+        }
+        <Portal>
+          <input type="checkbox" id="sign-modal" className="modal-toggle" />
+          <div className="modal modal-bottom">
+            <div className="modal-box">
+              <SignBox>
+                <SignStats />
+              </SignBox>
+              <div className="modal-action">
+                <label htmlFor="sign-modal" className="btn">Close</label>
+              </div>
+            </div>
+            <label className="modal-backdrop" htmlFor="sign-modal">Close</label>
+          </div>
+        </Portal>
+        <label className="btn btn-success flex-1" htmlFor="share-modal">
+          Share
+          <Portal>
+              <input type="checkbox" id="share-modal" className="modal-toggle" />
+              <div className="modal modal-bottom">
+                <div className="modal-box">
+                <SignBox>
+                  <ShareView />
+                </SignBox>
+                  <div className="modal-action">
+                    <label htmlFor="share-modal" className="btn">Close</label>
+                  </div>
+                </div>
+              </div>
+            </Portal>
+        </label>
+        {/* <button className="btn btn-outline flex-auto">
+          Chip in $
+        </button> */}
+      </div>
+    </div>
   )
 }

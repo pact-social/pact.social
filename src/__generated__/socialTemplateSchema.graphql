@@ -1,0 +1,14 @@
+
+  type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+    id: ID!
+  }
+  type SocialTemplate @createModel(accountRelation: LIST, description: "A Social content template Model") {
+    author: DID! @documentAccount
+    content: String! @string(maxLength: 5000)
+    createdAt: DateTime!
+    primaryTemplate: Boolean
+    archived: Boolean
+    pactID: StreamID! @documentReference(model: "Pact")
+    pact: Pact @relationDocument(property: "pactID")
+  }
+  

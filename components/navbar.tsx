@@ -48,7 +48,7 @@ export default function NavBar({ children }: NavbarProps) {
               </ul>
             </div>
             <div className="navbar-end flex-none hidden md:flex md:flex-1">
-              <ConnectButton chainStatus="icon" />
+              <ConnectButton chainStatus="icon" showBalance={false} label="Connect"/>
             </div>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function NavBar({ children }: NavbarProps) {
             </Link>
           </li>
           <li className="block">
-            <ConnectButton showBalance={false} chainStatus="icon"/>
+            <ConnectButton showBalance={false} chainStatus="icon" label="Connect"/>
           </li>
           <li>
             <ul className="mt-4 menu">
@@ -125,7 +125,7 @@ const MenuItems = ({ onClick }: MenuItemsProps) => {
           Explore
         </Link>
       </li>
-      <li>
+      {/* <li>
         <Link
           href={'/about-us'}
           onClick={onClick}
@@ -133,7 +133,7 @@ const MenuItems = ({ onClick }: MenuItemsProps) => {
         >
           About us
         </Link>
-      </li>
+      </li> */}
     </>
   )
 }

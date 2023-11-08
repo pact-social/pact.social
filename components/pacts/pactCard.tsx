@@ -5,13 +5,16 @@ import useStreamStats from '../../hooks/useStreamStats';
 import IconSig from '../svg/noun-signature';
 import CollectionButton from '../collections/collectionButton';
 import dayjs from 'dayjs';
+import { useProfileContext } from '../../context/profile';
+import { CheckBadgeIcon } from '@heroicons/react/24/outline';
+import DefaultImage from './defaultImage';
 
 export default function PactCard({pact}: { pact: Pact }) {
   const { data: stats, error } = useStreamStats(pact?.id);
-
+  const { hasSigned } = useProfileContext()
   return (
     <div className="card card-compact bg-base-100 shadow-xl max-w-sm h-full w-full">
-      <Link  href={`/m/${pact.id}`} className="">
+      <Link  href={`/m/${pact?.id}`} className="">
       {pact.media && pact.media.length > 0 &&
         <div className="carousel aspect-[4/3] w-full">
           {pact.media?.map((current, index) => 
@@ -22,8 +25,8 @@ export default function PactCard({pact}: { pact: Pact }) {
                 src={current?.item ? current.item : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
                 alt={current?.altTag || pact.title}
                 fill
-                // height={210}
-                // width={280}
+                priority={false}
+                sizes="(max-width: 768px) 100vw, 33vw"
                 className=" object-cover"
               />
             </figure>
@@ -32,38 +35,47 @@ export default function PactCard({pact}: { pact: Pact }) {
       }
       {pact.media && pact.media.length === 0 &&
         <figure className="relative w-full aspect-[4/3]">
-          <Image 
-            src={pact?.image ? pact?.image : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
-            alt={pact.title}
-            fill
-            className="object-cover"
-          />
+          {pact?.image 
+              ?
+                <Image 
+                  src={pact?.image ? pact?.image : 'https://images.unsplash.com/photo-1573481078804-70c9d3406cff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2333&q=80'}
+                  alt={pact.title}
+                  fill
+                  priority={false}
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+                : <DefaultImage height={70} />
+          }
         </figure>
       }
       </Link>
       <div className={`card-body bg-${pact.type}-light justify-between`}>
         <Link 
-        href={`/m/${pact.id}`}
+        href={`/m/${pact?.id}`}
         className="flex flex-col gap-2 flex-1"
         >
         <div className={`label-${pact.type}`}>featured {pact.type === 'openletter' ? 'open letter' : pact.type}</div>
         <h2 className="card-title">{pact.title}</h2>
         <div className="flex gap-2">  
           <div className="">{dayjs(pact.createdAt).format('LL')}</div>
-          <div className="badge badge-outline badge-primary">{pact?.topic?.name}</div>
+          <div className="badge badge-outline badge-primary line-clamp-1" title={pact?.topic?.name}>{pact?.topic?.name}</div>
         </div>
         </Link>
         <div className="card-actions justify-between items-baseline">
           <div className="flex items-baseline gap-6">
             <div className="flex gap-3">
-              <IconSig className="w-4 h-4" />
+              {hasSigned && hasSigned(pact?.id) ?
+                <CheckBadgeIcon className="w-5 h-5 text-green-600" />
+                : <IconSig className="w-4 h-4" />
+              }
               <div className="text-sm">{stats?.total}</div>
             </div>
             <CollectionButton pactID={pact?.id} />
           </div>
           <div className="justify-end">
             <Link 
-              href={`/m/${pact.id}`} className="btn btn-primary">
+              href={`/m/${pact?.id}`} className="btn btn-primary">
               sign
             </Link>
           </div>

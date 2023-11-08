@@ -1,4 +1,5 @@
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
+import { LitContracts } from '@lit-protocol/contracts-sdk';
 import { ProviderType } from '@lit-protocol/constants';
 import type { AuthMethod, AuthSig, ExecuteJsProps, GetSessionSigsProps, SessionSigs } from '@lit-protocol/types'
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
@@ -6,7 +7,7 @@ import { ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject
 import { ethConnect } from '@lit-protocol/auth-browser';
 import { Store } from './store';
 import { SESSION_DAYS } from './constants';
-import { LitAuthClient, GoogleProvider, isSignInRedirect } from '@lit-protocol/lit-auth-client';'@lit-protocol/lit-auth-client';
+import { LitAuthClient, GoogleProvider, isSignInRedirect, OtpProvider } from '@lit-protocol/lit-auth-client';'@lit-protocol/lit-auth-client';
 import { LitAbility, LitActionResource } from '@lit-protocol/auth-helpers';
 
 export function decodeb64(b64String: string) {
@@ -38,6 +39,14 @@ export function buf2hex(buffer: ArrayBuffer) { // buffer is an ArrayBuffer
   return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
+export enum PkpStatus {
+  NONE,
+  AUTH_PROVIDER,
+  FETCH_PKP,
+  MINT_PKP,
+  SESSION_SIGS,
+  AUTH_SUCCESS,
+}
 
 export class Lit {
   private litNodeClient: LitJsSdk.LitNodeClient
@@ -45,14 +54,18 @@ export class Lit {
   public account?: string
   private redirectUri: string = `${process.env.NEXT_PUBLIC_APP_DOMAIN}/auth/lit`
   private store?: Store;
-  private provider: GoogleProvider;
+  private provider?: GoogleProvider;
   private pkp?: string;
   private pkpWallet?: PKPEthersWallet;
   private sessionSigs?: SessionSigs;
+  public pkpStatus: PkpStatus = PkpStatus.NONE;
 
   constructor() {
     if (typeof window !== 'undefined') {
       this.store = new Store()
+      // this.getTokensOwnerByAddress('0x2D85abE6769806ab5B9611CDb6409c06ab541313')
+      // this.getTokensOwnerByAddress('0xC13E5709b01af28F12865EdF324DB77C374031Ec')
+      // this.getTokensOwnerByAddress('0x3B5dD260598B7579A0b015A1F3BBF322aDC499A1')
     }
     const client = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: true,
@@ -60,15 +73,65 @@ export class Lit {
       litNetwork: "serrano",
     })
     this.litNodeClient = client
+
     const authClient = new LitAuthClient({
       litRelayConfig: {
-        relayUrl: 'https://relay-server-staging.herokuapp.com',
+        // relayUrl: 'https://relay-server-staging.herokuapp.com',
          // Request a Lit Relay Server API key here: https://forms.gle/RNZYtGYTY9BcD9MEA
-        relayApiKey: '1234567890',
+        relayApiKey: '67e55044-10b1-426f-9247-bb680e5fe0c8_relayer',
       },
       litNodeClient: client,
     })
     this.litAuthClient = authClient
+  }
+
+  async getTokensOwnerByAddress(address: string) {
+
+  const litContracts = new LitContracts({});
+  try {
+    await litContracts.connect();
+    
+  } catch (error) {
+    console.log('error lit contracts connect', error)
+  }
+  //  
+  
+  const tokens = await litContracts
+                       .pkpNftContractUtil
+                       .read
+                       .getTokensInfoByAddress(address)
+                      //  .getTokensByAddress(address);
+  const actions = await litContracts.pkpPermissionsContractUtil.read.getPermittedActions("82886857139868379093806024562634912421531242225124108697027997553177628602053")
+  const addresses = await litContracts.pkpPermissionsContractUtil.read.getPermittedAddresses("82886857139868379093806024562634912421531242225124108697027997553177628602053")
+  // const infos = await litContracts.
+  }
+
+  getPublicKey() {
+    return this.pkp || 'undefined'
+  }
+  
+  async googleLogin() {
+    const currentUri = typeof window !== 'undefined' ? window.location.href : undefined
+    await this.store?.setItem('auth-redirect', currentUri)
+    await this.getPKPProvider().signIn();
+  }
+
+  getPKPProvider(redirectUri?: string) {
+    if (redirectUri) this.redirectUri = redirectUri
+
+    if (!this.provider) {
+      // Initialize Google provider
+      const provider = this.getGoogleProvider()
+  
+      // const provider = this.litAuthClient.getProvider(
+      //   ProviderType.Google,
+      // ) as GoogleProvider;
+      this.provider = provider
+    }
+    return this.provider
+  }
+
+  getGoogleProvider(redirectUri?: string) {
     // Initialize Google provider
     this.litAuthClient.initProvider(ProviderType.Google, {
       // The URL of your web app where users will be redirected after authentication
@@ -80,34 +143,69 @@ export class Lit {
       ProviderType.Google,
     ) as GoogleProvider;
     this.provider = provider
+    return provider
   }
 
-  getPublicKey() {
-    return this.pkp || 'undefined'
-  }
-  
-  async googleLogin() {    
-    await this.provider.signIn();
+  getOtpProvider(userId: string) {
+    // Initialize Google provider
+    const provider = this.litAuthClient.initProvider(ProviderType.Otp, {
+      // The URL of your web app where users will be redirected after authentication
+      // redirectUri: this.redirectUri,
+      userId: userId || 'pact.social0x01@gmail.com',
+      emailCustomizationOptions: {
+        fromName: 'pact.social',
+        from: 'devops@pact.social'
+      }
+      // appId: '',
+      // requestId,
+      // emailCustomizationOptions,
+      // customName,
+    })
+
+    // const provider = this.litAuthClient.getProvider(
+    //   ProviderType.Otp,
+    // ) as OtpProvider;
+    // this.provider = provider
+    return provider
   }
 
-  getPKPProvider() {
-    return this.provider
+  getActionProvider(userId: string) {
+    // Initialize Google provider
+    const provider = this.litAuthClient.initProvider(ProviderType.Otp, {
+      // The URL of your web app where users will be redirected after authentication
+      // redirectUri: this.redirectUri,
+      userId: userId || 'pact.social0x01@gmail.com',
+      emailCustomizationOptions: {
+        fromName: 'pact.social',
+        from: 'devops@pact.social'
+      }
+      // appId: '',
+      // requestId,
+      // emailCustomizationOptions,
+      // customName,
+    })
+
+    // const provider = this.litAuthClient.getProvider(
+    //   ProviderType.Otp,
+    // ) as OtpProvider;
+    // this.provider = provider
+    return provider
   }
 
   async handleGoogleRedirect() {
     if (isSignInRedirect(this.redirectUri)) {
-      if (!this.store) this.store = new Store()
-      // Get the provider that was used to sign in
-
       // Get auth method object that has the OAuth token from redirect callback
-      const authMethod: AuthMethod = await this.provider.authenticate();
+      this.pkpStatus = PkpStatus.AUTH_PROVIDER
+      const authMethod: AuthMethod = await this.getPKPProvider().authenticate();
 
-      this.store.setItem("lit-auth-method", JSON.stringify(authMethod));
+      this.store?.setItem("lit-auth-method", JSON.stringify(authMethod));
+      this.pkpStatus = PkpStatus.FETCH_PKP
       const pkp = await this.mintPKP()
       this.pkp = pkp
+      this.pkpStatus = PkpStatus.SESSION_SIGS
       await this.createPKPWallet()
-      }
-
+      this.pkpStatus = PkpStatus.AUTH_SUCCESS
+    }
   }
   // Get session signatures for the given PKP public key and auth method
   async getSessionSigs({
@@ -119,7 +217,7 @@ export class Lit {
     authMethod: AuthMethod;
     sessionSigsParams: GetSessionSigsProps;
   }) {
-    const sessionSigs = await this.provider.getSessionSigs({
+    const sessionSigs = await this.getPKPProvider().getSessionSigs({
       pkpPublicKey,
       authMethod,
       sessionSigsParams,
@@ -132,13 +230,13 @@ export class Lit {
     let authMethod = await this.getAuthMethod()
     if(authMethod) {
       // const exp = this.litNodeClient.getExpiration()
-
-      const existingPKP = await this.provider?.fetchPKPsThroughRelayer(authMethod)
+      const existingPKP = await this.getPKPProvider().fetchPKPsThroughRelayer(authMethod)
 
       if (!existingPKP || existingPKP?.length === 0) {
-        const tx = await this.provider?.mintPKPThroughRelayer(authMethod)
+        this.pkpStatus = PkpStatus.MINT_PKP
+        const tx = await this.getPKPProvider().mintPKPThroughRelayer(authMethod)
 
-        const newPKP = await this.provider?.fetchPKPsThroughRelayer(authMethod)
+        const newPKP = await this.getPKPProvider().fetchPKPsThroughRelayer(authMethod)
         this.pkp = newPKP[0].publicKey
         return this.pkp
       }
@@ -187,6 +285,7 @@ export class Lit {
     }
     // const authMethod = await this.getAuthMethod()
     if (!authSig || !this.pkp) throw new Error('you must authenticate first')
+
     const pkpWallet = new PKPEthersWallet({
       controllerAuthSig: authSig,
       // Or you can also pass in controllerSessionSigs
@@ -253,7 +352,7 @@ export class Lit {
       
       /** Step 3: Save signature in local storage while referencing address */
       const __authSig = await Lit.getAuthSig(store)
-      store.setItem("lit-auth-signature-" + account, JSON.stringify(__authSig));
+      // store.setItem("lit-auth-signature-" + account, JSON.stringify(__authSig));
       this.account = account;
   
     /** Step 3: Return results */

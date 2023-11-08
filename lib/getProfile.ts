@@ -24,6 +24,11 @@ const profileQuery = (address: string) => {
             city
             organisation
             profilePicture
+            email {
+              accessControlConditions
+              encryptedString
+              encryptedSymmetricKey
+            }
           }
         }
       }

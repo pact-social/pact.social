@@ -23,6 +23,9 @@ import { signatureToPact } from '../composites/signatureToPact.mjs';
 import { profile } from '../composites/profile.mjs';
 import { collectionPacts } from '../composites/collectionPacts.mjs'
 import { collectionPactsView } from '../composites/collectionPactsView.mjs';
+import { pactSubscribe, pactWithSubscribe } from '../composites/pactSubscribe.mjs';
+import { socialTemplate, socialTemplateToPact } from '../composites/socialTemplate.mjs';
+import { recipient, pactRecipient, pactRecipientView } from '../composites/recipient.mjs';
 
 const spinner = ora();
 
@@ -43,7 +46,7 @@ export const writeComposite = async () => {
   // profile
   const privateStoreComposite = await createComposite(ceramic, './composites/privateStore.graphql');
   await writeEncodedComposite(privateStoreComposite, "./src/__generated__/private_store_definition.json");
-
+  const { PrivateStore } = privateStoreComposite.toRuntime().models;
   // profile
   const profileSchema = profile();
   writeFileSync('./src/__generated__/pactProfile.graphql', profileSchema);
@@ -55,11 +58,6 @@ export const writeComposite = async () => {
   const topicComposite = await createComposite(ceramic, './composites/topic.graphql');
   await writeEncodedComposite(topicComposite, "./src/__generated__/topic_definition.json");
   const { Topic } = topicComposite.toRuntime().models;
-
-  // recipient
-  const recipientComposite = await createComposite(ceramic, './composites/recipient.graphql');
-  await writeEncodedComposite(recipientComposite, "./src/__generated__/recipient_definition.json");
-  const { PactRecipient } = recipientComposite.toRuntime().models;
 
   // collection
   const collectionComposite = await createComposite(ceramic, './composites/collection.graphql');
@@ -126,6 +124,60 @@ export const writeComposite = async () => {
   const signatureToPactComposite = await createComposite(ceramic, './src/__generated__/signatureToPactSchema.graphql')
   await writeEncodedComposite(signatureToPactComposite, "./src/__generated__/signatureToPact_definition.json");
 
+  // subscribe pact
+  console.log('PrivateStore.id', PrivateStore.id, PrivateStore)
+  const subscribeView = pactSubscribe(models.Pact.id, PrivateStore.id)
+  writeFileSync('./src/__generated__/subscribeSchema.graphql', subscribeView);
+  
+  const subscribeComposite = await createComposite(ceramic, './src/__generated__/subscribeSchema.graphql')
+  await writeEncodedComposite(subscribeComposite, "./src/__generated__/subscribe_definition.json");
+  const { PactSubscribe } = subscribeComposite.toRuntime().models;
+
+  const pactToSubscribeView = pactWithSubscribe(models.Pact.id, PactSubscribe.id)
+  writeFileSync('./src/__generated__/pactToSubscribeSchema.graphql', pactToSubscribeView);
+
+  const pactToSubscribeComposite = await createComposite(ceramic, './src/__generated__/pactToSubscribeSchema.graphql')
+  await writeEncodedComposite(pactToSubscribeComposite, "./src/__generated__/pactToSubscribe_definition.json");
+
+
+  // social template pact
+  const socialTemplateView = socialTemplate(models.Pact.id)
+  writeFileSync('./src/__generated__/socialTemplateSchema.graphql', socialTemplateView);
+  
+  const socialTemplateComposite = await createComposite(ceramic, './src/__generated__/socialTemplateSchema.graphql')
+  await writeEncodedComposite(socialTemplateComposite, "./src/__generated__/socialTemplate_definition.json");
+  const { SocialTemplate } = socialTemplateComposite.toRuntime().models;
+
+  const socialTemplateToPactView = socialTemplateToPact(models.Pact.id, SocialTemplate.id)
+  writeFileSync('./src/__generated__/socialTemplateToPactSchema.graphql', socialTemplateToPactView);
+
+  const socialTemplateToPactComposite = await createComposite(ceramic, './src/__generated__/socialTemplateToPactSchema.graphql')
+  await writeEncodedComposite(socialTemplateToPactComposite, "./src/__generated__/socialTemplateToPact_definition.json");
+
+  // recipient
+  const recipientModel = recipient()
+  writeFileSync('./src/__generated__/recipient.graphql', recipientModel);
+
+  const recipientComposite = await createComposite(ceramic, './src/__generated__/recipient.graphql')
+  await writeEncodedComposite(recipientComposite, "./src/__generated__/recipient_definition.json");
+  const { Recipient } = recipientComposite.toRuntime().models;
+  
+  // pactRecipient
+  const pactRecipientModel = pactRecipient(Pact.id, Recipient.id)
+  writeFileSync('./src/__generated__/pactRecipient.graphql', pactRecipientModel);
+
+  const pactRecipientComposite = await createComposite(ceramic, './src/__generated__/pactRecipient.graphql')
+  await writeEncodedComposite(pactRecipientComposite, "./src/__generated__/pactRecipient_definition.json");
+  const { PactRecipient } = pactRecipientComposite.toRuntime().models;
+  
+  // pactRecipientView
+  const pactRecipientViewModel = pactRecipientView(Pact.id, Recipient.id, PactRecipient.id)
+  writeFileSync('./src/__generated__/pactRecipientView.graphql', pactRecipientViewModel);
+
+  const pactRecipientViewComposite = await createComposite(ceramic, './src/__generated__/pactRecipientView.graphql')
+  await writeEncodedComposite(pactRecipientViewComposite, "./src/__generated__/pactRecipientView_definition.json");
+  // const { PactRecipientView } = recipientComposite.toRuntime().models;
+
   spinner.info('creating composite for runtime usage')
   await mergeEncodedComposites(ceramic, [
     "./src/__generated__/event_definition.json",
@@ -143,6 +195,13 @@ export const writeComposite = async () => {
     "./src/__generated__/topicToPact_definition.json",
     "./src/__generated__/pactSignature_definition.json",
     "./src/__generated__/signatureToPact_definition.json",
+    "./src/__generated__/subscribe_definition.json",
+    "./src/__generated__/pactToSubscribe_definition.json",
+    "./src/__generated__/socialTemplate_definition.json",
+    "./src/__generated__/socialTemplateToPact_definition.json",
+    "./src/__generated__/recipient_definition.json",
+    "./src/__generated__/pactRecipient_definition.json",
+    "./src/__generated__/pactRecipientView_definition.json",
     ],
     "./src/__generated__/definition.json"
   )
@@ -185,9 +244,9 @@ const authenticate = async () => {
       resolver: getResolver(),
       provider: new Ed25519Provider(key)
     })
-    console.log('did', did)
+
     await did.authenticate()
-    console.log('did authenticated', did)
+
     ceramic.did = did
   } catch (error) {
     console.log('error authenticating', error)

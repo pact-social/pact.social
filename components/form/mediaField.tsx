@@ -5,7 +5,7 @@ import { PostPublicationMetadataMedia } from "../../src/gql";
 
 export default function MediaField ({ className }: { className?: string}) {
   const ref = useRef<HTMLInputElement>(null);
-  const { register, control, setValue, formState: { errors }} = useFormContext()
+  const { register, control, setValue, getValues, formState: { errors }} = useFormContext()
   const { fields, append, update, remove, move } = useFieldArray<PostPublicationMetadataMedia>({
     control,
     name: 'media',
@@ -43,11 +43,10 @@ export default function MediaField ({ className }: { className?: string}) {
 
   const handleFilesUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = ref?.current?.files?.item(0)
-    console.log('nb files', ref?.current?.files?.length)
+
     if (ref?.current?.files) {
       const promises = []
       for (const fileItem of ref?.current?.files) {
-        console.log('fileItem', fileItem)
         promises.push(handleFileUpload(fileItem))
       }
       const res = await Promise.all(promises);
@@ -69,10 +68,10 @@ export default function MediaField ({ className }: { className?: string}) {
             onChange={handleFilesUpload} 
             className="file-input w-full file-input-bordered"
           />
-          <input 
+          {/* <input 
             type="hidden"
             {...register('media', {required: false})}
-          />
+          /> */}
         </div>
         <div className="flex flex-wrap gap-4 justify-center">
         {(fields as (Record<"id", string> & PostPublicationMetadataMedia)[]).map((field, index) => {

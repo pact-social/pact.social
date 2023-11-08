@@ -1,0 +1,10 @@
+
+    type SocialTemplate @loadModel(id: "kjzl6hvfrbw6c54jn4qk2z350m7k5bs9fzh7009ivgue5k85p9al0hbxtz9372t") {
+      id: ID!
+    }
+
+    type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+      id: ID!
+      socialTemplates: [SocialTemplate] @relationFrom(model: "SocialTemplate", property: "pactID")
+    }
+  

@@ -20,22 +20,42 @@ export type Scalars = {
   URI: any;
 };
 
+export type BooleanValueFilterInput = {
+  equalTo?: InputMaybe<Scalars['Boolean']>;
+  isNull?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type CeramicAccount = Node & {
   __typename?: 'CeramicAccount';
   collectionList?: Maybe<CollectionConnection>;
+  collectionListCount: Scalars['Int'];
   collectionPactList?: Maybe<CollectionPactConnection>;
+  collectionPactListCount: Scalars['Int'];
   eventList?: Maybe<EventConnection>;
+  eventListCount: Scalars['Int'];
   /** Globally unique identifier of the account (DID string) */
   id: Scalars['ID'];
   /** Whether the Ceramic instance is currently authenticated with this account or not */
   isViewer: Scalars['Boolean'];
   pactList?: Maybe<PactConnection>;
+  pactListCount: Scalars['Int'];
   pactProfile?: Maybe<PactProfile>;
   pactRecipientList?: Maybe<PactRecipientConnection>;
+  pactRecipientListCount: Scalars['Int'];
   pactSignatureList?: Maybe<PactSignatureConnection>;
+  pactSignatureListCount: Scalars['Int'];
+  pactSubscribeList?: Maybe<PactSubscribeConnection>;
+  pactSubscribeListCount: Scalars['Int'];
   postList?: Maybe<PostConnection>;
+  postListCount: Scalars['Int'];
   privateStoreList?: Maybe<PrivateStoreConnection>;
+  privateStoreListCount: Scalars['Int'];
+  recipientList?: Maybe<RecipientConnection>;
+  recipientListCount: Scalars['Int'];
+  socialTemplateList?: Maybe<SocialTemplateConnection>;
+  socialTemplateListCount: Scalars['Int'];
   topicList?: Maybe<TopicConnection>;
+  topicListCount: Scalars['Int'];
 };
 
 
@@ -87,6 +107,21 @@ export type CeramicAccountPactSignatureListArgs = {
 };
 
 
+export type CeramicAccountPactSubscribeListArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<PactSubscribeFiltersInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sorting?: InputMaybe<PactSubscribeSortingInput>;
+};
+
+
+export type CeramicAccountPactSubscribeListCountArgs = {
+  filters?: InputMaybe<PactSubscribeFiltersInput>;
+};
+
+
 export type CeramicAccountPostListArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -96,6 +131,22 @@ export type CeramicAccountPostListArgs = {
 
 
 export type CeramicAccountPrivateStoreListArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CeramicAccountRecipientListArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CeramicAccountSocialTemplateListArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -121,6 +172,7 @@ export type Collection = Node & {
   id: Scalars['ID'];
   media?: Maybe<Array<Maybe<CollectionPublicationMetadataMedia>>>;
   name: Scalars['String'];
+  tags?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 
@@ -160,6 +212,7 @@ export type CollectionInput = {
   description?: InputMaybe<Scalars['String']>;
   media?: InputMaybe<Array<InputMaybe<CollectionPublicationMetadataMediaInput>>>;
   name: Scalars['String'];
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type CollectionPact = Node & {
@@ -172,7 +225,6 @@ export type CollectionPact = Node & {
   id: Scalars['ID'];
   pact?: Maybe<Pact>;
   pactID: Scalars['CeramicStreamID'];
-  tags?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 /** A connection to a list of items. */
@@ -197,7 +249,6 @@ export type CollectionPactInput = {
   collectionID: Scalars['CeramicStreamID'];
   deleted?: InputMaybe<Scalars['Boolean']>;
   pactID: Scalars['CeramicStreamID'];
-  tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type CollectionPublicationMetadataMedia = {
@@ -357,6 +408,26 @@ export type CreatePactSignaturePayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
+export type CreatePactSubscribeInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PactSubscribeInput;
+};
+
+export type CreatePactSubscribePayload = {
+  __typename?: 'CreatePactSubscribePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PactSubscribe;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type CreatePactSubscribePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
 export type CreatePostInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
   content: PostInput;
@@ -397,6 +468,46 @@ export type CreatePrivateStorePayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
+export type CreateRecipientInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: RecipientInput;
+};
+
+export type CreateRecipientPayload = {
+  __typename?: 'CreateRecipientPayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: Recipient;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type CreateRecipientPayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type CreateSocialTemplateInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: SocialTemplateInput;
+};
+
+export type CreateSocialTemplatePayload = {
+  __typename?: 'CreateSocialTemplatePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: SocialTemplate;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type CreateSocialTemplatePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
 export type CreateTopicInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
   content: TopicInput;
@@ -424,43 +535,17 @@ export type Event = Node & {
   created_at: Scalars['DateTime'];
   did: CeramicAccount;
   event?: Maybe<Scalars['String']>;
-  geo_continent_code?: Maybe<Scalars['String']>;
-  geo_continent_geonameId?: Maybe<Scalars['Int']>;
-  geo_continent_name?: Maybe<Scalars['String']>;
-  geo_country_geonameId?: Maybe<Scalars['Int']>;
-  geo_country_isoCode?: Maybe<Scalars['String']>;
-  geo_country_name?: Maybe<Scalars['String']>;
-  geo_location_timeZone?: Maybe<Scalars['String']>;
-  geo_registeredCountry_geonameId?: Maybe<Scalars['Int']>;
-  geo_registeredCountry_isoCode?: Maybe<Scalars['String']>;
-  geo_registeredCountry_name?: Maybe<Scalars['String']>;
-  geo_subdivision_geonameId?: Maybe<Scalars['Int']>;
-  geo_subdivision_isoCode?: Maybe<Scalars['String']>;
-  geo_subdivision_name?: Maybe<Scalars['String']>;
-  geo_traits_isAnonymous?: Maybe<Scalars['Boolean']>;
-  geo_traits_isAnonymousProxy?: Maybe<Scalars['Boolean']>;
-  geo_traits_isAnonymousVpn?: Maybe<Scalars['Boolean']>;
-  geo_traits_isHostingProvider?: Maybe<Scalars['Boolean']>;
-  geo_traits_isLegitimateProxy?: Maybe<Scalars['Boolean']>;
-  geo_traits_isPublicProxy?: Maybe<Scalars['Boolean']>;
-  geo_traits_isResidentialProxy?: Maybe<Scalars['Boolean']>;
-  geo_traits_isSatelliteProvider?: Maybe<Scalars['Boolean']>;
-  geo_traits_isTorExitNode?: Maybe<Scalars['Boolean']>;
   id: Scalars['ID'];
   meta_rid?: Maybe<Scalars['String']>;
   meta_ts?: Maybe<Scalars['String']>;
   properties_hash?: Maybe<Scalars['String']>;
-  properties_height?: Maybe<Scalars['Int']>;
   properties_path?: Maybe<Scalars['String']>;
   properties_referrer?: Maybe<Scalars['String']>;
   properties_search?: Maybe<Scalars['String']>;
   properties_title?: Maybe<Scalars['String']>;
   properties_url?: Maybe<Scalars['String']>;
-  properties_width?: Maybe<Scalars['Int']>;
-  raw_payload?: Maybe<Scalars['String']>;
-  ref?: Maybe<CeramicAccount>;
+  referral?: Maybe<CeramicAccount>;
   type?: Maybe<Scalars['String']>;
-  updated_at: Scalars['Float'];
 };
 
 /** A connection to a list of items. */
@@ -487,42 +572,16 @@ export type EventInput = {
   created_at: Scalars['DateTime'];
   did: Scalars['DID'];
   event?: InputMaybe<Scalars['String']>;
-  geo_continent_code?: InputMaybe<Scalars['String']>;
-  geo_continent_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_continent_name?: InputMaybe<Scalars['String']>;
-  geo_country_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_country_isoCode?: InputMaybe<Scalars['String']>;
-  geo_country_name?: InputMaybe<Scalars['String']>;
-  geo_location_timeZone?: InputMaybe<Scalars['String']>;
-  geo_registeredCountry_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_registeredCountry_isoCode?: InputMaybe<Scalars['String']>;
-  geo_registeredCountry_name?: InputMaybe<Scalars['String']>;
-  geo_subdivision_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_subdivision_isoCode?: InputMaybe<Scalars['String']>;
-  geo_subdivision_name?: InputMaybe<Scalars['String']>;
-  geo_traits_isAnonymous?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isAnonymousProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isAnonymousVpn?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isHostingProvider?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isLegitimateProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isPublicProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isResidentialProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isSatelliteProvider?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isTorExitNode?: InputMaybe<Scalars['Boolean']>;
   meta_rid?: InputMaybe<Scalars['String']>;
   meta_ts?: InputMaybe<Scalars['String']>;
   properties_hash?: InputMaybe<Scalars['String']>;
-  properties_height?: InputMaybe<Scalars['Int']>;
   properties_path?: InputMaybe<Scalars['String']>;
   properties_referrer?: InputMaybe<Scalars['String']>;
   properties_search?: InputMaybe<Scalars['String']>;
   properties_title?: InputMaybe<Scalars['String']>;
   properties_url?: InputMaybe<Scalars['String']>;
-  properties_width?: InputMaybe<Scalars['Int']>;
-  raw_payload?: InputMaybe<Scalars['String']>;
-  ref?: InputMaybe<Scalars['DID']>;
+  referral?: InputMaybe<Scalars['DID']>;
   type?: InputMaybe<Scalars['String']>;
-  updated_at: Scalars['Float'];
 };
 
 export type Mutation = {
@@ -534,8 +593,11 @@ export type Mutation = {
   createPactProfile?: Maybe<CreatePactProfilePayload>;
   createPactRecipient?: Maybe<CreatePactRecipientPayload>;
   createPactSignature?: Maybe<CreatePactSignaturePayload>;
+  createPactSubscribe?: Maybe<CreatePactSubscribePayload>;
   createPost?: Maybe<CreatePostPayload>;
   createPrivateStore?: Maybe<CreatePrivateStorePayload>;
+  createRecipient?: Maybe<CreateRecipientPayload>;
+  createSocialTemplate?: Maybe<CreateSocialTemplatePayload>;
   createTopic?: Maybe<CreateTopicPayload>;
   updateCollection?: Maybe<UpdateCollectionPayload>;
   updateCollectionPact?: Maybe<UpdateCollectionPactPayload>;
@@ -544,8 +606,11 @@ export type Mutation = {
   updatePactProfile?: Maybe<UpdatePactProfilePayload>;
   updatePactRecipient?: Maybe<UpdatePactRecipientPayload>;
   updatePactSignature?: Maybe<UpdatePactSignaturePayload>;
+  updatePactSubscribe?: Maybe<UpdatePactSubscribePayload>;
   updatePost?: Maybe<UpdatePostPayload>;
   updatePrivateStore?: Maybe<UpdatePrivateStorePayload>;
+  updateRecipient?: Maybe<UpdateRecipientPayload>;
+  updateSocialTemplate?: Maybe<UpdateSocialTemplatePayload>;
   updateTopic?: Maybe<UpdateTopicPayload>;
 };
 
@@ -585,6 +650,11 @@ export type MutationCreatePactSignatureArgs = {
 };
 
 
+export type MutationCreatePactSubscribeArgs = {
+  input: CreatePactSubscribeInput;
+};
+
+
 export type MutationCreatePostArgs = {
   input: CreatePostInput;
 };
@@ -592,6 +662,16 @@ export type MutationCreatePostArgs = {
 
 export type MutationCreatePrivateStoreArgs = {
   input: CreatePrivateStoreInput;
+};
+
+
+export type MutationCreateRecipientArgs = {
+  input: CreateRecipientInput;
+};
+
+
+export type MutationCreateSocialTemplateArgs = {
+  input: CreateSocialTemplateInput;
 };
 
 
@@ -635,6 +715,11 @@ export type MutationUpdatePactSignatureArgs = {
 };
 
 
+export type MutationUpdatePactSubscribeArgs = {
+  input: UpdatePactSubscribeInput;
+};
+
+
 export type MutationUpdatePostArgs = {
   input: UpdatePostInput;
 };
@@ -642,6 +727,16 @@ export type MutationUpdatePostArgs = {
 
 export type MutationUpdatePrivateStoreArgs = {
   input: UpdatePrivateStoreInput;
+};
+
+
+export type MutationUpdateRecipientArgs = {
+  input: UpdateRecipientInput;
+};
+
+
+export type MutationUpdateSocialTemplateArgs = {
+  input: UpdateSocialTemplateInput;
 };
 
 
@@ -658,6 +753,7 @@ export type Node = {
 export type Pact = Node & {
   __typename?: 'Pact';
   animation_url?: Maybe<Scalars['URI']>;
+  archived?: Maybe<Scalars['Boolean']>;
   /** Account controlling the document */
   author: CeramicAccount;
   collectionsPact: CollectionPactConnection;
@@ -673,18 +769,23 @@ export type Pact = Node & {
   locale?: Maybe<Scalars['Locale']>;
   mainContentFocus?: Maybe<PactPublicationMainFocus>;
   media?: Maybe<Array<Maybe<PactPublicationMetadataMedia>>>;
-  name?: Maybe<Scalars['String']>;
+  metadata?: Maybe<Scalars['String']>;
+  pactRecipients: PactRecipientConnection;
+  pactRecipientsCount: Scalars['Int'];
   posts: PostConnection;
   postsCount: Scalars['Int'];
-  recipientList?: Maybe<Array<Maybe<Scalars['CeramicStreamID']>>>;
   signatures: PactSignatureConnection;
   signaturesCount: Scalars['Int'];
+  socialTemplates: SocialTemplateConnection;
   sourceUrl?: Maybe<Scalars['String']>;
+  subscriptions: PactSubscribeConnection;
+  subscriptionsCount: Scalars['Int'];
   tags?: Maybe<Array<Maybe<Scalars['String']>>>;
   title: Scalars['String'];
   topic?: Maybe<Topic>;
   topicID: Scalars['CeramicStreamID'];
   type?: Maybe<PactType>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
   /** Current version of the document */
   version: Scalars['CeramicCommitID'];
 };
@@ -700,6 +801,20 @@ export type PactCollectionsPactArgs = {
 
 
 export type PactCollectionsPactCountArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type PactPactRecipientsArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type PactPactRecipientsCountArgs = {
   account?: InputMaybe<Scalars['ID']>;
 };
 
@@ -731,6 +846,32 @@ export type PactSignaturesCountArgs = {
   account?: InputMaybe<Scalars['ID']>;
 };
 
+
+export type PactSocialTemplatesArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type PactSubscriptionsArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<PactSubscribeFiltersInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sorting?: InputMaybe<PactSubscribeSortingInput>;
+};
+
+
+export type PactSubscriptionsCountArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+  filters?: InputMaybe<PactSubscribeFiltersInput>;
+};
+
 /** A connection to a list of items. */
 export type PactConnection = {
   __typename?: 'PactConnection';
@@ -751,6 +892,7 @@ export type PactEdge = {
 
 export type PactInput = {
   animation_url?: InputMaybe<Scalars['URI']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
   content: Scalars['String'];
   contentWarning?: InputMaybe<PactPublicationContentWarning>;
   createdAt: Scalars['DateTime'];
@@ -761,13 +903,13 @@ export type PactInput = {
   locale?: InputMaybe<Scalars['Locale']>;
   mainContentFocus?: InputMaybe<PactPublicationMainFocus>;
   media?: InputMaybe<Array<InputMaybe<PactPublicationMetadataMediaInput>>>;
-  name?: InputMaybe<Scalars['String']>;
-  recipientList?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']>>>;
+  metadata?: InputMaybe<Scalars['String']>;
   sourceUrl?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   title: Scalars['String'];
   topicID: Scalars['CeramicStreamID'];
   type?: InputMaybe<PactType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PactProfile = Node & {
@@ -782,6 +924,7 @@ export type PactProfile = Node & {
   longitude?: Maybe<Scalars['Float']>;
   name?: Maybe<Scalars['String']>;
   organisation?: Maybe<Scalars['String']>;
+  profileBanner?: Maybe<Scalars['InterPlanetaryCID']>;
   profilePicture?: Maybe<Scalars['InterPlanetaryCID']>;
   title?: Maybe<Scalars['String']>;
 };
@@ -827,6 +970,7 @@ export type PactProfileInput = {
   longitude?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;
   organisation?: InputMaybe<Scalars['String']>;
+  profileBanner?: InputMaybe<Scalars['InterPlanetaryCID']>;
   profilePicture?: InputMaybe<Scalars['InterPlanetaryCID']>;
   title?: InputMaybe<Scalars['String']>;
 };
@@ -866,10 +1010,14 @@ export type PactPublicationMetadataMediaInput = {
 
 export type PactRecipient = Node & {
   __typename?: 'PactRecipient';
+  /** Account controlling the document */
+  author: CeramicAccount;
+  deleted?: Maybe<Scalars['Boolean']>;
   id: Scalars['ID'];
-  isVerified: Scalars['Boolean'];
-  name: Scalars['String'];
-  profile?: Maybe<Scalars['CeramicStreamID']>;
+  pact?: Maybe<Pact>;
+  pactID: Scalars['CeramicStreamID'];
+  recipient?: Maybe<Recipient>;
+  recipientID: Scalars['CeramicStreamID'];
 };
 
 /** A connection to a list of items. */
@@ -891,9 +1039,9 @@ export type PactRecipientEdge = {
 };
 
 export type PactRecipientInput = {
-  isVerified: Scalars['Boolean'];
-  name: Scalars['String'];
-  profile?: InputMaybe<Scalars['CeramicStreamID']>;
+  deleted?: InputMaybe<Scalars['Boolean']>;
+  pactID: Scalars['CeramicStreamID'];
+  recipientID: Scalars['CeramicStreamID'];
 };
 
 export type PactSignature = Node & {
@@ -947,6 +1095,61 @@ export enum PactSignatureVisibilityType {
   Public = 'public'
 }
 
+export type PactSubscribe = Node & {
+  __typename?: 'PactSubscribe';
+  archived?: Maybe<Scalars['Boolean']>;
+  /** Account controlling the document */
+  author: CeramicAccount;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  pact?: Maybe<Pact>;
+  pactID: Scalars['CeramicStreamID'];
+  recipient?: Maybe<PrivateStore>;
+  recipientID: Scalars['CeramicStreamID'];
+};
+
+/** A connection to a list of items. */
+export type PactSubscribeConnection = {
+  __typename?: 'PactSubscribeConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<PactSubscribeEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type PactSubscribeEdge = {
+  __typename?: 'PactSubscribeEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<PactSubscribe>;
+};
+
+export type PactSubscribeFiltersInput = {
+  and?: InputMaybe<Array<PactSubscribeFiltersInput>>;
+  not?: InputMaybe<PactSubscribeFiltersInput>;
+  or?: InputMaybe<Array<PactSubscribeFiltersInput>>;
+  where?: InputMaybe<PactSubscribeObjectFilterInput>;
+};
+
+export type PactSubscribeInput = {
+  archived?: InputMaybe<Scalars['Boolean']>;
+  createdAt: Scalars['DateTime'];
+  pactID: Scalars['CeramicStreamID'];
+  recipientID: Scalars['CeramicStreamID'];
+};
+
+export type PactSubscribeObjectFilterInput = {
+  archived?: InputMaybe<BooleanValueFilterInput>;
+  createdAt?: InputMaybe<StringValueFilterInput>;
+};
+
+export type PactSubscribeSortingInput = {
+  archived?: InputMaybe<SortOrder>;
+  createdAt?: InputMaybe<SortOrder>;
+};
+
 export enum PactType {
   Manifesto = 'manifesto',
   Openletter = 'openletter',
@@ -971,13 +1174,13 @@ export type PartialCollectionInput = {
   description?: InputMaybe<Scalars['String']>;
   media?: InputMaybe<Array<InputMaybe<CollectionPublicationMetadataMediaInput>>>;
   name?: InputMaybe<Scalars['String']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type PartialCollectionPactInput = {
   collectionID?: InputMaybe<Scalars['CeramicStreamID']>;
   deleted?: InputMaybe<Scalars['Boolean']>;
   pactID?: InputMaybe<Scalars['CeramicStreamID']>;
-  tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type PartialEventInput = {
@@ -986,46 +1189,21 @@ export type PartialEventInput = {
   created_at?: InputMaybe<Scalars['DateTime']>;
   did?: InputMaybe<Scalars['DID']>;
   event?: InputMaybe<Scalars['String']>;
-  geo_continent_code?: InputMaybe<Scalars['String']>;
-  geo_continent_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_continent_name?: InputMaybe<Scalars['String']>;
-  geo_country_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_country_isoCode?: InputMaybe<Scalars['String']>;
-  geo_country_name?: InputMaybe<Scalars['String']>;
-  geo_location_timeZone?: InputMaybe<Scalars['String']>;
-  geo_registeredCountry_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_registeredCountry_isoCode?: InputMaybe<Scalars['String']>;
-  geo_registeredCountry_name?: InputMaybe<Scalars['String']>;
-  geo_subdivision_geonameId?: InputMaybe<Scalars['Int']>;
-  geo_subdivision_isoCode?: InputMaybe<Scalars['String']>;
-  geo_subdivision_name?: InputMaybe<Scalars['String']>;
-  geo_traits_isAnonymous?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isAnonymousProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isAnonymousVpn?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isHostingProvider?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isLegitimateProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isPublicProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isResidentialProxy?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isSatelliteProvider?: InputMaybe<Scalars['Boolean']>;
-  geo_traits_isTorExitNode?: InputMaybe<Scalars['Boolean']>;
   meta_rid?: InputMaybe<Scalars['String']>;
   meta_ts?: InputMaybe<Scalars['String']>;
   properties_hash?: InputMaybe<Scalars['String']>;
-  properties_height?: InputMaybe<Scalars['Int']>;
   properties_path?: InputMaybe<Scalars['String']>;
   properties_referrer?: InputMaybe<Scalars['String']>;
   properties_search?: InputMaybe<Scalars['String']>;
   properties_title?: InputMaybe<Scalars['String']>;
   properties_url?: InputMaybe<Scalars['String']>;
-  properties_width?: InputMaybe<Scalars['Int']>;
-  raw_payload?: InputMaybe<Scalars['String']>;
-  ref?: InputMaybe<Scalars['DID']>;
+  referral?: InputMaybe<Scalars['DID']>;
   type?: InputMaybe<Scalars['String']>;
-  updated_at?: InputMaybe<Scalars['Float']>;
 };
 
 export type PartialPactInput = {
   animation_url?: InputMaybe<Scalars['URI']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
   content?: InputMaybe<Scalars['String']>;
   contentWarning?: InputMaybe<PactPublicationContentWarning>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1036,13 +1214,13 @@ export type PartialPactInput = {
   locale?: InputMaybe<Scalars['Locale']>;
   mainContentFocus?: InputMaybe<PactPublicationMainFocus>;
   media?: InputMaybe<Array<InputMaybe<PactPublicationMetadataMediaInput>>>;
-  name?: InputMaybe<Scalars['String']>;
-  recipientList?: InputMaybe<Array<InputMaybe<Scalars['CeramicStreamID']>>>;
+  metadata?: InputMaybe<Scalars['String']>;
   sourceUrl?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   title?: InputMaybe<Scalars['String']>;
   topicID?: InputMaybe<Scalars['CeramicStreamID']>;
   type?: InputMaybe<PactType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PartialPactProfileInput = {
@@ -1055,14 +1233,15 @@ export type PartialPactProfileInput = {
   longitude?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;
   organisation?: InputMaybe<Scalars['String']>;
+  profileBanner?: InputMaybe<Scalars['InterPlanetaryCID']>;
   profilePicture?: InputMaybe<Scalars['InterPlanetaryCID']>;
   title?: InputMaybe<Scalars['String']>;
 };
 
 export type PartialPactRecipientInput = {
-  isVerified?: InputMaybe<Scalars['Boolean']>;
-  name?: InputMaybe<Scalars['String']>;
-  profile?: InputMaybe<Scalars['CeramicStreamID']>;
+  deleted?: InputMaybe<Scalars['Boolean']>;
+  pactID?: InputMaybe<Scalars['CeramicStreamID']>;
+  recipientID?: InputMaybe<Scalars['CeramicStreamID']>;
 };
 
 export type PartialPactSignatureInput = {
@@ -1076,11 +1255,17 @@ export type PartialPactSignatureInput = {
   visibility?: InputMaybe<PactSignatureVisibilityType>;
 };
 
+export type PartialPactSubscribeInput = {
+  archived?: InputMaybe<Scalars['Boolean']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  pactID?: InputMaybe<Scalars['CeramicStreamID']>;
+  recipientID?: InputMaybe<Scalars['CeramicStreamID']>;
+};
+
 export type PartialPostInput = {
   animation_url?: InputMaybe<Scalars['URI']>;
   content?: InputMaybe<Scalars['String']>;
   contentWarning?: InputMaybe<PostPublicationContentWarning>;
-  context?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   description?: InputMaybe<Scalars['String']>;
   external_url?: InputMaybe<Scalars['URI']>;
@@ -1089,16 +1274,33 @@ export type PartialPostInput = {
   locale?: InputMaybe<Scalars['Locale']>;
   mainContentFocus?: InputMaybe<PostPublicationMainFocus>;
   media?: InputMaybe<Array<InputMaybe<PostPublicationMetadataMediaInput>>>;
-  name?: InputMaybe<Scalars['String']>;
+  metadata?: InputMaybe<Scalars['String']>;
   pactID?: InputMaybe<Scalars['CeramicStreamID']>;
   sourceUrl?: InputMaybe<Scalars['URI']>;
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PartialPrivateStoreInput = {
+  archived?: InputMaybe<Scalars['Boolean']>;
   encryptedContent?: InputMaybe<PrivateStoreEncryptedLitContentInput>;
   model?: InputMaybe<Scalars['String']>;
+};
+
+export type PartialRecipientInput = {
+  contact?: InputMaybe<Scalars['String']>;
+  isVerified?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  profile?: InputMaybe<Scalars['DID']>;
+};
+
+export type PartialSocialTemplateInput = {
+  archived?: InputMaybe<Scalars['Boolean']>;
+  content?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  pactID?: InputMaybe<Scalars['CeramicStreamID']>;
+  primaryTemplate?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type PartialTopicInput = {
@@ -1112,7 +1314,6 @@ export type Post = Node & {
   author: CeramicAccount;
   content?: Maybe<Scalars['String']>;
   contentWarning?: Maybe<PostPublicationContentWarning>;
-  context?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   external_url?: Maybe<Scalars['URI']>;
@@ -1122,12 +1323,13 @@ export type Post = Node & {
   locale?: Maybe<Scalars['Locale']>;
   mainContentFocus?: Maybe<PostPublicationMainFocus>;
   media?: Maybe<Array<Maybe<PostPublicationMetadataMedia>>>;
-  name?: Maybe<Scalars['String']>;
+  metadata?: Maybe<Scalars['String']>;
   pact?: Maybe<Pact>;
   pactID: Scalars['CeramicStreamID'];
   sourceUrl?: Maybe<Scalars['URI']>;
   tags?: Maybe<Array<Maybe<Scalars['String']>>>;
   title: Scalars['String'];
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 /** A connection to a list of items. */
@@ -1152,7 +1354,6 @@ export type PostInput = {
   animation_url?: InputMaybe<Scalars['URI']>;
   content?: InputMaybe<Scalars['String']>;
   contentWarning?: InputMaybe<PostPublicationContentWarning>;
-  context?: InputMaybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description?: InputMaybe<Scalars['String']>;
   external_url?: InputMaybe<Scalars['URI']>;
@@ -1161,11 +1362,12 @@ export type PostInput = {
   locale?: InputMaybe<Scalars['Locale']>;
   mainContentFocus?: InputMaybe<PostPublicationMainFocus>;
   media?: InputMaybe<Array<InputMaybe<PostPublicationMetadataMediaInput>>>;
-  name?: InputMaybe<Scalars['String']>;
+  metadata?: InputMaybe<Scalars['String']>;
   pactID: Scalars['CeramicStreamID'];
   sourceUrl?: InputMaybe<Scalars['URI']>;
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   title: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export enum PostPublicationContentWarning {
@@ -1203,6 +1405,7 @@ export type PostPublicationMetadataMediaInput = {
 
 export type PrivateStore = Node & {
   __typename?: 'PrivateStore';
+  archived?: Maybe<Scalars['Boolean']>;
   encryptedContent: PrivateStoreEncryptedLitContent;
   id: Scalars['ID'];
   model?: Maybe<Scalars['String']>;
@@ -1240,23 +1443,42 @@ export type PrivateStoreEncryptedLitContentInput = {
 };
 
 export type PrivateStoreInput = {
+  archived?: InputMaybe<Scalars['Boolean']>;
   encryptedContent: PrivateStoreEncryptedLitContentInput;
   model?: InputMaybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
+  collectionCount: Scalars['Int'];
   collectionIndex?: Maybe<CollectionConnection>;
+  collectionPactCount: Scalars['Int'];
   collectionPactIndex?: Maybe<CollectionPactConnection>;
+  eventCount: Scalars['Int'];
   eventIndex?: Maybe<EventConnection>;
   /** Fetches an object given its ID */
   node?: Maybe<Node>;
+  /** Fetches objects given their IDs */
+  nodes: Array<Maybe<Node>>;
+  pactCount: Scalars['Int'];
   pactIndex?: Maybe<PactConnection>;
+  pactProfileCount: Scalars['Int'];
   pactProfileIndex?: Maybe<PactProfileConnection>;
+  pactRecipientCount: Scalars['Int'];
   pactRecipientIndex?: Maybe<PactRecipientConnection>;
+  pactSignatureCount: Scalars['Int'];
   pactSignatureIndex?: Maybe<PactSignatureConnection>;
+  pactSubscribeCount: Scalars['Int'];
+  pactSubscribeIndex?: Maybe<PactSubscribeConnection>;
+  postCount: Scalars['Int'];
   postIndex?: Maybe<PostConnection>;
+  privateStoreCount: Scalars['Int'];
   privateStoreIndex?: Maybe<PrivateStoreConnection>;
+  recipientCount: Scalars['Int'];
+  recipientIndex?: Maybe<RecipientConnection>;
+  socialTemplateCount: Scalars['Int'];
+  socialTemplateIndex?: Maybe<SocialTemplateConnection>;
+  topicCount: Scalars['Int'];
   topicIndex?: Maybe<TopicConnection>;
   /** Account currently authenticated on the Ceramic instance, if set */
   viewer?: Maybe<CeramicAccount>;
@@ -1292,6 +1514,11 @@ export type QueryNodeArgs = {
 };
 
 
+export type QueryNodesArgs = {
+  ids: Array<Scalars['ID']>;
+};
+
+
 export type QueryPactIndexArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -1324,6 +1551,21 @@ export type QueryPactSignatureIndexArgs = {
 };
 
 
+export type QueryPactSubscribeCountArgs = {
+  filters?: InputMaybe<PactSubscribeFiltersInput>;
+};
+
+
+export type QueryPactSubscribeIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<PactSubscribeFiltersInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sorting?: InputMaybe<PactSubscribeSortingInput>;
+};
+
+
 export type QueryPostIndexArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -1340,11 +1582,135 @@ export type QueryPrivateStoreIndexArgs = {
 };
 
 
+export type QueryRecipientIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySocialTemplateIndexArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryTopicIndexArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+};
+
+export type Recipient = Node & {
+  __typename?: 'Recipient';
+  /** Account controlling the document */
+  author: CeramicAccount;
+  contact?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isVerified: Scalars['Boolean'];
+  name: Scalars['String'];
+  pactsRecipient: PactRecipientConnection;
+  pactsRecipientCount: Scalars['Int'];
+  profile?: Maybe<CeramicAccount>;
+};
+
+
+export type RecipientPactsRecipientArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type RecipientPactsRecipientCountArgs = {
+  account?: InputMaybe<Scalars['ID']>;
+};
+
+/** A connection to a list of items. */
+export type RecipientConnection = {
+  __typename?: 'RecipientConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<RecipientEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type RecipientEdge = {
+  __typename?: 'RecipientEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<Recipient>;
+};
+
+export type RecipientInput = {
+  contact?: InputMaybe<Scalars['String']>;
+  isVerified: Scalars['Boolean'];
+  name: Scalars['String'];
+  profile?: InputMaybe<Scalars['DID']>;
+};
+
+export type SocialTemplate = Node & {
+  __typename?: 'SocialTemplate';
+  archived?: Maybe<Scalars['Boolean']>;
+  /** Account controlling the document */
+  author: CeramicAccount;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  pact?: Maybe<Pact>;
+  pactID: Scalars['CeramicStreamID'];
+  primaryTemplate?: Maybe<Scalars['Boolean']>;
+};
+
+/** A connection to a list of items. */
+export type SocialTemplateConnection = {
+  __typename?: 'SocialTemplateConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<SocialTemplateEdge>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type SocialTemplateEdge = {
+  __typename?: 'SocialTemplateEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<SocialTemplate>;
+};
+
+export type SocialTemplateInput = {
+  archived?: InputMaybe<Scalars['Boolean']>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  pactID: Scalars['CeramicStreamID'];
+  primaryTemplate?: InputMaybe<Scalars['Boolean']>;
+};
+
+export enum SortOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+export type StringValueFilterInput = {
+  equalTo?: InputMaybe<Scalars['String']>;
+  greaterThan?: InputMaybe<Scalars['String']>;
+  greaterThanOrEqualTo?: InputMaybe<Scalars['String']>;
+  in?: InputMaybe<Array<Scalars['String']>>;
+  isNull?: InputMaybe<Scalars['Boolean']>;
+  lessThan?: InputMaybe<Scalars['String']>;
+  lessThanOrEqualTo?: InputMaybe<Scalars['String']>;
+  notEqualTo?: InputMaybe<Scalars['String']>;
+  notIn?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type Topic = Node & {
@@ -1554,6 +1920,28 @@ export type UpdatePactSignaturePayloadNodeArgs = {
   id: Scalars['ID'];
 };
 
+export type UpdatePactSubscribeInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialPactSubscribeInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdatePactSubscribePayload = {
+  __typename?: 'UpdatePactSubscribePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: PactSubscribe;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdatePactSubscribePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
 export type UpdatePostInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
   content: PartialPostInput;
@@ -1595,6 +1983,50 @@ export type UpdatePrivateStorePayload = {
 
 
 export type UpdatePrivateStorePayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type UpdateRecipientInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialRecipientInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdateRecipientPayload = {
+  __typename?: 'UpdateRecipientPayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: Recipient;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdateRecipientPayloadNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type UpdateSocialTemplateInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  content: PartialSocialTemplateInput;
+  id: Scalars['ID'];
+  options?: InputMaybe<UpdateOptionsInput>;
+};
+
+export type UpdateSocialTemplatePayload = {
+  __typename?: 'UpdateSocialTemplatePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  document: SocialTemplate;
+  /** Fetches an object given its ID */
+  node?: Maybe<Node>;
+  /** Account currently authenticated on the Ceramic instance, if set */
+  viewer?: Maybe<CeramicAccount>;
+};
+
+
+export type UpdateSocialTemplatePayloadNodeArgs = {
   id: Scalars['ID'];
 };
 

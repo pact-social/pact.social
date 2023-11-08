@@ -23,6 +23,7 @@ const query = `
         }
         author {
           id
+          isViewer
           pactProfile {
             name
           }
@@ -30,6 +31,7 @@ const query = `
         topic {
           name
         }
+        topicID
       }
     }
   }

@@ -18,7 +18,7 @@ const Tiptap = ({ editor }: { editor: Editor}) => {
   return (
     <>
       {editor && <EditorMenuBar editor={editor} />}
-      <EditorContent editor={editor} className="font-sans" />
+      <EditorContent editor={editor} />
     </>
   )
 }
@@ -30,7 +30,7 @@ export default function MarkdownField(args: RteFieldType) {
     editorProps: {
       attributes: {
         class:
-          "prose p-2 dark:prose-invert",
+          "prose p-2 font-sans dark:prose-invert",
       },
     },
     extensions: [

@@ -1,5 +1,5 @@
 
-    type Pact @loadModel(id:  "kjzl6hvfrbw6c6yeolo1iwxxk84j80fnmtkgufd5l9hibjolzcvu96ujgdm24h7") {
+    type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
       id: ID!
     }
     

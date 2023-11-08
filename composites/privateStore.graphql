@@ -7,4 +7,5 @@ type EncryptedLitContent {
 type PrivateStore @createModel(accountRelation: LIST, description: "Personal encrypted set of jwe") {
   model: String @string(maxLength: 300)
   encryptedContent: EncryptedLitContent!
+  archived: Boolean
 }

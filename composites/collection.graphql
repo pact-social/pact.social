@@ -6,10 +6,11 @@ type PublicationMetadataMedia {
   cid: CID
 }
 
-type Collection @createModel(accountRelation: LIST, description:"A collection of Documents") {
+type Collection @createModel(accountRelation: LIST, description: "A collection of Documents") {
   author: DID! @documentAccount
   name: String! @string(maxLength: 100)
   description: String @string(maxLength: 500)
   media: [PublicationMetadataMedia] @list(maxLength: 20)
   deleted: Boolean
+  tags: [String] @list(maxLength: 20) @string(maxLength: 50)
 }

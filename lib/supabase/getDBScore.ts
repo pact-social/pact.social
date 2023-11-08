@@ -1,12 +1,12 @@
-import { supabase, GPScorer } from ".";
+import { supabase, GPScorer } from "."
 
-export default async function getDBScore(address: string) {
+export default async function getDBScore(address: string, scorer: string = GPScorer) {
   const dbRecord = await supabase
     .from('passport_sybil_scorer')
     .select('*')
-    .eq('address', (address as string).toLowerCase())
-    .eq('scorer', GPScorer)
+    .eq('address', address.toLowerCase())
+    .eq('scorer', scorer)
     .single()
   ;
-  return dbRecord;
+  return dbRecord
 }

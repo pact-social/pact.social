@@ -1,0 +1,10 @@
+
+  type Recipient @createModel(accountRelation: LIST, description: "A Pact Recipient, a decision maker reference") {
+    author: DID! @documentAccount
+    
+    name: String! @string(maxLength: 100)
+    isVerified: Boolean!
+    contact: String @string(maxLength: 500) # can be email, or address
+    profile: DID
+  }
+  

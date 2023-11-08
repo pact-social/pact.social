@@ -19,7 +19,7 @@ const MenuItem = ({
 }: MenuItemType) => {
   return (
     <div 
-      className={`btn join-item ${isActive && isActive() ? ' btn-active' : ''}`}
+      className={`btn btn-sm join-item ${isActive && isActive() ? ' btn-active' : ''}`}
       onClick={action}
       title={title}
     >
@@ -214,7 +214,7 @@ export default function EditorMenuBar ({ editor }: { editor: Editor}) {
   ]
   return (
     <div className="sticky top-[5rem] z-10">
-      <div className="join">
+      <div className="join flex-wrap ">
         {items.map((item, index) => (
           <Fragment key={index}>
             {item.type === 'divider' ? <div className="divider" /> : <MenuItem {...item} />}

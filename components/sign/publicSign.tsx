@@ -108,7 +108,11 @@ export default function PublicSign() {
 
 
   if ( !address || status !== 'connected') {
-    return (<ConnectButton/>);
+    return (
+      <div className="flex flex-col justify-around my-6 mx-4 items-center">
+        <ConnectButton label="Connect"/>
+      </div>
+    );
   }
   if (!composeClient.did?.authenticated) {
     return (

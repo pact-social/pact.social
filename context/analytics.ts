@@ -6,7 +6,7 @@ const analytics = Analytics({
   debug: false,
   plugins: [
     web3Analytics({
-      appId: 'pact.social.local',
+      appId: 'pact.social',
       loglevel: 'info'
     }),
   ]

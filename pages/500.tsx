@@ -16,7 +16,7 @@ const Custom404: NextPage = () => {
       <div className="container min-h-[calc(100dvh-11.5rem)] flex flex-col items-center justify-center gap-10">
         <div className="flex max-h-56">
           <Image 
-            src="/500.svg"
+            src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/500.svg`}
             alt="500, woops! something went wrong :("
             width="1252"
             height="696"

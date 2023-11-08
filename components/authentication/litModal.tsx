@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import useLit from "../../hooks/useLit";
+import { useLitContext } from "../../context/lit";
 
 type LitModalProps = {
   open: boolean;
@@ -9,7 +9,7 @@ type LitModalProps = {
 export default function LitModal ({ onClose, open }: LitModalProps) {
   const ref = useRef<HTMLDialogElement>(null)
 
-  const { connect: connectLit, isConnected, isLoading } = useLit()
+  const { connect, isConnected, isLoading } = useLitContext()
   
   useEffect(() => {
     if (isConnected) {
@@ -44,7 +44,7 @@ export default function LitModal ({ onClose, open }: LitModalProps) {
             {/* <ConnectButton /> */}
             <div 
               className={`btn btn-secondary ${isLoading ? 'disabled' : ''}`}
-              onClick={connectLit}
+              onClick={connect}
             >
               {isLoading &&
                 <span className="loading"></span>

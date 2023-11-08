@@ -1,0 +1,15 @@
+
+  type PactRecipient @loadModel(id: "kjzl6hvfrbw6c8ypk4kk92qnakmmt28bhj73xqyyb7pm8xpc8bsgjp7wl8fxvrq") {
+    id: ID!
+  }
+  type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+    id: ID!
+    pactRecipients: [PactRecipient] @relationFrom(model: "PactRecipient", property: "pactID")
+    pactRecipientsCount: Int! @relationCountFrom(model: "PactRecipient", property: "pactID")
+  }
+  type Recipient @loadModel(id: "kjzl6hvfrbw6c5iw3uqqquy19sqhfpe9bz04ucan8ujbi2sf0jaremc1ailr9qf") {
+    id: ID!
+    pactsRecipient: [PactRecipient] @relationFrom(model: "PactRecipient", property: "recipientID")
+    pactsRecipientCount: Int! @relationCountFrom(model: "PactRecipient", property: "recipientID")
+  }
+  

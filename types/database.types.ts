@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json }
+  | { [key: string]: Json | undefined }
   | Json[]
 
 export interface Database {
@@ -52,6 +52,33 @@ export interface Database {
         }
         Relationships: []
       }
+      otp: {
+        Row: {
+          created_at: string | null
+          expiration_time: string | null
+          id: number
+          otp: string | null
+          updated_at: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          expiration_time?: string | null
+          id?: number
+          otp?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          expiration_time?: string | null
+          id?: number
+          otp?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       pact_indexer_logs: {
         Row: {
           account: string
@@ -87,6 +114,7 @@ export interface Database {
           last_score_timestamp: string | null
           score: number | null
           scorer: string
+          stamp_scores: Json[] | null
           status: string | null
         }
         Insert: {
@@ -96,6 +124,7 @@ export interface Database {
           last_score_timestamp?: string | null
           score?: number | null
           scorer: string
+          stamp_scores?: Json[] | null
           status?: string | null
         }
         Update: {
@@ -105,6 +134,7 @@ export interface Database {
           last_score_timestamp?: string | null
           score?: number | null
           scorer?: string
+          stamp_scores?: Json[] | null
           status?: string | null
         }
         Relationships: []
@@ -134,97 +164,53 @@ export interface Database {
     Views: {
       pact_all: {
         Row: {
+          createdAt: string | null
           id: string | null
           image: string | null
           media: string | null
           title: string | null
+          topic: Json | null
+          topicID: string | null
           type: string | null
-        }
-        Insert: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
-        }
-        Update: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
         }
         Relationships: []
       }
       pact_manifesto: {
         Row: {
+          createdAt: string | null
           id: string | null
           image: string | null
           media: string | null
           title: string | null
+          topic: Json | null
+          topicID: string | null
           type: string | null
-        }
-        Insert: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
-        }
-        Update: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
         }
         Relationships: []
       }
       pact_openletter: {
         Row: {
+          createdAt: string | null
           id: string | null
           image: string | null
           media: string | null
           title: string | null
+          topic: Json | null
+          topicID: string | null
           type: string | null
-        }
-        Insert: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
-        }
-        Update: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
         }
         Relationships: []
       }
       pact_petition: {
         Row: {
+          createdAt: string | null
           id: string | null
           image: string | null
           media: string | null
           title: string | null
+          topic: Json | null
+          topicID: string | null
           type: string | null
-        }
-        Insert: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
-        }
-        Update: {
-          id?: string | null
-          image?: never
-          media?: never
-          title?: never
-          type?: never
         }
         Relationships: []
       }

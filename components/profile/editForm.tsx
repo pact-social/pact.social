@@ -1,32 +1,58 @@
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { PactProfile } from "../../src/gql";
+import { PactProfile, PactProfileEncryptedLitContent } from "../../src/gql";
 import createProfile from "../../lib/updateProfile";
 import { useCeramicContext } from "../../context";
 import ConnectButton from "../connect";
 import { useViewContext } from "../viewBox";
 import CountrySelect from "../form/countrySelect";
 import SubmitButton from "../form/submitButton";
+import { useProfileContext } from "../../context/profile";
+import Input from "../form/input";
+import { useEffect } from "react";
+import EmailField from "./emailField";
 
 export default function ProfilEditForm({ 
   profile
 }: {
   profile?: PactProfile
 }) {
-  const { ceramic } = useCeramicContext();
+  const { ceramic } = useCeramicContext()
   const { previousView } = useViewContext()
-  const methods = useForm<PactProfile>({
-    defaultValues: profile || {}
-  });
+  const methods = useForm<PactProfile & { decryptedEmail?: string }>({
+    defaultValues: profile ? {...profile} : {}
+  })
   const { register, handleSubmit, watch, setValue, getValues, formState: { errors }, reset } = methods
+  const { refreshProfile, encryptContent, decryptContent } = useProfileContext()
 
-  const onSubmit: SubmitHandler<PactProfile> = async (data) => {
+  watch('email')
+
+  // useEffect(() => {
+  //   if (profile?.email && typeof profile.email !== 'string') {
+  //     console.log('decrypting string', profile.email, profile)
+  //     decryptContent(profile.email).then((decryptedString) => {
+  //       console.log('decrypted string', decryptedString)
+  //       setValue('email', decryptedString.email)
+  //     })
+  //   } else {
+  //     console.log('profile decrypt missed', profile)
+  //   }
+  // }, [profile])
+
+  const onSubmit: SubmitHandler<PactProfile & { decryptedEmail?: string }> = async (data) => {
     try {
-      await createProfile(data, ceramic);
+      if (data.email && typeof data.email === 'string' && data.email !== profile?.email) {
+        const encryptedContent = await encryptContent('Email', data.email, {email: data.email}, ['notif-did']) as PactProfileEncryptedLitContent
+        data.email = encryptedContent
+      }
+      const { decryptedEmail, ...rest} = data
+      await createProfile(rest, ceramic);
+      if (refreshProfile) refreshProfile()
       previousView()
     } catch (error) {
       console.log('error', error)
     }
-  };
+  }
+
   return (
     <FormProvider {...methods} >
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-row gap-2 w-full px-4">
@@ -36,13 +62,13 @@ export default function ProfilEditForm({
             <span className="label-text">name</span>
           </label>
           <input 
-            id="name" 
+            id="name"
             type="text" 
-            className={`input input-bordered w-full max-w-xs${errors.name && 'input-error'}`}
+            className={`input input-bordered w-full max-w-xs${errors?.name && 'input-error'}`}
             placeholder="your name"
             {...register('name', {required: false, maxLength: 100})}
           />
-          {errors.name && 
+          {errors?.name && 
             <label className="label">
               <span className="label-text-alt ">name max length is 100</span>
             </label>
@@ -121,6 +147,10 @@ export default function ProfilEditForm({
             </label>
           }
         </div>
+        <EmailField 
+          required={false}
+          profile={profile}
+        />
         <div className="divider"></div>
         <div className="formControl flex justify-between">
           <ConnectButton el={

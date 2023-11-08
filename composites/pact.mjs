@@ -38,16 +38,16 @@ export const pact = function (topicId, postId) {
       version: CommitID! @documentVersion
       author: DID! @documentAccount
       createdAt: DateTime!
-      
+      updatedAt: DateTime
+      archived: Boolean
+
       title: String! @string(maxLength: 500)
-      name: String @string(maxLength: 500)
       description: String @string(maxLength: 500)
-      content: String! @string(minLength: 1, maxLength: 50000)
+      content: String! @string(maxLength: 100000)
 
       type: PactType!
       topicID: StreamID! @documentReference(model: "Topic")
       topic: Topic @relationDocument(property: "topicID")
-      recipientList: [StreamID!] @list(maxLength: 10) # decisionMakers
       
       tags: [String] @list(maxLength: 20) @string(maxLength: 50)
       sourceUrl: String @string(maxLength: 500)
@@ -59,6 +59,7 @@ export const pact = function (topicId, postId) {
       image: URI
       imageMimeType: String @string(maxLength: 50)
       animation_url: URI
+      metadata: String @string(maxLength: 10000)
     }
   `;
 }

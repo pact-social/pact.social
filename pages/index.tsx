@@ -6,26 +6,56 @@ import Highlights from '../components/highlights';
 import Layout from '../components/layout';
 import BrandName from '../components/svg/brandName';
 import Leaderboard from '../components/leaderboard';
-import Roadmap from '../components/roadmap';
+// import Roadmap from '../components/roadmap';
 import SpeakCTA from '../components/speakCTA';
+import { getPact } from '../lib/getPact';
+import { Pact, PactType } from '../src/gql';
+import Link from 'next/link';
+
 
 export async function getStaticProps() {
   const { getLatestPacts } = await import('../lib/getLatestPacts')
+  const { supabase } = await import('../lib/supabase')
+  const { data, error } = await supabase.rpc('sign_stats_top')
+  if (error) console.log('error', error)
+  
+  let featured = null
+  let top = null
+  console.log('data', data)
+  if (data && data.length > 0) {
+    featured = await getPact({streamID: data[0].streamid})
+  }
+  if (data && data.length > 3) {
+    top = await Promise.all([
+      getPact({streamID: data[1].streamid}),
+      getPact({streamID: data[2].streamid}),
+      getPact({streamID: data[3].streamid}),
+    ])
+  }
+
   return { 
     props: {
       fallback: {
         [unstable_serialize({key: 'getLatestPacts',limit: 6})]: await getLatestPacts({limit: 6})
-      }
+      },
+      featured,
+      top,
     }, 
     revalidate: 1000
   }
 }
 
 interface HomeProps {
-  fallback: Object
+  fallback: Object;
+  featured?: Pact,
+  top?: Pact[];
 }
 
-const Home: NextPage<HomeProps> = ({ fallback }) => {
+const Home: NextPage<HomeProps> = ({ 
+  fallback,
+  featured,
+  top,
+}) => {
   return (
     <Layout 
       metas={{
@@ -35,37 +65,71 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
       }}
     >
       <SWRConfig value={{ fallback }}>
-        <Hero 
-          title="where free voices act!"
-          description="stand up and create"
-          media={{
-            image: '/ehimetalor-akhere-unuabona-sW16rbnZHp8-unsplash.jpg',
-            alt: '',
-            title: 'featured petition',
-            subtitle: 'Help Save Grace the Ancient Tree and her friends, by ending the filling of wetlands!',
-            ratio: '1/1'
-          }}
-          extra={
-          <div className="relative overflow-hidden h-16 -ml-2">
-            <div className="message">
-              <div className="word-manifesto">manifestos</div>
-              <div className="word-petition">petitions</div>
-              <div className="word-openletter">open letters</div>
+        {featured
+          ?
+          <Link
+            href={`/m/${featured.id}`}
+            title=''
+          >
+            <Hero 
+              title="where free voices act!"
+              description="stand up and create"
+              media={{
+                image: featured.media?.at(0)?.item,
+                alt: '',
+                title: `featured ${featured.type}`,
+                subtitle: featured?.title || '',
+                ratio: '1/1',
+                action: 'Sign',
+                accentColor: featured.type as PactType,
+              }}
+              extra={
+              <div className="relative overflow-hidden h-16 -ml-2">
+                <div className="message">
+                  <div className="word-manifesto">manifestos</div>
+                  <div className="word-petition">petitions</div>
+                  <div className="word-openletter">open letters</div>
+                </div>
+              </div>
+            }
+            />
+          </Link>
+          :
+          <Hero 
+            title="where free voices act!"
+            description="stand up and create"
+            media={{
+              image: `${process.env.NEXT_PUBLIC_APP_DOMAIN}/ehimetalor-akhere-unuabona-sW16rbnZHp8-unsplash.jpg`,
+              alt: '',
+              title: 'featured petition',
+              subtitle: 'Help Save Grace the Ancient Tree and her friends, by ending the filling of wetlands!',
+              ratio: '1/1'
+            }}
+            extra={
+            <div className="relative overflow-hidden h-16 -ml-2">
+              <div className="message">
+                <div className="word-manifesto">manifestos</div>
+                <div className="word-petition">petitions</div>
+                <div className="word-openletter">open letters</div>
+              </div>
             </div>
-          </div>
+            }
+          />
         }
-        />
         <SpeakCTA />
-        <Highlights />
+        <Highlights pacts={top} />
         <Leaderboard />
         {/* About pact.social */}
         <section className="relative py-9 min-h-[32rem]">
           <Image 
-            src="/gayatri-malhotra-WzfqobnrSVc-unsplash.jpeg"
+            src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/gayatri-malhotra-WzfqobnrSVc-unsplash.jpeg`}
             width={680}
             height={1024}
             alt=""
-            className="picture-frame max-w-[75%] lg:max-w-[calc(50%-3.5rem)] mx-auto lg:ml-14"
+            priority={false}
+            sizes="(max-width: 768px) 80vw, (max-width: 1200px) 33vw, 33vw"
+            // className={`${props.media?.ratio ? `aspect-[${props.media?.ratio}]` : 'aspect-[1/1]'} object-cover h-auto w-auto`}
+            className="picture-frame max-w-[75%] lg:max-w-[calc(50%-3.5rem)] mx-auto lg:ml-14 h-auto w-auto"
           />
           <div className="lg:absolute w-full min-h-[50%] lg:top-0 py-8 pt-32 -mt-24 lg:mt-0 lg:py-0 flex items-center justify-center lg:justify-end backdrop-opacity-10 bg-gradient-to-b from-[#cfffc1]/[.4] to-[#d495ff]/[.4]">
             <div className="w-3/4 lg:w-1/2 lg:px-14 my-24">
@@ -98,46 +162,46 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
           <p className="my-4 font-light">buidl on the following tech stack and partners</p>
           <div className="grid md:grid-cols-3 lg:grid-cols-6 justify-items-center items-center gap-12 my-11">
             <Image 
-              src="/partners/ceramic_logo.png"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/partners/ceramic_logo.png`}
               width={120}
               height={48}
               alt=""
-              className=""
+              className="h-auto"
             />
             <Image 
-              src="/partners/composedb_logo.png"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/partners/composedb_logo.png`}
               width={120}
               height={48}
               alt=""
-              className=""
+              className="h-auto"
             />
             <Image 
-              src="/partners/orbis_logo.png"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/partners/orbis_logo.png`}
               width={120}
               height={48}
               alt=""
-              className=""
+              className="h-auto"
             />
             <Image 
-              src="/partners/ipfs_logo.png"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/partners/ipfs_logo.png`}
               width={120}
               height={48}
               alt=""
-              className=""
+              className="h-auto"
             />
             <Image 
-              src="/partners/lit_logo.png"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/partners/lit_logo.png`}
               width={48}
               height={48}
               alt=""
-              className=""
+              className="h-auto"
             />
             <Image 
-              src="/partners/passport_logo.png"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/partners/passport_logo.png`}
               width={120}
               height={48}
               alt=""
-              className=""
+              className="h-auto"
             />
           </div>
         </section>

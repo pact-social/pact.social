@@ -19,6 +19,7 @@ export default function CollectionCard ({
     >
       <div className="card card-side card-compact border-0">
           <div className="stack h-full w-full max-w-[40%] mr-2">
+            {collection?.media?.at(0) && 
             <figure className="w-full h-full ">
               <Image 
                 src={collection?.media?.at(0)?.item}
@@ -27,6 +28,7 @@ export default function CollectionCard ({
                 className=" object-cover"
               />
             </figure>
+            }
             <div className="grid w-full aspect-[4/3] -ml-5 border border-neutral-500 bg-neutral-400 !opacity-100"></div> 
             <div className="grid w-full aspect-[4/3] -ml-10 border border-neutral-500 bg-neutral-200 !opacity-100"></div>
           </div>
@@ -39,7 +41,7 @@ export default function CollectionCard ({
           }
           <div className="flex gap-2">
             <Image
-              src="/collectionIcon.svg"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/collectionIcon.svg`}
               width={20}
               height={16}
               alt="collection"
@@ -51,7 +53,7 @@ export default function CollectionCard ({
           </h2>
           <div className="card-actions justify-start items-end flex-1">
             <Image
-              src="/collectionStackIcon.svg"
+              src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/collectionStackIcon.svg`}
               width={16}
               height={14}
               alt="collection"

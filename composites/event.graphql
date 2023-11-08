@@ -1,43 +1,17 @@
-type Event @createModel(accountRelation: LIST, description:"An application event to track") {
+type Event @createModel(accountRelation: LIST, description: "An application event to track") {
   app_id: String! @string(maxLength: 50)
   did: DID!
   created_at: DateTime!
-  updated_at: Float!
-  ref: DID
-  raw_payload: String @string(maxLength: 50000)
+  referral: DID # advocate ref account
   anonymousId: String @string(maxLength: 50)
   event: String @string(maxLength: 50)
   meta_ts: String @string(maxLength: 20)
-  meta_rid: String @string(maxLength: 50)
+  meta_rid: String @string(maxLength: 50) # to check
   properties_url: String @string(maxLength: 2048)
   properties_hash: String @string(maxLength: 1024)
   properties_path: String @string(maxLength: 2048)
   properties_title: String @string(maxLength: 1024)
-  properties_width: Int @int(min: 1)
-  properties_height: Int @int(min: 1)
   properties_search: String @string(maxLength: 2048)
   properties_referrer: String @string(maxLength: 2048)
   type: String @string(maxLength: 50)
-  geo_continent_code: String @string(maxLength: 2)
-  geo_continent_geonameId: Int @int(min: 0)
-  geo_continent_name: String @string(maxLength: 255)
-  geo_country_geonameId: Int @int(min: 0)
-  geo_country_isoCode: String @string(maxLength: 2)
-  geo_country_name: String @string(maxLength: 255)
-  geo_location_timeZone: String @string(maxLength: 255)
-  geo_registeredCountry_geonameId: Int @int(min: 0)
-  geo_registeredCountry_isoCode: String @string(maxLength: 2)
-  geo_registeredCountry_name: String @string(maxLength: 255)
-  geo_subdivision_geonameId: Int @int(min: 0)
-  geo_subdivision_isoCode: String @string(maxLength: 3)
-  geo_subdivision_name: String @string(maxLength: 255)
-  geo_traits_isAnonymous: Boolean
-  geo_traits_isAnonymousProxy: Boolean
-  geo_traits_isAnonymousVpn: Boolean
-  geo_traits_isHostingProvider: Boolean
-  geo_traits_isLegitimateProxy: Boolean
-  geo_traits_isPublicProxy: Boolean
-  geo_traits_isResidentialProxy: Boolean
-  geo_traits_isSatelliteProvider: Boolean
-  geo_traits_isTorExitNode: Boolean
 }

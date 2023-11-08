@@ -1,0 +1,10 @@
+
+  type PactSubscribe @loadModel(id: "kjzl6hvfrbw6c67py21uh1f5rfrpv1w8yavo9kjb6h2u3r1qcmluzzin59iqrhz") {
+    id: ID!
+  }
+  type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+    id: ID!
+    subscriptions: [PactSubscribe] @relationFrom(model: "PactSubscribe", property: "pactID")
+    subscriptionsCount: Int! @relationCountFrom(model: "PactSubscribe", property: "pactID")
+  }
+  

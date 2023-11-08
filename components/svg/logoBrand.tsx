@@ -1,9 +1,10 @@
 type SvgType = {
   height: number;
   white?: boolean;
+  isTestnet?: boolean;
 }
-export default function LogoBrand({height = 26, white = true, ...rest}: SvgType) {
-  const isTestnet = process.env.NEXT_PUBLIC_NETWORK === 'testnet'
+export default function LogoBrand({height = 26, white = true, isTestnet, ...rest}: SvgType) {
+  isTestnet = isTestnet !== undefined ? isTestnet : process.env.NEXT_PUBLIC_NETWORK === 'testnet'
   return (
     <>
     <svg height={height} width={height * 183 / 26} viewBox="0 0 183 26" xmlns="http://www.w3.org/2000/svg">

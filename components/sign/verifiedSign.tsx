@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image'
 import { useAccount, useSignMessage } from "wagmi";
 import type { ChallengeResponse, ScorerResponse } from "../../pages/api/credentials/challenge";
 import { useViewContext } from "../signBox"
 import ShareView from "./share";
+import { useCeramicContext } from "../../context";
+import OrbisCredentials from "../user/credentials";
+import GitcoinPassport from "../verification/gitcoinPassport";
+import OrbisScore from "../verification/orbisScore";
+import RegenScore from "../verification/regenScore";
 
 export default function VerifiedSign() {
   const [ challengeLoading, toggleChallengeLoading ] = useState<boolean>(false)
@@ -14,159 +19,36 @@ export default function VerifiedSign() {
 
   const { setView, previousView } = useViewContext()
   const { address } = useAccount();
-
-  const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage({
-    message: challenge?.message,
-    onSuccess(data) {
-      setSignature(data)
-      toggleWaitingSigning(!waitingSigning)
-      submitSignedChallenge(data);
-    }
-  });
-
-  async function getChallenge() {
-    toggleChallengeLoading(!challengeLoading)
-    const res = await fetch('/api/credentials/challenge');
-    const data = await res.json();
-    if (data) {
-      setChallenge(data);
-    }
-    toggleChallengeLoading(!challengeLoading)
-  }
-
-  function signChallenge() {
-    toggleWaitingSigning(!waitingSigning)
-    signMessage()
-  }
-
-  async function submitSignedChallenge(signature: string) {
-    const params = {
-      address,
-      signature,
-      nonce: challenge?.nonce,
-    }
-    const res = await fetch('/api/credentials/challenge', {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    });
-    const data = await res.json();
-    if (data) {
-      setScore(data);
-    }
-    // toggleChallengeLoading(!challengeLoading)
-  }
+  const { ceramic: {did}} = useCeramicContext()
 
 
-  async function refreshScore() {
-    const res = await fetch(`/api/credentials/score/${address}`);
-    const data = await res.json();
-    if (data) {
-      setScore(data);
-    }
-    // toggleChallengeLoading(!challengeLoading)
-  }
-
+  
   return (
-    <div className="flex flex-col justify-around my-6 mx-4">
+    <div className="flex flex-col justify-around my-6 mx-4 gap-3">
       <p className=" text-lg font-semibold text-neutral-700">Add legitimacy to your voice!</p>
-      <p className="text-sm">Get your signature verified.</p>
-      <div className="divider"></div>
-      {!challenge &&
-        <>
-          {challengeLoading && 
-            <div 
-              className="btn btn-primary loading"
-            >
-              Fetching challenge
-            </div>
-          }
-          {!challengeLoading && 
-          <div className="grid gap-2">
-            <div 
-              className="btn btn-primary"
-              onClick={getChallenge}
-            >
-              score your GitcoinPassport
-            </div>
-
-            <button 
-            className="btn btn-outline gap-1"
-            onClick={getChallenge}
-            >
-              <Image
-                src={'/gitcoin_passport_logo.svg'}
-                height={32}
-                width={32}
-                alt=""
-                className=""
-              ></Image>
-            Manage your passport
-            </button>
-          </div>
-          }
-        </>
-      }
-
-      {(challenge && !score) &&
-      <div>
-        <div>Nonce: {challenge.nonce}</div>
-        {waitingSigning && 
-          <div 
-            className="btn btn-primary loading"
-          >
-            Waiting wallet signature
-          </div>
-        }
-        {!waitingSigning && 
-          <div 
-            className="btn btn-primary"
-            onClick={signChallenge}
-          >
-            Sign the challenge
-          </div>
-        }
+      <p className=" text-sm text-neutral-700">We reward unique humans, not bots.</p>
+      
+      <div className="flex flex-col mt-4 gap-4">
+        <GitcoinPassport />
+        <OrbisScore />
+        <RegenScore />
       </div>
-      }
-      {score &&
-      <div>
-        {score.status === 'PROCESSING' &&
-        <>
-          <div>status: {score.status}</div>
-          <div 
-            className="btn"
-            onClick={refreshScore}
-          >
-            refresh
-          </div>
-        </>
-        }
-        {score.status === 'DONE' &&
-          <div>score: {parseInt(score.score?.toString() || '0')}</div>
-        }
-        {score.status === 'ERROR' &&
-        <>
-          <div>{score.error}</div>
-        </>
-        }
-      </div>
-      }
-      <div className="divider"></div>
-      <div className="flex justify-between">
-        <div
+
+      {/* {did && <OrbisCredentials did={did.parent}/>} */}
+      
+      {/* <div className="divider"></div> */}
+      <div className="flex justify-end">
+        {/* <div
           className="btn"
           onClick={previousView}
         >
           Back
-        </div>
+        </div> */}
         <div
-          className="btn btn-outline"
+          className="btn btn-ghost"
           onClick={() => setView(<ShareView/>)}
         >
-          Skip
+          Next
         </div>
       </div>
     </div>

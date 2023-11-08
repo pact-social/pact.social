@@ -28,9 +28,16 @@ const pactTypes: PactTypeInput[] = [
   {id: PactType.Petition, name:"Petition"},
 ]
 
-const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID?: string;}) => {
-  const { push } = useRouter();
-
+const PactForm = ({
+  defaultValues,
+  pactID,
+  isLive = false,
+}: {
+  defaultValues?: PactInput;
+  pactID?: string;
+  isLive?: boolean;
+}) => {
+  // const { push } = useRouter();
   const methods = useForm<PactInput>({
     defaultValues: defaultValues ? {
       ...defaultValues,
@@ -40,6 +47,7 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
       title: ''
     }
   });
+
   const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = methods
 
   const { data: topics } = useTopics();
@@ -49,7 +57,7 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
 
   const onSubmit: SubmitHandler<PactInput> = async (data) => {
 
-    await publish(data, pactID)
+    await publish(data, pactID, !isLive)
   };
 
   return (
@@ -138,18 +146,24 @@ const PactForm = ({ defaultValues, pactID }: { defaultValues?: PactInput, pactID
           <MarkdownField label="Post your content:" field="content" />
 
           <MediaField />
+
           <div className="divider"></div>
           <div className="formControl flex justify-end">
-            <ConnectButton el={
-              <div className="join">
-                <button
-                  type="button"
-                  className="btn btn-primary join-item"
-                  onClick={() => saveDraft(getValues(), pactID)}
-                >Save Draft</button>
-                <SubmitButton name="Publish Live" className="btn-secondary join-item" />
-              </div>
-            } />
+            {!isLive &&
+              <ConnectButton el={
+                <div className="join">
+                  <button
+                    type="button"
+                    className="btn btn-primary join-item"
+                    onClick={() => saveDraft(getValues(), pactID)}
+                  >Save Draft</button>
+                  <SubmitButton name="Publish Live" className="btn-secondary join-item" />
+                </div>
+              } />
+            }
+            {isLive && 
+              <SubmitButton name="Update" className="btn-secondary join-item" />
+            }
           </div>
 
         </form>

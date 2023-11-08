@@ -1,0 +1,17 @@
+
+  type Recipient @loadModel(id: "kjzl6hvfrbw6c5iw3uqqquy19sqhfpe9bz04ucan8ujbi2sf0jaremc1ailr9qf") {
+    id: ID!
+  }
+  type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+    id: ID!
+  }
+  type PactRecipient @createModel(accountRelation: LIST, description: "Link between a recipient (decision maker) and a Pact") {
+    author: DID! @documentAccount
+
+    pactID: StreamID! @documentReference(model: "Pact")
+    pact: Pact @relationDocument(property: "pactID")
+    recipientID: StreamID! @documentReference(model: "Recipient")
+    recipient: Recipient @relationDocument(property: "recipientID")
+    deleted: Boolean
+  }
+  

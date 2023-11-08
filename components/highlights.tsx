@@ -4,7 +4,11 @@ import PactCard from './pacts/pactCard'
 import Divider from './svg/divider';
 import { Pact } from '../src/gql';
 
-export default function Highlights() {
+export default function Highlights({
+  pacts,
+}: {
+  pacts?: Pact[]
+}) {
   const { data, error } = useSWR(
     {
       key: 'getLatestPacts',
@@ -26,10 +30,16 @@ export default function Highlights() {
           Pacts that are most promoted by its signers and champions
         </p>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-8 lg:mx-16 xl:mx-24 justify-center ">
-        {data?.map(doc => (
-          <PactCard key={doc?.node?.id} pact={doc?.node as Pact} />
-        ))}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-8 lg:mx-16 xl:mx-24 justify-center justify-items-center">
+        {pacts ?
+            pacts?.map(doc => (
+              <PactCard key={doc?.id} pact={doc} />
+            ))
+          :
+            data?.map(doc => (
+              <PactCard key={doc?.node?.id} pact={doc?.node as Pact} />
+            ))
+        }
       </div>
     </div>
   )

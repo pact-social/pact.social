@@ -16,7 +16,7 @@ const Custom404: NextPage = () => {
       <div className="container min-h-[calc(100dvh-11.5rem)] flex flex-col items-center justify-center gap-10">
         <div className="flex max-h-56">
           <Image 
-            src="/404.svg"
+            src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/404.svg`}
             alt="404, page not found"
             width="1252"
             height="696"

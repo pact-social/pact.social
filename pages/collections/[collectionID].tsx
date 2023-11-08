@@ -22,11 +22,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   
   try {
     const resp = await getCollectionPacts({ collectionID })
-    console.log([unstable_serialize([
-      `/collections/${collectionID}`,
-      collectionID,
-    ]
-    )], resp)
+    
     return { 
       props: {
         fallback: {
@@ -39,7 +35,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
         collectionID,
         title: resp.name,
         description: resp.description,
-        image: resp.media?.at(0)?.item
+        image: resp.media?.at(0)?.item || ''
       }, 
       revalidate: 30
     }

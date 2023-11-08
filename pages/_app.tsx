@@ -25,7 +25,7 @@ import analytics from '../context/analytics';
 import { ReactElement, ReactNode } from 'react';
 import { type NextPage } from 'next';
 import { AuthenticationProvider } from '../context/authentication';
-import { PKPConnector } from '../lib/pkpConnector';
+import { PKPGoogleConnector } from '../lib/pkpGoogleConnector';
 
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
@@ -73,7 +73,7 @@ const connectors = connectorsForWallets([
         installed: true,
         createConnector: () => {
           return {
-            connector: new PKPConnector({
+            connector: new PKPGoogleConnector({
               chains,
               options: {
                 lit: litClient
@@ -81,25 +81,60 @@ const connectors = connectorsForWallets([
             }),
             mobile: {
               getUri: async () => {
-                litClient.googleLogin()
+                await litClient.googleLogin()
                 return ''
               },
             },
             desktop: {
               getUri: async () => {
-                litClient.googleLogin()
+                await litClient.googleLogin()
                 return ''
               },
             },
             qrCode: {
               getUri: async () => {
-                litClient.googleLogin()
+                await litClient.googleLogin()
                 return ''
               },
             },
           }
         }
-      }
+      },
+      // {
+      //   id: 'email-pkp',
+      //   name: 'sign-in with email',
+      //   iconUrl: '/google.svg',
+      //   iconBackground: '',
+      //   installed: true,
+      //   createConnector: () => {
+      //     return {
+      //       connector: new PKPGoogleConnector({
+      //         chains,
+      //         options: {
+      //           lit: litClient
+      //         },
+      //       }),
+      //       mobile: {
+      //         getUri: async () => {
+      //           litClient.googleLogin()
+      //           return ''
+      //         },
+      //       },
+      //       desktop: {
+      //         getUri: async () => {
+      //           litClient.googleLogin()
+      //           return ''
+      //         },
+      //       },
+      //       qrCode: {
+      //         getUri: async () => {
+      //           litClient.googleLogin()
+      //           return ''
+      //         },
+      //       },
+      //     }
+      //   }
+      // }
     ],
   },
   ...wallets,

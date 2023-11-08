@@ -1,6 +1,6 @@
 export const topicToPact = function (topicId, pactId) {
   return `
-    type Pact @loadModel(id:  "${pactId}") {
+    type Pact @loadModel(id: "${pactId}") {
       id: ID!
     }
     

@@ -1,0 +1,21 @@
+
+  type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+    id: ID!
+  }
+  type PrivateStore @loadModel(id: "kjzl6hvfrbw6c6whv22f4atq6cn3xocc1rmwurvpqizvzifrf1ek9a2p8547p20") {
+    id: ID!
+  }
+  type PactSubscribe 
+    @createModel(accountRelation: LIST, description: "A subscription to a Pact")
+    @createIndex(fields: [{ path: ["archived"] }])
+    @createIndex(fields: [{ path: ["createdAt"] }])
+  {
+    author: DID! @documentAccount
+    pactID: StreamID! @documentReference(model: "Pact")
+    pact: Pact @relationDocument(property: "pactID")
+    createdAt: DateTime!
+    archived: Boolean
+    recipientID: StreamID! @documentReference(model: "PrivateStore")
+    recipient: PrivateStore! @relationDocument(property: "recipientID")
+  }
+  

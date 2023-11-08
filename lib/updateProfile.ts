@@ -14,10 +14,11 @@ const createProfileQuery = `
   }
 `;
 
-export default async function createProfile (profile: PactProfile, ceramic?: CeramicClient) {
-  const inputs = Object.fromEntries(Object.entries(profile).filter(([_, v]) => v != null && v != ''));
+export default async function createProfile (profile: PactProfile, ceramic?: CeramicClient) { 
+  const inputs = Object.fromEntries(Object.entries(profile).filter(([_, v]) => {
+    return (v && typeof v === 'object') || (v != null && v != '')
+  }));
   inputs?.id && delete inputs.id
-
   const inputProfile: CreatePactProfileInput = {
     content: {
       ...inputs,
