@@ -949,15 +949,19 @@ export type PactProfileEdge = {
 
 export type PactProfileEncryptedLitContent = {
   __typename?: 'PactProfileEncryptedLitContent';
-  accessControlConditions: Scalars['String'];
-  encryptedString: Scalars['String'];
-  encryptedSymmetricKey: Scalars['String'];
+  accessControlConditionType?: Maybe<Scalars['String']>;
+  accessControlConditions?: Maybe<Scalars['String']>;
+  chain?: Maybe<Scalars['String']>;
+  ciphertext: Scalars['String'];
+  dataToEncryptHash: Scalars['String'];
 };
 
 export type PactProfileEncryptedLitContentInput = {
-  accessControlConditions: Scalars['String'];
-  encryptedString: Scalars['String'];
-  encryptedSymmetricKey: Scalars['String'];
+  accessControlConditionType?: InputMaybe<Scalars['String']>;
+  accessControlConditions?: InputMaybe<Scalars['String']>;
+  chain?: InputMaybe<Scalars['String']>;
+  ciphertext: Scalars['String'];
+  dataToEncryptHash: Scalars['String'];
 };
 
 export type PactProfileInput = {
@@ -1054,7 +1058,6 @@ export type PactSignature = Node & {
   pactID: Scalars['CeramicStreamID'];
   pactVersion: Scalars['CeramicCommitID'];
   referral?: Maybe<CeramicAccount>;
-  signature?: Maybe<Scalars['String']>;
   signedAt: Scalars['DateTime'];
   turnToken?: Maybe<Scalars['String']>;
   visibility?: Maybe<PactSignatureVisibilityType>;
@@ -1083,7 +1086,6 @@ export type PactSignatureInput = {
   pactID: Scalars['CeramicStreamID'];
   pactVersion: Scalars['CeramicCommitID'];
   referral?: InputMaybe<Scalars['DID']>;
-  signature?: InputMaybe<Scalars['String']>;
   signedAt: Scalars['DateTime'];
   turnToken?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<PactSignatureVisibilityType>;
@@ -1249,7 +1251,6 @@ export type PartialPactSignatureInput = {
   pactID?: InputMaybe<Scalars['CeramicStreamID']>;
   pactVersion?: InputMaybe<Scalars['CeramicCommitID']>;
   referral?: InputMaybe<Scalars['DID']>;
-  signature?: InputMaybe<Scalars['String']>;
   signedAt?: InputMaybe<Scalars['DateTime']>;
   turnToken?: InputMaybe<Scalars['String']>;
   visibility?: InputMaybe<PactSignatureVisibilityType>;
@@ -1289,6 +1290,7 @@ export type PartialPrivateStoreInput = {
 };
 
 export type PartialRecipientInput = {
+  altContact?: InputMaybe<Scalars['String']>;
   contact?: InputMaybe<Scalars['String']>;
   isVerified?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
@@ -1431,15 +1433,19 @@ export type PrivateStoreEdge = {
 
 export type PrivateStoreEncryptedLitContent = {
   __typename?: 'PrivateStoreEncryptedLitContent';
-  accessControlConditions: Scalars['String'];
-  encryptedString: Scalars['String'];
-  encryptedSymmetricKey: Scalars['String'];
+  accessControlConditionType?: Maybe<Scalars['String']>;
+  accessControlConditions?: Maybe<Scalars['String']>;
+  chain?: Maybe<Scalars['String']>;
+  ciphertext: Scalars['String'];
+  dataToEncryptHash: Scalars['String'];
 };
 
 export type PrivateStoreEncryptedLitContentInput = {
-  accessControlConditions: Scalars['String'];
-  encryptedString: Scalars['String'];
-  encryptedSymmetricKey: Scalars['String'];
+  accessControlConditionType?: InputMaybe<Scalars['String']>;
+  accessControlConditions?: InputMaybe<Scalars['String']>;
+  chain?: InputMaybe<Scalars['String']>;
+  ciphertext: Scalars['String'];
+  dataToEncryptHash: Scalars['String'];
 };
 
 export type PrivateStoreInput = {
@@ -1607,6 +1613,7 @@ export type QueryTopicIndexArgs = {
 
 export type Recipient = Node & {
   __typename?: 'Recipient';
+  altContact?: Maybe<Scalars['String']>;
   /** Account controlling the document */
   author: CeramicAccount;
   contact?: Maybe<Scalars['String']>;
@@ -1651,6 +1658,7 @@ export type RecipientEdge = {
 };
 
 export type RecipientInput = {
+  altContact?: InputMaybe<Scalars['String']>;
   contact?: InputMaybe<Scalars['String']>;
   isVerified: Scalars['Boolean'];
   name: Scalars['String'];

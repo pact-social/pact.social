@@ -1,19 +1,20 @@
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
-import { useRouter } from "next/router";
 import dynamic from 'next/dynamic'
 
 import Layout from "../../components/layout";
 import useTopics from "../../hooks/useTopics";
-import { PactInput, PactType } from "../../src/gql";
+import { Pact, PactInput, PactType, Topic } from "../../src/gql";
 import TopicSelect from "../../components/form/topicSelect";
 import ConnectButton from "../../components/connect";
 import { markdownToHtml } from "../../lib/mdUtils";
 import MediaField from "../../components/form/mediaField";
 import useMutatePact from "../../hooks/useMutatePact";
-import MarkdownField from "../../components/form/markdownField";
+// import MarkdownField from "../../components/form/markdownField";
 import SubmitButton from "../../components/form/submitButton";
+import { useAccount } from "wagmi";
+import { useCeramicContext } from "../../context";
 
-const RteField = dynamic(() => import('../../components/form/rteField'), {
+const MarkdownField = dynamic(() => import('../../components/form/markdownField'), {
   ssr: false,
 })
 
@@ -33,7 +34,7 @@ const PactForm = ({
   pactID,
   isLive = false,
 }: {
-  defaultValues?: PactInput;
+  defaultValues?: Pact;
   pactID?: string;
   isLive?: boolean;
 }) => {
@@ -44,21 +45,39 @@ const PactForm = ({
       content: markdownToHtml(defaultValues.content)
     } : {
       type: PactType.Petition,
-      title: ''
     }
   });
-
-  const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = methods
+  const { connector } = useAccount()
+  const { ceramic } = useCeramicContext();
+  const { register, handleSubmit, watch, setValue, getValues, trigger, formState: { errors } } = methods
 
   const { data: topics } = useTopics();
-  const { saveDraft, publish } = useMutatePact()
+  const { saveDraft, publish } = useMutatePact(pactID)
 
+  watch('type')
   watch('topicID')
+  watch('title')
+  watch('description')
+  watch('content')
+
 
   const onSubmit: SubmitHandler<PactInput> = async (data) => {
-
     await publish(data, pactID, !isLive)
   };
+
+  if (connector?.id === 'pkp') {
+    return (
+      <Layout metas={{
+        title: "Create a Pact",
+        description: "",
+        imageSrc: ""
+      }}>
+        <div className="container max-w-md my-12">
+          Please authenticate with a web3 wallet to create a pact
+        </div>
+      </Layout>
+    )
+  }
 
   return (
     <Layout metas={{
@@ -99,7 +118,7 @@ const PactForm = ({
               Choose the topic that fit to your Pact:
             </label>
             {topics &&
-              <TopicSelect topics={topics} register={register} setValue={setValue}></TopicSelect>
+              <TopicSelect topics={topics} register={register} setValue={setValue} defaultValues={defaultValues}></TopicSelect>
             }
           </div>
 
@@ -110,9 +129,9 @@ const PactForm = ({
               <input
                 id="title"
                 type="text"
-                className={`input input-bordered w-full max-w-xs${errors.title && 'input-error'}`}
+                className={`input input-bordered w-full max-w-xs ${errors.title && 'input-error'}`}
                 placeholder="Name your Pact"
-                {...register('title', {required: true, minLength: 10, maxLength: 120})}
+                {...register('title', {required: true, maxLength: 120})}
               />
             {errors.title &&
             <label className="label">
@@ -130,19 +149,18 @@ const PactForm = ({
               <input
                 id="description"
                 type="text"
-                className={`input input-bordered w-full max-w-xs${errors.description && 'input-error'}`}
+                className={`input input-bordered w-full max-w-xs ${errors.description && 'input-error'}`}
                 placeholder=" Summarize your Pact"
                 {...register('description', {required: false, maxLength: 500})}
               />
-            {errors.description &&
+            {/* {errors.description &&
             <label className="label">
 
               <span className="label-text-alt ">Description is required</span>
             </label>
-            }
+            } */}
           </div>
 
-          {/* <RteField label="Post your content:" field="content" /> */}
           <MarkdownField label="Post your content:" field="content" />
 
           <MediaField />

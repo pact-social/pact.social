@@ -3,14 +3,17 @@ import { Connector } from 'wagmi/connectors'
 import { Lit } from './litUtils'
 import { WalletClient } from 'wagmi'
 
-export type PKPGoogleConnectorOptions = {
+export type PKPStytchConnectorOptions = {
   /**
    * While "disconnected" with `shimDisconnect`, allows user to select a different PKP account (than the currently connected account) when trying to connect.
    */
   lit: Lit
 }
 
-export class PKPGoogleConnector extends Connector {
+const delay = (ms: number) => {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
+export class PKPStytchConnector extends Connector {
   name: string
   ready: boolean
 
@@ -23,7 +26,7 @@ export class PKPGoogleConnector extends Connector {
     options: options_,
   }: {
     chains?: Chain[]
-    options?: PKPGoogleConnectorOptions
+    options?: PKPStytchConnectorOptions
   } = {}) {
     
     const options = {
@@ -32,9 +35,18 @@ export class PKPGoogleConnector extends Connector {
     }
     super({ chains, options })
     this.lit = options_?.lit
-    this.name = 'GoogleConnect'
+    this.name = 'Email'
     // this.getProvider()
     this.ready = true
+  }
+
+  async getUri () {
+    if(typeof window !== 'undefined') {
+      const loginHref = `${window.location.pathname}?stytch=open`
+      window.location.href = loginHref
+      return loginHref
+    }
+    return '/auth/otp'
   }
 
   async disconnect(): Promise<void> {
@@ -55,14 +67,29 @@ export class PKPGoogleConnector extends Connector {
     // return this.lit?.getPKPWallet();
     throw new Error('Method not implemented.')
   }
+
+  async waitAuth(): Promise<boolean> {
+    const authSig = await this.lit?.getWalletSig()
+    if(!authSig) {
+      await delay(1000)
+      return await this.waitAuth()
+    }
+    return true
+  }
+
   async isAuthorized(): Promise<boolean> {
     const authSig = await this.lit?.getWalletSig()
     if (!authSig) {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('provider') === 'google' && urlParams.has('id_token') && urlParams.has('state')) {
-        await this.lit?.handleGoogleRedirect()
-        return true
+      if(urlParams.get('stytch') === 'open' ) {
+        const res = await this.waitAuth()
+        return res
       }
+      // const urlParams = new URLSearchParams(window.location.search);
+      // if (urlParams.get('provider') === 'google' && urlParams.has('id_token') && urlParams.has('state')) {
+      //   await this.lit?.handleGoogleRedirect()
+      //   return true
+      // }
       return false
     }
     return true
@@ -93,8 +120,8 @@ export class PKPGoogleConnector extends Connector {
   async connect({ chainId }: { chainId?: number } = {}) {
     // check localstorage for authMethod
     const authSig = await this.lit?.getWalletSig()
-    if (!authSig) {
-      await this.lit?.googleLogin()
+    if(!authSig) {
+      this.getUri()
     }
     
     const pkp = await this.lit?.mintPKP()

@@ -114,7 +114,7 @@ export default function ShareView() {
   };
 
   const getLink = () => {
-    return `https://testnet.pact.social/m/${pact?.id}${(isAuthenticated && did?.parent) ? `?ref=${encodeURIComponent(did?.parent)}` : ''}`
+    return `${process.env.NEXT_PUBLIC_APP_DOMAIN}/m/${pact?.id}${(isAuthenticated && did?.parent) ? `?ref=${encodeURIComponent(did?.parent)}` : ''}`
   }
 
   const getText = () => {

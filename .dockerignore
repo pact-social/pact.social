@@ -2,3 +2,6 @@
 .env.production
 node_modules
 .next
+.git
+admin_seed.txt
+*.sh

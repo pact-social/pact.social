@@ -131,7 +131,7 @@ export default function useSignPact() {
   /**
    * 
    */
-  const savePublicSignature = async (time: Date) => {
+  const savePublicSignature = async (time: Date, metadata?: any) => {
     try {
       // verify message
       // const signerAddress = await ethers.utils.verifyMessage(
@@ -148,6 +148,9 @@ export default function useSignPact() {
           pactVersion: pact?.version,
         }
       };
+      if (metadata) {
+        input.content.metadata = JSON.stringify(metadata)
+      }
       const referral = localStorage.getItem(`ref_${pact?.id}`)
       if (referral) {
         const data = JSON.parse(referral)
@@ -176,7 +179,8 @@ export default function useSignPact() {
       }
       setView(
         <>
-          <VerifiedSign/>
+          <ShareView/>
+          {/* <VerifiedSign/> */}
         </>
       );
 
@@ -185,7 +189,7 @@ export default function useSignPact() {
     }
   }
 
-  const signPublic = async () => {
+  const signPublic = async (metadata?: any) => {
     // check if user already signed
     if (!pact) return;
     // form the message
@@ -201,7 +205,7 @@ export default function useSignPact() {
     // });
 
     // create signature on ceramic
-    await savePublicSignature(time);
+    await savePublicSignature(time, metadata);
 
   }
 

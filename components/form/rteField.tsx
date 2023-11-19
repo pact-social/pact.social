@@ -42,7 +42,7 @@ export default function RteField(args: RteFieldType) {
 
   useEffect(() => {
     Quill.register('modules/markdownOptions', QuillMarkdown, true);
-    register(args.field || "content",{ required:true, minLength:30, maxLength: 50000});
+    register(args.field || "content",{ required: true, minLength: 1, maxLength: 50000});
   }, [args.field, register]);
 
   const onEditorStateChange = (content: string) => {

@@ -16,7 +16,6 @@ const query = `
             signedAt
             visibility
             metadata
-            signature
             pact {
               title
             }

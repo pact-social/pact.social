@@ -1,5 +1,6 @@
 import Image, { type StaticImageData } from 'next/image'
 import { ReactElement } from 'react'
+import DefaultImage from './pacts/defaultImage';
 
 export type HeroProps = {
   media?: {
@@ -24,6 +25,7 @@ export default function Hero({ ...props }: HeroProps) {
           <div className="hero-img flex-1 relative lg:border-white lg:border-r-[1rem] lg:border-b-[1rem]">
           {props.media &&
             <figure className={`relative w-full ${props.media?.ratio ? `aspect-[${props.media?.ratio}]` : 'aspect-[1/1]'}`}>
+              {props.media.image &&
               <Image
                 src={props.media?.image} 
                 alt=""
@@ -33,6 +35,10 @@ export default function Hero({ ...props }: HeroProps) {
                 sizes="(max-width: 768px) 320px, 400px"
                 className={`${props.media?.ratio ? `aspect-[${props.media?.ratio}]` : 'aspect-[1/1]'} object-cover`}
               />
+              }
+              {!props.media.image &&
+              <DefaultImage />
+              }
             </figure>
           }
             <div className="absolute flex justify-between items-center bottom-0 sm:bottom-10 xl:bottom-20 max-w-full min-w-[80%] lg:max-w-[90%] bg-[#f4fffb]/80 backdrop-blur-md font-sans p-8 py-3">

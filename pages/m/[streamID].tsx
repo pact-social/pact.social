@@ -45,6 +45,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
           [unstable_serialize({ streamID })]: data
         },
         title: data.title,
+        description: data?.description,
         pactID: data.id,
       }, 
       revalidate: 1000

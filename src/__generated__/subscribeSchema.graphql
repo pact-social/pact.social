@@ -1,8 +1,8 @@
 
-  type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+  type Pact @loadModel(id: "kjzl6hvfrbw6c541c89xa4afuvcrd3lkmr9z00lo5urkjx883gxycj18vieyth4") {
     id: ID!
   }
-  type PrivateStore @loadModel(id: "kjzl6hvfrbw6c6whv22f4atq6cn3xocc1rmwurvpqizvzifrf1ek9a2p8547p20") {
+  type PrivateStore @loadModel(id: "kjzl6hvfrbw6c68klagq8n3hrih8gaxiqpclort42n6qf8py7s54ajrrgkargrd") {
     id: ID!
   }
   type PactSubscribe 

@@ -1,13 +1,15 @@
 
     type EncryptedLitContent {
-      encryptedString: String! @string(maxLength: 10000)
-      encryptedSymmetricKey: String! @string(maxLength: 600)
-      accessControlConditions: String! @string(minLength: 100, maxLength: 3000)
+      dataToEncryptHash: String! @string(maxLength: 100000)
+      ciphertext: String! @string(maxLength: 100000)
+      chain: String @string(maxLength: 100000)
+      accessControlConditions: String @string(maxLength: 100000)
+      accessControlConditionType: String @string(maxLength: 100000)
     }
 
     type PactProfile @createModel(accountRelation: SINGLE, description: "pact.social Profile") {
       name: String @string(maxLength: 100)
-      bio: String @string(maxLength: 200)
+      bio: String @string(maxLength: 1000)
       profilePicture: CID
       profileBanner: CID
       organisation: String @string(maxLength: 100)

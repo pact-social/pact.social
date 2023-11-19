@@ -15,7 +15,7 @@ const createProfileQuery = `
 `;
 
 export default async function createProfile (profile: PactProfile, ceramic?: CeramicClient) { 
-  const inputs = Object.fromEntries(Object.entries(profile).filter(([_, v]) => {
+  const { email, ...inputs} = Object.fromEntries(Object.entries(profile).filter(([_, v]) => {
     return (v && typeof v === 'object') || (v != null && v != '')
   }));
   inputs?.id && delete inputs.id
@@ -23,6 +23,9 @@ export default async function createProfile (profile: PactProfile, ceramic?: Cer
     content: {
       ...inputs,
     }
+  }
+  if (email?.ciphertext) {
+    inputProfile.content.email = email
   }
 
   const { data, errors } = await composeClient.executeQuery<Mutation>(

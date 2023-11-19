@@ -47,7 +47,7 @@ function SignatureListPage({ page }: { page: number | undefined }) {
   if (!data) return null;
 
   return (
-    <div className="mt-12">
+    <div className="my-12">
       <div className="divider"></div>
       <div className="flex justify-between items-center mb-9">
         <h3 className="font-title text-3xl font-bold">Signed by:</h3>
@@ -105,7 +105,6 @@ const SignatureRow = ({
 }) => {
   // const [profile, setProfile] = useState<any>();
   const address = getAddressFromDid(signature.controller_did).address || 'anon';
-
   // const getProfile = async (did: string) => {
 
   //   if(!address) return;
@@ -128,18 +127,39 @@ const SignatureRow = ({
         <EmojiAvatar address={address} />
       </div>
       <div className="">
-        <div className="flex gap-2 font-bold">
-          <span className="hidden lg:block">{signature?.name || address}</span>
-          <span className="block lg:hidden">{signature?.name || shortAddress(address)}</span>
-        </div>
-        <div className="flex gap-2 text-sm">
-          {signature?.title && 
-            <span className="">{signature?.title}{signature?.organisation ? `, ${signature?.organisation}` : ''}</span>
-          }
-          {(!signature?.title && signature?.organisation) && 
-            <span className="">{signature?.organisation}</span>
-          }
-        </div>
+        {signature.metadata?.signOrg &&
+        <>
+          <div className="flex gap-2 font-bold">
+            <span className="">{signature.metadata.org}</span>
+            {/* <span className="block lg:hidden">{signature?.name || shortAddress(address)}</span> */}
+          </div>
+          <div className="flex gap-1 text-sm">
+            <span>represented by</span>
+            {signature?.title && 
+              <span className="">{signature?.name || shortAddress(address)}{signature?.title ?? `, ${signature?.title}`}</span>
+            }
+            {(!signature?.title) && 
+              <span className="">{signature?.name  || shortAddress(address)}</span>
+            }
+          </div>
+        </>
+        }
+        {!signature.metadata?.signOrg &&
+        <>
+          <div className="flex gap-2 font-bold">
+            <span className="hidden lg:block">{signature?.name || address}</span>
+            <span className="block lg:hidden">{signature?.name || shortAddress(address)}</span>
+          </div>
+          <div className="flex gap-2 text-sm">
+            {signature?.title && 
+              <span className="">{signature?.title}{signature?.organisation ? `, ${signature?.organisation}` : ''}</span>
+            }
+            {(!signature?.title && signature?.organisation) && 
+              <span className="">{signature?.organisation}</span>
+            }
+          </div>
+        </>
+        }
       </div>
       <span className="flex-1 text-right">{dayjs(signature?.created_at).fromNow()}</span>
     </div>
@@ -233,6 +253,13 @@ export function useSignatureListPage(page: number = 1) {
       })
     })
     const body =  await res.json()
+    body.data = body.data.map((sig: any) => {
+      if (sig.metadata) {
+        sig.metadata = JSON.parse(sig.metadata)
+      }
+      return sig
+    })
+
     return body
   }
   const { data: list, error, isLoading, mutate } = useSWR(

@@ -1,4 +1,4 @@
 type Topic @createModel(accountRelation: LIST, description: "A Topic Model") {
   author: DID! @documentAccount
-  name: String! @string(minLength: 3, maxLength: 32)
+  name: String! @string(maxLength: 100)
 }

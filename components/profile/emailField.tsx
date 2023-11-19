@@ -18,14 +18,20 @@ export default function EmailField({
   const { ceramic } = useCeramicContext()
   const [current, setCurrent] = useState<string>()
   const [isLoading, setLoading] = useState<boolean>(false)
-  const [isEdit, setEdit] = useState<boolean>(!profile?.email)
+  const [isEdit, setEdit] = useState<boolean>()
   // const emailFields = register('email')
   // register('decryptedEmail')
   const decryptedEmail = watch('decryptedEmail')
 
   const encryptEmail = async (email: string) => {
     setLoading(true)
-    const encryptedContent = await encryptContent('Email', email, {email}, [process.env.NEXT_PUBLIC_EMAIL_NOTIF_ADDRESS || 'notif-address']) as PactProfileEncryptedLitContent
+
+    const encryptedContent = await encryptContent(
+      'Email',
+      email,
+      {email},
+      [process.env.NEXT_PUBLIC_EMAIL_NOTIF_ADDRESS || 'notif-address']
+    ) as PactProfileEncryptedLitContent
 
     setValue('email', encryptedContent)
     setCurrent(decryptedEmail)
@@ -35,7 +41,7 @@ export default function EmailField({
   }
 
   const saveEmail = async () => {
-    if (decryptedEmail && decryptedEmail !== current && isValid) {
+    if (decryptedEmail && decryptedEmail !== current) {
       // if (!current) return
       try {
         const encryptedContent =  await encryptEmail(decryptedEmail)
@@ -54,7 +60,7 @@ export default function EmailField({
   }
 
   useEffect(() => {
-    if (profile?.email && typeof profile.email !== 'string') {
+    if (profile?.email && typeof profile.email !== 'string' && profile.email.ciphertext) {
       setLoading(true)
 
       decryptContent(profile.email).then((decryptedString) => {
@@ -82,11 +88,19 @@ export default function EmailField({
     ></input>
     <input
       type="hidden"
-      {...register('email.encryptedString')}
+      {...register('email.dataToEncryptHash')}
     ></input>
     <input
       type="hidden"
-      {...register('email.encryptedSymmetricKey')}
+      {...register('email.ciphertext')}
+    ></input>
+    <input
+      type="hidden"
+      {...register('email.chain')}
+    ></input>
+    <input
+      type="hidden"
+      {...register('email.accessControlConditionType')}
     ></input>
     <div
       className=" join"

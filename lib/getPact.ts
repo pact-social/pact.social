@@ -30,6 +30,7 @@ const query = `
         }
         topic {
           name
+          id
         }
         topicID
       }

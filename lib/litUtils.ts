@@ -1,17 +1,85 @@
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
-import { LitContracts } from '@lit-protocol/contracts-sdk';
-import { ProviderType } from '@lit-protocol/constants';
-import type { AuthMethod, AuthSig, ExecuteJsProps, GetSessionSigsProps, SessionSigs } from '@lit-protocol/types'
+import { AuthMethodType, ProviderType } from '@lit-protocol/constants';
+import type { AuthMethod, AuthSig, ExecuteJsProps, GetSessionSigsProps, IRelayPKP, IRelayRequestData, SessionSigs } from '@lit-protocol/types'
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
-import { ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers"
+import { BaseProvider, ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers"
 import { ethConnect } from '@lit-protocol/auth-browser';
 import { Store } from './store';
 import { SESSION_DAYS } from './constants';
-import { LitAuthClient, GoogleProvider, isSignInRedirect, OtpProvider } from '@lit-protocol/lit-auth-client';'@lit-protocol/lit-auth-client';
+import { LitAuthClient, GoogleProvider, StytchOtpProvider, isSignInRedirect } from '@lit-protocol/lit-auth-client';
 import { LitAbility, LitActionResource } from '@lit-protocol/auth-helpers';
+import { ethers } from 'ethers';
+import { LitContracts } from '@lit-protocol/contracts-sdk';
+
+
+interface MintRequestBody {
+  keyType: number;
+  permittedAuthMethodTypes: number[];
+  permittedAuthMethodIds: string[];
+  permittedAuthMethodPubkeys: string[];
+  permittedAuthMethodScopes: any[][] // ethers.BigNumber;
+  addPkpEthAddressAsPermittedAddress: boolean;
+  sendPkpToItself: boolean;
+};
+
+
+const validateMintRequestBody = (customArgs: Partial<MintRequestBody>): boolean => {
+  let isValid = true;
+  const validKeys = ['keyType', 'permittedAuthMethodTypes', 'permittedAuthMethodIds', 'permittedAuthMethodPubkeys', 'permittedAuthMethodScopes', 'addPkpEthAddressAsPermittedAddress', 'sendPkpToItself'];
+
+  // Check for any extraneous keys
+  for (const key of Object.keys(customArgs)) {
+    if (!validKeys.includes(key)) {
+      console.error(`Invalid key found: ${key}. This key is not allowed. Valid keys are: ${validKeys.join(', ')}`);
+      isValid = false;
+    }
+  }
+
+  if (customArgs.keyType !== undefined && typeof customArgs.keyType !== 'number') {
+    console.error('Invalid type for keyType: expected a number.');
+    isValid = false;
+  }
+
+  if (customArgs.permittedAuthMethodTypes !== undefined && (!Array.isArray(customArgs.permittedAuthMethodTypes) || !customArgs.permittedAuthMethodTypes.every(type => typeof type === 'number'))) {
+    console.error('Invalid type for permittedAuthMethodTypes: expected an array of numbers.');
+    isValid = false;
+  }
+
+  if (customArgs.permittedAuthMethodIds !== undefined && (!Array.isArray(customArgs.permittedAuthMethodIds) || !customArgs.permittedAuthMethodIds.every(id => typeof id === 'string'))) {
+    console.error('Invalid type for permittedAuthMethodIds: expected an array of strings.');
+    isValid = false;
+  }
+
+  if (customArgs.permittedAuthMethodPubkeys !== undefined && (!Array.isArray(customArgs.permittedAuthMethodPubkeys) || !customArgs.permittedAuthMethodPubkeys.every(pubkey => typeof pubkey === 'string'))) {
+    console.error('Invalid type for permittedAuthMethodPubkeys: expected an array of strings.');
+    isValid = false;
+  }
+
+  if (customArgs.permittedAuthMethodScopes !== undefined && (!Array.isArray(customArgs.permittedAuthMethodScopes) || !customArgs.permittedAuthMethodScopes.every(scope => Array.isArray(scope) && scope.every(s => typeof s === 'number')))) {
+    console.error('Invalid type for permittedAuthMethodScopes: expected an array of arrays of numberr.');
+    isValid = false;
+  }
+
+  if (customArgs.addPkpEthAddressAsPermittedAddress !== undefined && typeof customArgs.addPkpEthAddressAsPermittedAddress !== 'boolean') {
+    console.error('Invalid type for addPkpEthAddressAsPermittedAddress: expected a boolean.');
+    isValid = false;
+  }
+
+  if (customArgs.sendPkpToItself !== undefined && typeof customArgs.sendPkpToItself !== 'boolean') {
+    console.error('Invalid type for sendPkpToItself: expected a boolean.');
+    isValid = false;
+  }
+
+  return isValid;
+};
 
 export function decodeb64(b64String: string) {
   return new Uint8Array(Buffer.from(b64String, "base64"));
+}
+
+export function encodeb64(uintarray: any) {
+  const b64 = Buffer.from(uintarray).toString("base64");
+  return b64;
 }
 
 /**
@@ -53,12 +121,13 @@ export class Lit {
   private litAuthClient: LitAuthClient
   public account?: string
   private redirectUri: string = `${process.env.NEXT_PUBLIC_APP_DOMAIN}/auth/lit`
-  private store?: Store;
-  private provider?: GoogleProvider;
+  private store: Store;
+  private provider?: GoogleProvider | StytchOtpProvider | any;
   private pkp?: string;
   private pkpWallet?: PKPEthersWallet;
   private sessionSigs?: SessionSigs;
   public pkpStatus: PkpStatus = PkpStatus.NONE;
+  public authStytch: boolean = false;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -66,11 +135,14 @@ export class Lit {
       // this.getTokensOwnerByAddress('0x2D85abE6769806ab5B9611CDb6409c06ab541313')
       // this.getTokensOwnerByAddress('0xC13E5709b01af28F12865EdF324DB77C374031Ec')
       // this.getTokensOwnerByAddress('0x3B5dD260598B7579A0b015A1F3BBF322aDC499A1')
+    } else {
+      // @ts-ignore
+      this.store = {}
     }
     const client = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: true,
       debug: false,
-      litNetwork: "serrano",
+      litNetwork: "cayenne",
     })
     this.litNodeClient = client
 
@@ -85,25 +157,138 @@ export class Lit {
     this.litAuthClient = authClient
   }
 
-  async getTokensOwnerByAddress(address: string) {
-
-  const litContracts = new LitContracts({});
-  try {
-    await litContracts.connect();
-    
-  } catch (error) {
-    console.log('error lit contracts connect', error)
+  triggerStytch() {
+    if(!this.authStytch) {
+      this.authStytch = true
+    } else {
+      // this.authStytch = false
+    }
   }
-  //  
-  
-  const tokens = await litContracts
-                       .pkpNftContractUtil
-                       .read
-                       .getTokensInfoByAddress(address)
-                      //  .getTokensByAddress(address);
-  const actions = await litContracts.pkpPermissionsContractUtil.read.getPermittedActions("82886857139868379093806024562634912421531242225124108697027997553177628602053")
-  const addresses = await litContracts.pkpPermissionsContractUtil.read.getPermittedAddresses("82886857139868379093806024562634912421531242225124108697027997553177628602053")
-  // const infos = await litContracts.
+
+  isStytch() {
+    return this?.authStytch || false
+  }
+
+  async prepareRelayRequestData(
+    authMethod: AuthMethod
+  ): Promise<IRelayRequestData> {
+    const authMethodType = authMethod.authMethodType;
+    const authMethodId = await this.getPKPProvider(authMethodType).getAuthMethodId(authMethod);
+    const data = {
+      authMethodType,
+      authMethodId,
+    };
+    return data;
+  }
+
+  async mintPKPThroughRelayer(authMethod: AuthMethod, customArgs?: any): Promise<string> {
+    const data = await this.prepareRelayRequestData(authMethod);
+
+    if (customArgs && !validateMintRequestBody(customArgs)) {
+      throw new Error('Invalid mint request body');
+    };
+
+    const body = this.prepareMintBody(data, customArgs ?? {} as MintRequestBody);
+    const mintRes = await this.getPKPProvider(authMethod.authMethodType).relay.mintPKP(body);
+    if (!mintRes || !mintRes.requestId) {
+      throw new Error('Missing mint response or request ID from relay server');
+    }
+    return mintRes.requestId;
+  }
+
+  prepareMintBody(data: IRelayRequestData, customArgs: MintRequestBody): string {
+    const pubkey = data.authMethodPubKey || '0x';
+
+    const defaultArgs: MintRequestBody = {
+      // default params
+      keyType: 2,
+      permittedAuthMethodTypes: [data.authMethodType],
+      permittedAuthMethodIds: [data.authMethodId],
+      permittedAuthMethodPubkeys: [pubkey],
+      permittedAuthMethodScopes: [[ethers.BigNumber.from('0')]],
+      addPkpEthAddressAsPermittedAddress: true,
+      sendPkpToItself: true,
+    };
+
+    const args: MintRequestBody = {
+      ...defaultArgs,
+      ...customArgs,
+    };
+
+    const body = JSON.stringify(args);
+    return body;
+  }
+
+
+  async fetchPKPs() {
+    // const litContracts = new LitContracts({});
+    try {
+      // 3. connect to lit contracts
+      // Create a random wallet
+      const wallet = ethers.Wallet.createRandom();
+
+      // Define custom RPC provider information
+      const customRpcProvider = new ethers.providers.JsonRpcProvider(
+        "https://chain-rpc.litprotocol.com/http",
+        175177  // This is the network ID
+      );
+
+      // Connect the wallet to the custom RPC provider
+      const walletWithProvider = wallet.connect(customRpcProvider);
+
+      const litContracts = new LitContracts({ signer: walletWithProvider });
+      await litContracts.connect();
+      
+      const permissionsContract = litContracts.pkpPermissionsContract
+      const _authMethod = await this.getAuthMethod()
+      if (!_authMethod) {
+        throw new Error('No auth method provided')
+      }
+      var authProvider = await this.getPKPProvider(_authMethod.authMethodType)
+
+      const authId = await authProvider.getAuthMethodId(_authMethod);
+      const tokenIds = await permissionsContract.read.getTokenIdsForAuthMethod(_authMethod.authMethodType, authId);
+      // console.log('tokenIds', tokenIds, permissionsContract)
+
+      let pkpsRelayer = await authProvider.fetchPKPsThroughRelayer(_authMethod);
+      // console.log('pkpsRelayer', pkpsRelayer)
+      
+      // -- get the pkps
+      const pkps = [];
+      for (let i = 0; i < tokenIds.length; i++) {
+        const pubkey = await permissionsContract.read.getPubkey(tokenIds[i]);
+        if (pubkey) {
+          const ethAddress = ethers.utils.computeAddress(pubkey);
+
+          // check the permission scopes
+          const permissionScopes = await permissionsContract.read.getPermittedAuthMethodScopes(
+            tokenIds[i],
+            _authMethod.authMethodType,
+            authId,
+            3,
+          );
+
+          pkps.push({
+            authId: authId,
+            tokenId: tokenIds[i],
+            publicKey: pubkey,
+            ethAddress: ethAddress,
+            scopes: {
+              signAnything: permissionScopes[1],
+              onlySignMessages: permissionScopes[2],
+            },
+          });
+        }
+      }
+
+      // reverse the pkps order
+      pkps.reverse();
+      // console.log('pkps', pkps)
+      return pkps
+
+    } catch (error) {
+      console.log('error lit contracts connect', error)
+    }
   }
 
   getPublicKey() {
@@ -113,82 +298,21 @@ export class Lit {
   async googleLogin() {
     const currentUri = typeof window !== 'undefined' ? window.location.href : undefined
     await this.store?.setItem('auth-redirect', currentUri)
-    await this.getPKPProvider().signIn();
-  }
-
-  getPKPProvider(redirectUri?: string) {
-    if (redirectUri) this.redirectUri = redirectUri
-
-    if (!this.provider) {
-      // Initialize Google provider
-      const provider = this.getGoogleProvider()
-  
-      // const provider = this.litAuthClient.getProvider(
-      //   ProviderType.Google,
-      // ) as GoogleProvider;
-      this.provider = provider
-    }
-    return this.provider
+    await this.getPKPProvider(AuthMethodType.GoogleJwt).signIn();
   }
 
   getGoogleProvider(redirectUri?: string) {
     // Initialize Google provider
-    this.litAuthClient.initProvider(ProviderType.Google, {
+    const provider = this.litAuthClient.initProvider(ProviderType.Google, {
       // The URL of your web app where users will be redirected after authentication
       redirectUri: this.redirectUri,
 
     })
 
-    const provider = this.litAuthClient.getProvider(
-      ProviderType.Google,
-    ) as GoogleProvider;
+    // const provider = this.litAuthClient.getProvider(
+    //   ProviderType.Google,
+    // ) as GoogleProvider;
     this.provider = provider
-    return provider
-  }
-
-  getOtpProvider(userId: string) {
-    // Initialize Google provider
-    const provider = this.litAuthClient.initProvider(ProviderType.Otp, {
-      // The URL of your web app where users will be redirected after authentication
-      // redirectUri: this.redirectUri,
-      userId: userId || 'pact.social0x01@gmail.com',
-      emailCustomizationOptions: {
-        fromName: 'pact.social',
-        from: 'devops@pact.social'
-      }
-      // appId: '',
-      // requestId,
-      // emailCustomizationOptions,
-      // customName,
-    })
-
-    // const provider = this.litAuthClient.getProvider(
-    //   ProviderType.Otp,
-    // ) as OtpProvider;
-    // this.provider = provider
-    return provider
-  }
-
-  getActionProvider(userId: string) {
-    // Initialize Google provider
-    const provider = this.litAuthClient.initProvider(ProviderType.Otp, {
-      // The URL of your web app where users will be redirected after authentication
-      // redirectUri: this.redirectUri,
-      userId: userId || 'pact.social0x01@gmail.com',
-      emailCustomizationOptions: {
-        fromName: 'pact.social',
-        from: 'devops@pact.social'
-      }
-      // appId: '',
-      // requestId,
-      // emailCustomizationOptions,
-      // customName,
-    })
-
-    // const provider = this.litAuthClient.getProvider(
-    //   ProviderType.Otp,
-    // ) as OtpProvider;
-    // this.provider = provider
     return provider
   }
 
@@ -196,7 +320,7 @@ export class Lit {
     if (isSignInRedirect(this.redirectUri)) {
       // Get auth method object that has the OAuth token from redirect callback
       this.pkpStatus = PkpStatus.AUTH_PROVIDER
-      const authMethod: AuthMethod = await this.getPKPProvider().authenticate();
+      const authMethod: AuthMethod = await this.getPKPProvider(AuthMethodType.GoogleJwt).authenticate();
 
       this.store?.setItem("lit-auth-method", JSON.stringify(authMethod));
       this.pkpStatus = PkpStatus.FETCH_PKP
@@ -207,6 +331,63 @@ export class Lit {
       this.pkpStatus = PkpStatus.AUTH_SUCCESS
     }
   }
+
+  async getStytchProvider() {
+    const provider = this.litAuthClient.initProvider(ProviderType.StytchOtp, {
+      appId: process.env.NEXT_PUBLIC_STYTCH_APP_ID || '',
+    });
+    this.provider = provider
+    return provider
+  }
+
+  async authenticateWithStytch(
+    accessToken: string,
+    userId?: string
+  ) {
+    const provider = await this.getStytchProvider()
+    // @ts-ignore
+    this.provider = provider
+
+    const authMethod = await provider?.authenticate({ accessToken, userId });
+    this.store?.setItem("lit-auth-method", JSON.stringify(authMethod));
+
+    this.pkpStatus = PkpStatus.FETCH_PKP
+    const pkp = await this.mintPKP()
+    this.pkp = pkp
+    this.pkpStatus = PkpStatus.SESSION_SIGS
+    await this.createPKPWallet()
+    this.pkpStatus = PkpStatus.AUTH_SUCCESS
+    return authMethod;
+  }
+
+  // 
+  // const authMethod = {accessToken
+  //   : "eyJhbGciOiJSUzI1NiIsImtpZCI6Imp3ay10ZXN0LTBiMzIzZWU4LWM2NjEtNGI1OC04YjBlLWY4YmQ0YWYyMTg5NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsicHJvamVjdC10ZXN0LWU3YTQwNjcyLTBlZWItNDBkNi1hNzg5LWExNDJiM2I4OTlhOSJdLCJleHAiOjE2OTk1Mzk1NzMsImh0dHBzOi8vc3R5dGNoLmNvbS9zZXNzaW9uIjp7ImlkIjoic2Vzc2lvbi10ZXN0LTUzYTFhZTA0LTcwNmEtNGI4ZC1iMjU2LTA5NWI1ZWQ3Y2UzYSIsInN0YXJ0ZWRfYXQiOiIyMDIzLTExLTA5VDE0OjA1OjI0WiIsImxhc3RfYWNjZXNzZWRfYXQiOiIyMDIzLTExLTA5VDE0OjE0OjMzWiIsImV4cGlyZXNfYXQiOiIyMDIzLTExLTA5VDE1OjE0OjMzWiIsImF0dHJpYnV0ZXMiOnsidXNlcl9hZ2VudCI6Ik1vemlsbGEvNS4wIChNYWNpbnRvc2g7IEludGVsIE1hYyBPUyBYIDEwXzE1XzcpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8xMTkuMC4wLjAgU2FmYXJpLzUzNy4zNiIsImlwX2FkZHJlc3MiOiI4My40MS41NS4yMDEifSwiYXV0aGVudGljYXRpb25fZmFjdG9ycyI6W3sidHlwZSI6Im90cCIsImRlbGl2ZXJ5X21ldGhvZCI6ImVtYWlsIiwibGFzdF9hdXRoZW50aWNhdGVkX2F0IjoiMjAyMy0xMS0wOVQxNDoxNDozM1oiLCJlbWFpbF9mYWN0b3IiOnsiZW1haWxfaWQiOiJlbWFpbC10ZXN0LTEwYzJhZTc0LWYzNjMtNDY1Zi05N2IzLWZkZGY0MTJlN2E1NCIsImVtYWlsX2FkZHJlc3MiOiJsdWRvQHBhY3Quc29jaWFsIn19XX0sImlhdCI6MTY5OTUzOTI3MywiaXNzIjoic3R5dGNoLmNvbS9wcm9qZWN0LXRlc3QtZTdhNDA2NzItMGVlYi00MGQ2LWE3ODktYTE0MmIzYjg5OWE5IiwibmJmIjoxNjk5NTM5MjczLCJzdWIiOiJ1c2VyLXRlc3QtNjJkNjNkN2MtN2M0MC00NjRlLWJhNGEtMzMzMDE5MWRlOWM1In0.EkirhN-48BxIPuZJ5U4JE3NWsuHJixnmlzSMwYTYE9WY_tfIexi43gjbuk8vBvwZHLPJosv2lsCNj9UQYLjZTzPpGr1NC5iRj3f6LdpV75KT5ES0YGLMtgApicZisMCDods8Ct1EIHNu4O1xLYFtcrz3uZgW0AqKLyPvH6cKmzWgB-gF-SWqrqwAPXlOE-um-iNzKs_qurg5VyvTpb8-1-lydBZnjUWgEA8Gz2c6jN33gjFwbQBD6f9gvmxUz6iNSpag2ZkaBsiAR5I3D6n63IyiUfWG3ENNZJjiQFomCcXZMuFojiuSC_s1fhOaCDhL2rJFCvqYVF4WsmjMjlo2FQ",
+  //   authMethodType: 9}
+  
+
+  getPKPProvider(type: AuthMethodType, redirectUri?: string) {
+    if (redirectUri) this.redirectUri = redirectUri
+    if (!this.provider) {
+      // Initialize Google provider
+      switch (type) {
+        case AuthMethodType.StytchOtp:
+          return this.getStytchProvider()
+          break;
+        case AuthMethodType.GoogleJwt:
+          
+          return this.getGoogleProvider()
+          break;
+      
+        default:
+          return this.getStytchProvider()
+          break;
+      }
+    }
+    return this.provider
+  }
+
+
   // Get session signatures for the given PKP public key and auth method
   async getSessionSigs({
     pkpPublicKey,
@@ -217,7 +398,7 @@ export class Lit {
     authMethod: AuthMethod;
     sessionSigsParams: GetSessionSigsProps;
   }) {
-    const sessionSigs = await this.getPKPProvider().getSessionSigs({
+    const sessionSigs = await this.getPKPProvider(authMethod.authMethodType).getSessionSigs({
       pkpPublicKey,
       authMethod,
       sessionSigsParams,
@@ -230,18 +411,22 @@ export class Lit {
     let authMethod = await this.getAuthMethod()
     if(authMethod) {
       // const exp = this.litNodeClient.getExpiration()
-      const existingPKP = await this.getPKPProvider().fetchPKPsThroughRelayer(authMethod)
-
-      if (!existingPKP || existingPKP?.length === 0) {
+      const existingPKP = await this.fetchPKPs()
+      const validPKPs = existingPKP?.filter(pkp => pkp.scopes.signAnything === true)
+      // console.log('valid pkps', validPKPs)
+      if (!validPKPs || validPKPs?.length === 0) {
         this.pkpStatus = PkpStatus.MINT_PKP
-        const tx = await this.getPKPProvider().mintPKPThroughRelayer(authMethod)
-
-        const newPKP = await this.getPKPProvider().fetchPKPsThroughRelayer(authMethod)
-        this.pkp = newPKP[0].publicKey
+        const customArgs = {
+          permittedAuthMethodScopes: [[1]], // ethers.BigNumber;
+        };
+        const tx = await this.mintPKPThroughRelayer(authMethod, customArgs)
+        const newPKP = await this.getPKPProvider(authMethod.authMethodType)?.relay.pollRequestUntilTerminalState(tx)
+        // const newPKP = await this.getPKPProvider().fetchPKPsThroughRelayer(authMethod)
+        this.pkp = newPKP?.pkpPublicKey
         return this.pkp
       }
-      this.pkp = existingPKP[0].publicKey
-      return existingPKP[0].publicKey
+      this.pkp = validPKPs[0].publicKey
+      return validPKPs[0].publicKey
     }
   }
 
@@ -417,149 +602,186 @@ export class Lit {
     }
   }
 
-  async decryptString(encryptedContent: any, chain: string, store: Store, forcedAuthSig = null) {
+  async decryptString(encryptedContent: any, forcedAuthSig = null) {
     /** Make sure Lit is ready before trying to decrypt the string */
     await this.connect();
-  
     /** Retrieve AuthSig or used the one passed as a parameter */
     let authSig;
     if(forcedAuthSig) {
       authSig = forcedAuthSig;
     } else {
-      authSig = await Lit.getAuthSig(store);
+      authSig = await this.getAuthSig()
     }
-  
-    /** Decode string encoded as b64 to be supported by Ceramic */
-    let decodedString;
+
     try {
-      decodedString = decodeb64(encryptedContent.encryptedString);
-    } catch(e) {
-      console.log("Error decoding b64 string: ", e);
-      throw e;
+      const decryptedString = await LitJsSdk.decryptToString(
+        {
+          accessControlConditions: JSON.parse(encryptedContent.accessControlConditions),
+          ciphertext: encryptedContent.ciphertext,
+          dataToEncryptHash: encryptedContent.dataToEncryptHash,
+          authSig,
+          chain: encryptedContent.chain,
+        },
+        this.litNodeClient,
+      );
+      
+      return {
+        decryptedString
+      }
+    } catch (error) {
+      console.log('error', error) 
     }
+
+    // /** Decode string encoded as b64 to be supported by Ceramic */
+    // let decodedString;
+    // try {
+    //   decodedString = decodeb64(encryptedContent.ciphertext);
+    // } catch(e) {
+    //   console.log("Error decoding b64 string: ", e);
+    //   throw e;
+    // }
   
-    /** Instantiate the decrypted symmetric key */
-    let decryptedSymmKey;
+    // /** Instantiate the decrypted symmetric key */
+    // let decryptedSymmKey;
   
-    /** Decrypt the message accroding to the chain the user is connected on  */
-    switch (chain) {
-      /** Decrypt for EVM users */
-      case "ethereum":
-        let _access;
-        try {
-          _access = JSON.parse(encryptedContent.accessControlConditions);
-        } catch(e) {
-          console.log("Couldn't parse accessControlConditions: ", e);
-          throw e;
-        }
+    // /** Decrypt the message accroding to the chain the user is connected on  */
+    // switch (encryptedContent.chain) {
+    //   /** Decrypt for EVM users */
+    //   case "ethereum":
+    //     let _access;
+    //     try {
+    //       _access = JSON.parse(encryptedContent.accessControlConditions);
+    //     } catch(e) {
+    //       console.log("Couldn't parse accessControlConditions: ", e);
+    //       throw e;
+    //     }
   
-        /** Get encryption key from Lit */
-        try {
-          decryptedSymmKey = await this.litNodeClient.getEncryptionKey({
-            accessControlConditions: _access,
-            toDecrypt: encryptedContent.encryptedSymmetricKey,
-            chain: "ethereum",
-            authSig
-          })
-        } catch(e) {
-          console.log("Error getting encryptionKey for EVM: ", e);
-          throw e;
-        }
-        break;
+    //     /** Get encryption key from Lit */
+    //     try {
+    //       decryptedSymmKey = await this.litNodeClient. getEncryptionKey({
+    //         accessControlConditions: _access,
+    //         toDecrypt: encryptedContent.dataToEncryptHash,
+    //         chain: "ethereum",
+    //         authSig
+    //       })
+    //     } catch(e) {
+    //       console.log("Error getting encryptionKey for EVM: ", e);
+    //       throw e;
+    //     }
+    //     break;
   
-      /** Decrypt for Solana users */
-      case "solana":
-        let _rpcCond;
-        try {
-          _rpcCond = JSON.parse(encryptedContent.solRpcConditions);
-        } catch(e) {
-          console.log("Couldn't parse solRpcConditions: ", e);
-          throw e;
-        }
+    //   /** Decrypt for Solana users */
+    //   case "solana":
+    //     let _rpcCond;
+    //     try {
+    //       _rpcCond = JSON.parse(encryptedContent.solRpcConditions);
+    //     } catch(e) {
+    //       console.log("Couldn't parse solRpcConditions: ", e);
+    //       throw e;
+    //     }
   
-        /** Get encryption key from Lit */
-        try {
-          decryptedSymmKey = await this.litNodeClient.getEncryptionKey({
-            solRpcConditions: _rpcCond,
-            toDecrypt: encryptedContent.encryptedSymmetricKey,
-            chain: "solana",
-            authSig
-          })
-        } catch(e) {
-          console.log("Error getting encryptionKey for Solana: ", e);
-          throw e;
-        }
-        break;
-    }
+    //     /** Get encryption key from Lit */
+    //     try {
+    //       decryptedSymmKey = await this.litNodeClient.getEncryptionKey({
+    //         solRpcConditions: _rpcCond,
+    //         toDecrypt: encryptedContent.dataToEncryptHash,
+    //         chain: "solana",
+    //         authSig
+    //       })
+    //     } catch(e) {
+    //       console.log("Error getting encryptionKey for Solana: ", e);
+    //       throw e;
+    //     }
+    //     break;
+    // }
   
-    /** Decrypt the string using the encryption key */
-    try {
-        if (!decryptedSymmKey) throw new Error('no symmKey found')
-        let _blob = new Blob([decodedString]);
-        const decryptedString = await LitJsSdk.decryptString(_blob, decryptedSymmKey);
-        return {
-          status: 200,
-          result: decryptedString
-        };
-    } catch(e) {
-      console.log("Error decrypting string: ", e)
-      throw e;
-    }
+    // /** Decrypt the string using the encryption key */
+    // try {
+    //     if (!decryptedSymmKey) throw new Error('no symmKey found')
+    //     let _blob = new Blob([decodedString]);
+    //     const decryptedString = await LitJsSdk.decryptString(_blob, decryptedSymmKey);
+    //     return {
+    //       decryptedString
+    //     };
+    // } catch(e) {
+    //   console.log("Error decrypting string: ", e)
+    //   throw e;
+    // }
   }
 
   /** Encrypt string based on some access control conditions */
-  async encryptString(body: string, chain = "ethereum", controlConditions: any[]) {
+  async encryptString(body: string, chain = 'ethereum', accessControlConditions: any[]) {
+    await this.connect();
     /** Step 2: Encrypt message */
-    const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(body);
+    const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString({
+      accessControlConditions,
+      authSig: await this.getAuthSig(),
+      chain,
+      dataToEncrypt: body,
+    }, this.litNodeClient)
 
-    /** We convert the encrypted string to base64 to make it work with Ceramic */
-    let base64EncryptedString = await blobToBase64(encryptedString);
-
-    /** Step 4: Save encrypted content to lit nodes */
-    let encryptedSymmetricKey;
-    switch (chain) {
-      /** Encrypt for EVM based on the access control conditions */
-      case "ethereum":
-        try {
-          encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-            accessControlConditions: controlConditions,
-            symmetricKey: symmetricKey,
-            authSig: evmEmptyAuthSig,
-            chain: "ethereum"
-          });
-        } catch(e) {
-          console.log("Error encrypting string with Lit for EVM: ", e);
-          throw new Error("Error encrypting string with Lit: " + e)
-        }
-
-        /** Step 5: Return encrypted content which will be stored on Ceramic (and needed to decrypt the content) */
-        return {
-          accessControlConditions: JSON.stringify(controlConditions),
-          encryptedSymmetricKey: buf2hex(encryptedSymmetricKey),
-          encryptedString: base64EncryptedString
-        };
-
-      /** Encrypt for Solana based on the sol rpc conditions */
-      case "solana":
-        try {
-          encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-            solRpcConditions: controlConditions,
-            symmetricKey: symmetricKey,
-            authSig: solEmptyAuthSig,
-            chain: "solana"
-          });
-        } catch(e) {
-          console.log("Error encrypting string with Lit for Solana: ", e);
-          throw new Error("Error encrypting string with Lit: " + e)
-        }
-
-        /** Step 5: Return encrypted content which will be stored on Ceramic (and needed to decrypt the content) */
-        return {
-          solRpcConditions: JSON.stringify(controlConditions),
-          encryptedSymmetricKey: buf2hex(encryptedSymmetricKey),
-          encryptedString: base64EncryptedString
-        };
+    return {
+      ciphertext,
+      dataToEncryptHash,
+      accessControlConditions: JSON.stringify(accessControlConditions),
+      chain,
+      accessControlConditionType: 'accessControlConditions'
     }
+   
+    // const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(body);
+
+    // /** We convert the encrypted string to base64 to make it work with Ceramic */
+    // let base64EncryptedString = await blobToBase64(encryptedString);
+
+    // /** Step 4: Save encrypted content to lit nodes */
+    // let encryptedSymmetricKey;
+    // switch (chain) {
+    //   /** Encrypt for EVM based on the access control conditions */
+    //   case "ethereum":
+    //     try {
+    //       encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
+    //         accessControlConditions,
+    //         symmetricKey: symmetricKey,
+    //         authSig: evmEmptyAuthSig,
+    //         chain: "ethereum"
+    //       });
+    //     } catch(e) {
+    //       console.log("Error encrypting string with Lit for EVM: ", e);
+    //       throw new Error("Error encrypting string with Lit: " + e)
+    //     }
+
+    //     /** Step 5: Return encrypted content which will be stored on Ceramic (and needed to decrypt the content) */
+    //     return {
+    //       ciphertext: base64EncryptedString,
+    //       dataToEncryptHash: buf2hex(encryptedSymmetricKey),
+    //       accessControlConditions: JSON.stringify(accessControlConditions),
+    //       chain,
+    //       accessControlConditionType: 'v2accessControlConditionsEth'
+    //     }
+
+    //   /** Encrypt for Solana based on the sol rpc conditions */
+    //   case "solana":
+    //     try {
+    //       encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
+    //         solRpcConditions: accessControlConditions,
+    //         symmetricKey: symmetricKey,
+    //         authSig: solEmptyAuthSig,
+    //         chain: "solana"
+    //       });
+    //     } catch(e) {
+    //       console.log("Error encrypting string with Lit for Solana: ", e);
+    //       throw new Error("Error encrypting string with Lit: " + e)
+    //     }
+
+    //     /** Step 5: Return encrypted content which will be stored on Ceramic (and needed to decrypt the content) */
+    //     return {
+    //       ciphertext: base64EncryptedString,
+    //       dataToEncryptHash: buf2hex(encryptedSymmetricKey),
+    //       accessControlConditions: JSON.stringify(accessControlConditions),
+    //       chain,
+    //       accessControlConditionType: 'v2accessControlConditionsSol'
+    //     }
+    // }
   }
 }
 
@@ -651,19 +873,21 @@ export function generateAccessControlConditionsForRecipients(recipients: any[]) 
   /** Loop through all EVM users in this conversation */
   ethRecipients.forEach((ethRecipient, i) => {
     let { address } = getAddressFromDid(ethRecipient);
-    _accessControlConditions.push({
-      contractAddress: '',
-      standardContractType: '',
-      chain: 'ethereum',
-      method: '',
-      parameters: [
-        ':userAddress',
-      ],
-      returnValueTest: {
-        comparator: '=',
-        value: address
-      }
-    });
+    if(address) {
+      _accessControlConditions.push({
+        contractAddress: '',
+        standardContractType: '',
+        chain: 'ethereum',
+        method: '',
+        parameters: [
+          ':userAddress',
+        ],
+        returnValueTest: {
+          comparator: '=',
+          value: address
+        }
+      });
+    }
 
     /** Push `or` operator if recipient isn't the last one of the list */
     if(i < ethRecipients.length - 1) {

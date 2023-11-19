@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -9,7 +9,7 @@ import Youtube from '@tiptap/extension-youtube';
 import EditorMenuBar from './editorMenuBar';
 
 
-export type RteFieldType = {
+export type MarkdownFieldType = {
   label?: string;
   field?: string;
 }
@@ -23,7 +23,7 @@ const Tiptap = ({ editor }: { editor: Editor}) => {
   )
 }
 
-export default function MarkdownField(args: RteFieldType) {
+export default function MarkdownField(args: MarkdownFieldType) {
   const { register, setValue, getValues, watch, formState: { errors }} = useFormContext()
   const editorContent = watch(args.field || "content");
   const editor = useEditor({
@@ -59,18 +59,18 @@ export default function MarkdownField(args: RteFieldType) {
     },
     content: editorContent,
   })
-
+  
   useEffect(() => {
+    register(args.field || "content",{ required:true, maxLength: 100000});
     // Quill.register('modules/markdownOptions', QuillMarkdown, true);
-    register(args.field || "content",{ required:true, minLength:30, maxLength: 50000});
-  }, [args.field, register]);
+  }, []);
 
   // const onEditorStateChange = (content: string) => {
   //   setValue(args.field || "content", content);
   // };
 
-  useEffect(() => {
-  }, [args.field, editorContent, getValues])
+  // useEffect(() => {
+  // }, [args.field, editorContent, getValues])
 
   return (
     <div className="formControl">

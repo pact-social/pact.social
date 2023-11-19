@@ -26,6 +26,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   
   try {
     const resp = await getPactsByType(params.type as string, parseInt(page as string))
+
     return { 
       props: {
         fallback: {

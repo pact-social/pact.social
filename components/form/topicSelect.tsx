@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
-import { PactInput, PactType, Topic } from '../../src/gql'
+import { Pact, PactInput, PactType, Topic } from '../../src/gql'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { UseFormSetValue } from 'react-hook-form';
 
@@ -8,6 +8,7 @@ interface TopicProps {
   topics: Topic[];
   register: any;
   setValue: UseFormSetValue<PactInput>;
+  defaultValues?: Pact;
 }
 
 type PactInputs = {
@@ -18,8 +19,13 @@ type PactInputs = {
   image?: string,
 };
 
-export default function TopicSelect({topics, register, setValue}: TopicProps) {
-  const [selectedTopic, setSelectedTopic] = useState<Topic>(topics?.[0])
+export default function TopicSelect({
+  topics, 
+  register, 
+  setValue,
+  defaultValues
+}: TopicProps) {
+  const [selectedTopic, setSelectedTopic] = useState<Topic>(defaultValues?.topic || topics?.[0])
   const [query, setQuery] = useState<string>('')
   
   const saveTopic = async (topic: Topic) => {
@@ -60,10 +66,8 @@ export default function TopicSelect({topics, register, setValue}: TopicProps) {
 
 
   useEffect(() => {
-    console.log('Topic changed', selectedTopic)
     if (selectedTopic && !selectedTopic?.id) {
       // create the topic
-      console.log('saveTopic', selectedTopic)
       saveTopic(selectedTopic)
     }
     setValue('topicID', selectedTopic?.id)

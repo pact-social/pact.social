@@ -125,7 +125,6 @@ export const writeComposite = async () => {
   await writeEncodedComposite(signatureToPactComposite, "./src/__generated__/signatureToPact_definition.json");
 
   // subscribe pact
-  console.log('PrivateStore.id', PrivateStore.id, PrivateStore)
   const subscribeView = pactSubscribe(models.Pact.id, PrivateStore.id)
   writeFileSync('./src/__generated__/subscribeSchema.graphql', subscribeView);
   

@@ -1,21 +1,23 @@
+import { useEffect } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import dynamic from 'next/dynamic'
+import Turnstile from "react-turnstile";
+
 import Input from "../form/input";
-import { useViewContext } from "../signBox";
 import SubmitButton from "../form/submitButton";
-import { useAccount } from "wagmi";
 import ConnectButton from "../connect";
-import ShareView from "./share";
-import useProfile from "../../hooks/useProfile";
 import { useCeramicContext } from "../../context";
-import { useEffect, useState } from "react";
 import { useProfileContext } from "../../context/profile";
 import createProfile from "../../lib/updateProfile";
 import useSignPact from "../../hooks/useSignPact";
-import Turnstile from "react-turnstile";
 import EmailField from "../profile/emailField";
 import { subscribeToPact } from "../../lib/subscription";
 import { Mutation } from "../../src/gql";
 import { usePactContext } from "../../context/pact";
+
+const VerificationStatusPanel = dynamic(() => import('../verification/statusPanel'), {
+  ssr: false,
+});
 
 const DescriptionButton = ({
   title,
@@ -45,6 +47,7 @@ interface SignInput {
   anon: boolean;
   subscribe: boolean;
   turnToken?: string;
+  metadata?: any; // json object
 }
 
 export default function Sign () {
@@ -74,6 +77,8 @@ export default function Sign () {
   watch('name')
   watch('subscribe')
   watch('turnToken')
+  watch('metadata')
+  const signOrg = watch('metadata.signOrg')
   
   const onSubmit: SubmitHandler<SignInput & { decryptedEmail?: string }> = async (data) => {
     // update profile if name changed
@@ -89,9 +94,15 @@ export default function Sign () {
     }
     // share notif recipient and method
     if (data.decryptedEmail && add && data.subscribe) {
-      const recipients = [pact?.author?.id || '', process.env.NEXT_PUBLIC_EMAIL_NOTIF_ADDRESS || '']
+      // const recipients = [pact?.author?.id || '', process.env.NEXT_PUBLIC_EMAIL_NOTIF_ADDRESS || '']
+      const recipients = [process.env.NEXT_PUBLIC_EMAIL_NOTIF_ADDRESS || '']
 
-      const encryptedContent = await add('Email', data.decryptedEmail, data.decryptedEmail, recipients)
+      const encryptedContent = await add(
+        {email: data.decryptedEmail}, 
+        'Email', 
+        data.decryptedEmail, 
+        recipients
+      )
 
       const { data: res } = encryptedContent
       const recipientId = res?.createPrivateStore?.document.id
@@ -117,7 +128,7 @@ export default function Sign () {
       refreshSignatures(false)
     } else {
       // sign public
-      await signPublic()
+      await signPublic(data.metadata)
       refreshSignatures(true)
 
     }
@@ -132,8 +143,17 @@ export default function Sign () {
 
   }, [profile])
 
+  useEffect(() => {
+    if (profile?.organisation && signOrg ) {
+      setValue('metadata.org', profile.organisation)
+      trigger(['metadata.org'])
+    }
+  }, [profile, signOrg])
+
   return (
     <div className="flex flex-col justify-around">
+      {/* <GitcoinPassport /> */}
+      <VerificationStatusPanel />
     {/* <div className="flex flex-col justify-around my-6 mx-4"> */}
       {/* <div>
 
@@ -154,13 +174,35 @@ export default function Sign () {
               </div>
             </div> */}
             {!getValues().anon &&
-              <Input 
-                label="Your name"
-                placeholder="type here"
-                id="name"
-                required
-                size="sm"
-              />
+              <div className="flex flex-col items-start">
+                <Input 
+                  label="Your name"
+                  placeholder="type here"
+                  id="name"
+                  required
+                  size="sm"
+                  className="w-full"
+                />
+                <div className="form-control">
+                  <label className="cursor-pointer label gap-2">
+                    <input
+                      {...register('metadata.signOrg', {})}
+                      type="checkbox" 
+                      className="toggle toggle-secondary" 
+                    />
+                    <span className="label-text">Sign as an org</span> 
+                  </label>
+                </div>
+                {getValues().metadata?.signOrg &&
+                  <Input 
+                    // label="Organisation"
+                    placeholder="your organisation"
+                    id="metadata.org"
+                    required
+                    size="sm"
+                  />
+                }
+              </div>
             }
             
             {/* <div 

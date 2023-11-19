@@ -17,9 +17,11 @@ query getPrivateStore {
             id
             archived
             encryptedContent {
+              dataToEncryptHash
+              ciphertext
+              chain
               accessControlConditions
-              encryptedString
-              encryptedSymmetricKey
+              accessControlConditionType
             }
           }
         }
@@ -77,9 +79,9 @@ export default function usePrivateStore() {
     
     for (const item of list) {
 
-      const prom = lit?.decryptString(item?.node?.encryptedContent, 'ethereum', new Store()).then(sig => {
-        if (sig.status === 200) {
-          const content = JSON.parse(sig.result)
+      const prom = lit?.decryptString(item?.node?.encryptedContent).then((res) => {
+        if (res) {
+          const content = JSON.parse(res.decryptedString)
           return {...content, id: item?.node?.id}
         }
       })
@@ -199,7 +201,7 @@ export default function usePrivateStore() {
   }
 
   async function encryptContent(__typename: string, id: string, content: any, recipients: [string]) {
-    await lit.connect()
+    // await lit.connect()
     const {accessControlConditions} = generateAccessControlConditionsForRecipients([did?.parent, ...recipients])
     const newClearStream = {...content, __typename, id}
     const encryptedContent = await lit.encryptString(JSON.stringify(newClearStream), 'ethereum', accessControlConditions)
@@ -208,10 +210,10 @@ export default function usePrivateStore() {
   
   async function decryptContent(data: PactProfileEncryptedLitContent | undefined, id?: string) {
     if (!data) throw new Error('no data provided')
-    await lit.connect()
-    const decryptedContent = await lit?.decryptString(data, 'ethereum', new Store()).then(sig => {
-      if (sig.status === 200) {
-        const content = JSON.parse(sig.result)
+
+    const decryptedContent = await lit.decryptString(data).then((res) => {
+      if(res) {
+        const content = JSON.parse(res.decryptedString)
         return {...content, _id: id}
       }
     })

@@ -1,10 +1,10 @@
-import { createContext, ReactNode, useContext } from "react";
-import usePact from "../hooks/usePact";
-import { Pact } from "../src/gql";
+import { createContext, ReactNode, useContext } from "react"
+import usePact from "../hooks/usePact"
+import { Pact } from "../src/gql"
 
 export const PactContext = createContext<{
   pact?: Pact,
-  isLoading: boolean
+  isLoading: boolean,
 }>({ 
   isLoading: false 
 });
@@ -14,7 +14,7 @@ export const PactProvider = ({
   children 
 }: {
   pactId: string; 
-  children: ReactNode
+  children: ReactNode;
 }) => {
   const {
     data,
@@ -42,4 +42,4 @@ export const DraftPactProvider = ({
   )
 }
 
-export const usePactContext = () => useContext(PactContext);
+export const usePactContext = () => useContext(PactContext)

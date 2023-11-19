@@ -24,15 +24,15 @@ type Tab = {
 export default function PactLayout({ children }: { children: ReactElement }) {
   const router = useRouter()
   const streamID = router.query.streamID as string;
-  const { fallback, title, pactID } = children?.props;
+  const { fallback, title, description, pactID } = children?.props;
 
   useEffect(() => {
     const url = new URL(location.href);
     const ref = url.searchParams.get('ref')
     let args: any = {}
     if (ref) {
-      args.refferal = ref
-      localStorage.setItem(`refferal_${streamID}`, JSON.stringify({
+      args.referral = ref
+      localStorage.setItem(`ref_${streamID}`, JSON.stringify({
         ref,
         createdAt: (new Date()).toISOString()
       }));
@@ -62,8 +62,8 @@ export default function PactLayout({ children }: { children: ReactElement }) {
     <Layout
       // noContainer
       metas={{
-      title: title || 'pact.social',
-      description: 'decentralized petition and manifest for change and impact',
+      title: title.trim() || 'sign on pact.social',
+      description: description || 'decentralized petition and manifest for change and impact',
       imageSrc: `${process.env.NEXT_PUBLIC_APP_DOMAIN}/api/og/${pactID}`
       }}
     >

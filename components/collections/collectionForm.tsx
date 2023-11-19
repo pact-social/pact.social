@@ -56,9 +56,12 @@ export default function CollectionForm ({
             <input 
               id="name" 
               type="text" 
-              className={`input input-bordered w-full max-w-xs${errors.name && 'input-error'}`}
+              className={`input input-bordered w-full max-w-xs ${errors.name && 'input-error'}`}
               placeholder="Name your collection"
-              {...register('name', {required: true, minLength: 3, maxLength: 100})}
+              {
+                // @ts-ignore
+                ...register('name', {required: true, maxLength: 100})
+              }
             />
             {errors.name && 
             <label className="label">
@@ -71,7 +74,7 @@ export default function CollectionForm ({
             <input 
               id="description" 
               type="text" 
-              className={`input input-bordered w-full max-w-xs${errors.description && 'input-error'}`}
+              className={`input input-bordered w-full max-w-xs ${errors.description && 'input-error'}`}
               placeholder="Description your collection"
               {...register('description', {required: false, maxLength: 500})}
             />

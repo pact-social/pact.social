@@ -14,7 +14,6 @@ export const pactSignature = function (pactId) {
       author: DID! @documentAccount
       visibility: VisibilityType!
       signedAt: DateTime!
-      signature: String @string(minLength: 10, maxLength: 200) # optional wallet signature
       pactVersion: CommitID!
       pactID: StreamID! @documentReference(model: "Pact")
       pact: Pact @relationDocument(property: "pactID")

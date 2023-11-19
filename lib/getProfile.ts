@@ -13,7 +13,7 @@ type QueryMultiProfile = {
 const profileQuery = (address: string) => {
   const query = supportedChains.reduce((query, chain) => {
     return `${query}
-      ${chain.name}: node(id: "did:pkh:eip155:${chain.id}:${address}") {
+      ${chain.network}: node(id: "did:pkh:eip155:${chain.id}:${address}") {
         ... on CeramicAccount {
           pactProfile {
             id
@@ -25,9 +25,11 @@ const profileQuery = (address: string) => {
             organisation
             profilePicture
             email {
+              dataToEncryptHash
+              ciphertext
+              chain
               accessControlConditions
-              encryptedString
-              encryptedSymmetricKey
+              accessControlConditionType
             }
           }
         }
@@ -68,7 +70,7 @@ export default async function getProfile (did: string) {
   const currentChain = supportedChains.find((current) => current.id.toString() === account.chain.split(':')[1])
   
   if (currentChain && composeProfiles) {
-    let profile = composeProfiles[currentChain?.name].pactProfile;
+    let profile = composeProfiles[currentChain?.network].pactProfile;
     return profile as PactProfile;
   }
   return;

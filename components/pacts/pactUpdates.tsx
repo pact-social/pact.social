@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
 import { htmlToMarkdown } from "../../lib/mdUtils";
 import SubmitButton from "../form/submitButton";
 
-const RteField = dynamic(() => import('../form/rteField'), {
+const MarkdownField = dynamic(() => import('../../components/form/markdownField'), {
   ssr: false,
 })
 
@@ -27,7 +27,6 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
   const { composeClient } = useCeramicContext()
   
   const onSubmit: SubmitHandler<PostInput> = async (data) => {
-    // console.log('submit data', data)
     data.createdAt = data.createdAt || (new Date()).toISOString()
     data.content = htmlToMarkdown(data?.content as string)
     
@@ -83,7 +82,7 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
                 type="text" 
                 className={`input input-bordered w-full max-w-xs${errors.title && 'input-error'}`}
                 placeholder="Name your post"
-                {...register('title', {required: true, minLength: 10, maxLength: 120})}
+                {...register('title', {required: true, maxLength: 120})}
               />
             {errors.title && 
             <label className="label">
@@ -112,7 +111,7 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
             }
           </div>
           
-          <RteField label="Your post content" field="content" />
+          <MarkdownField label="Your post content:" field="content" />
 
           <MetadataFields />
 

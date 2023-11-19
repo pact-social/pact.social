@@ -11,11 +11,11 @@ import OrbisScore from "../verification/orbisScore";
 import RegenScore from "../verification/regenScore";
 
 export default function VerifiedSign() {
-  const [ challengeLoading, toggleChallengeLoading ] = useState<boolean>(false)
-  const [ challenge, setChallenge ] = useState<ChallengeResponse>()
-  const [ waitingSigning, toggleWaitingSigning ] = useState<boolean>(false);
-  const [ signature, setSignature ] = useState<string>();
-  const [ score, setScore ] = useState<ScorerResponse>();
+  // const [ challengeLoading, toggleChallengeLoading ] = useState<boolean>(false)
+  // const [ challenge, setChallenge ] = useState<ChallengeResponse>()
+  // const [ waitingSigning, toggleWaitingSigning ] = useState<boolean>(false);
+  // const [ signature, setSignature ] = useState<string>();
+  // const [ score, setScore ] = useState<ScorerResponse>();
 
   const { setView, previousView } = useViewContext()
   const { address } = useAccount();
@@ -30,8 +30,8 @@ export default function VerifiedSign() {
       
       <div className="flex flex-col mt-4 gap-4">
         <GitcoinPassport />
-        <OrbisScore />
-        <RegenScore />
+        {/* <OrbisScore /> */}
+        {/* <RegenScore /> */}
       </div>
 
       {/* {did && <OrbisCredentials did={did.parent}/>} */}

@@ -34,7 +34,6 @@ export async function authenticatePkp(
        session: didSession
      };
   } else {
-    console.log("results Lit Action: ");
     return({
       status: 300,
       error: "Error generating signatures from LitAction"

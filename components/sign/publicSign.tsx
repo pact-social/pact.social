@@ -24,7 +24,7 @@ export default function PublicSign() {
   //     saveSignature(data);
   //   }
   // });
-  const { composeClient, ceramic } = useCeramicContext();  
+  const { composeClient, ceramic } = useCeramicContext();
   
   const saveSignature = async (time: Date) => {
     try {

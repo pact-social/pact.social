@@ -7,7 +7,7 @@ export default async function getReferralStats(did: string, page?: number, limit
     .range(limit * (page - 1), limit * page)
     .limit(limit)
   ;
-  console.log('referral stats query', page, limit, did)
+
   console.log(dbRecord)
   return dbRecord;
 }

@@ -62,7 +62,7 @@ export default function PactCardH({pact}: { pact: Pact }) {
           <h2 className="card-title line-clamp-2">{pact.title}</h2>
           <div className="flex gap-2">  
             <div className="">{dayjs(pact.createdAt).format('LL')}</div>
-            <div className="badge badge-outline badge-primary">{pact?.topic?.name}</div>
+            <div className="badge badge-outline badge-primary line-clamp-1">{pact?.topic?.name}</div>
           </div>
         </Link>
         <div className="card-actions justify-between items-baseline">

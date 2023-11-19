@@ -22,14 +22,10 @@ export const ProfileContext = createContext<{
   isLoading: boolean
   encryptContent: (__typename: string, id: string, content: any, recipients: [string]) => Promise<{
     accessControlConditions: string;
-    encryptedSymmetricKey: string;
-    encryptedString: unknown;
-    solRpcConditions?: undefined;
-  } | {
-    solRpcConditions: string;
-    encryptedSymmetricKey: string;
-    encryptedString: unknown;
-    accessControlConditions?: undefined;
+    ciphertext: unknown;
+    dataToEncryptHash: string;
+    accessControlConditionType: string;
+    chain: string;
   } | undefined>,
   decryptContent: (data: PactProfileEncryptedLitContent | undefined) => Promise<any | undefined>
 

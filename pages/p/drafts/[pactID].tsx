@@ -52,7 +52,7 @@ export default function DraftPactPreview({}) {
       {(isLoading || !router.isReady) && <>Loading</>}
       {(!isLoading && !pact) && <>Error</>}
       {(edit && pact)&&
-        <PactForm defaultValues={pact as PactInput} pactID={pact.id}/>
+        <PactForm defaultValues={pact} pactID={pact.id}/>
       }
       {(pact && !edit) && 
         <DraftPactProvider

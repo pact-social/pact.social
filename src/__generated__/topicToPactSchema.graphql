@@ -1,9 +1,9 @@
 
-    type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+    type Pact @loadModel(id: "kjzl6hvfrbw6c541c89xa4afuvcrd3lkmr9z00lo5urkjx883gxycj18vieyth4") {
       id: ID!
     }
     
-    type Topic @loadModel(id: "kjzl6hvfrbw6c64flvg8scssg663ortm0eu92kr0fmpa7li6ajgx7t3ytga3o3y"){
+    type Topic @loadModel(id: "kjzl6hvfrbw6ca197hm92ezvx36z0e4940zkv81ura7bmg1swfxxwhfwga7x0bb"){
       pacts: [Pact] @relationFrom(model: "Pact", property: "topicID")
       pactsCount: Int! @relationCountFrom(model: "Pact", property: "topicID")
     }  

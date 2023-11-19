@@ -7,7 +7,7 @@ import ShareView from "../sign/share";
 import { useCeramicContext } from "../../context";
 import OrbisCredentials from "../user/credentials";
 import Link from "next/link";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
 
 export default function GitcoinPassport () {
   const [ challengeLoading, toggleChallengeLoading ] = useState<boolean>(false)
@@ -126,6 +126,10 @@ export default function GitcoinPassport () {
           className=""
         ></Image>
         Gitcoin Passport
+        <div className="tooltip" data-tip="hello">
+          <InformationCircleIcon className="w-4 h-4" />
+          {/* <button className="btn">Hover me</button> */}
+        </div>
         </h2>
       </div>
       <div className="card-actions justify-between  px-4 py-2 bg-white !rounded-2xl">

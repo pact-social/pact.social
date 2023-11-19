@@ -1,5 +1,5 @@
 
-    type Topic @loadModel(id: "kjzl6hvfrbw6c64flvg8scssg663ortm0eu92kr0fmpa7li6ajgx7t3ytga3o3y") {
+    type Topic @loadModel(id: "kjzl6hvfrbw6ca197hm92ezvx36z0e4940zkv81ura7bmg1swfxxwhfwga7x0bb") {
       id: ID!
     }
 

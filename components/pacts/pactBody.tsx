@@ -8,7 +8,6 @@ export default function PactBody () {
 
   return (
     <>
-      <h1 className="text-3xl font-bold">{pact?.title}</h1>
       <article className="prose">
         {pact?.content &&
           <div dangerouslySetInnerHTML={{ __html: markdownToHtml( pact?.content ) || pact?.content }}></div>
@@ -17,7 +16,7 @@ export default function PactBody () {
       <div className="flex justify-end">
         <ReportButton pactID={pact?.id} />
       </div>
-      <section>
+      <section className="">
         <PactSignatures />
       </section>
     </>

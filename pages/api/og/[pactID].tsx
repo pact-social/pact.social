@@ -7,13 +7,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import fetch from 'node-fetch';
 import { Maybe, Pact, PactType } from '../../../src/gql';
 import { getPact } from '../../../lib/getPact';
-import supabase from '../../../lib/supabase';
 import { Resvg } from '@resvg/resvg-js'
-import { formatNumber } from '../../../utils/stats';
+// import { formatNumber } from '../../../utils/stats';
 import LogoBrand from '../../../components/svg/logoBrand';
-import IconSig from '../../../components/svg/noun-signature';
+// import IconSig from '../../../components/svg/noun-signature';
 import VerifiedIcon from '../../../components/svg/verifiedIcon';
-import ViewIcon from '../../../components/svg/viewIcon';
+// import ViewIcon from '../../../components/svg/viewIcon';
 import Logo from '../../../components/svg/logo';
 
 export default async function handle (req: NextApiRequest, res: NextApiResponse) {

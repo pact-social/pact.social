@@ -5,6 +5,7 @@ import useAuthCeramic from "../hooks/useAuthCeramic";
 import { useAccount } from "wagmi";
 import LitModal from "../components/authentication/litModal";
 import { useLitContext } from "./lit";
+import StytchModal from "../components/authentication/stytchModal";
 
 export function useModalStateValue() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -29,7 +30,7 @@ export const AuthenticationContext = createContext<AuthenticationContextValue>({
 });
 
 export const AuthenticationProvider = ({
-  children 
+  children
 }: {
   children: ReactNode
 }) => {
@@ -57,6 +58,12 @@ export const AuthenticationProvider = ({
     closeModal: closeLitModal,
     isModalOpen: litModalOpen,
     openModal: openLitModal,
+  } = useModalStateValue()
+  
+  const {
+    closeModal: closeStytchModal,
+    isModalOpen: litStytchOpen,
+    openModal: openStytchModal,
   } = useModalStateValue()
 
   useEffect(() => {
@@ -103,6 +110,13 @@ export const AuthenticationProvider = ({
     }
   }, [address])
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('stytch') === 'open' ) {
+      openStytchModal()
+    }
+  }, [])
+
   return (
     <AuthenticationContext.Provider value={useMemo(
       () => ({
@@ -111,12 +125,13 @@ export const AuthenticationProvider = ({
         openCeramicModal: isConnected ? openCeramicModal : undefined,
         openLitModal: isAuthenticated ? openLitModal : undefined,
         }),
-        [ceramicModalOpen, isAuthenticated, isConnected, litModalOpen, openCeramicModal, openLitModal]
+        [ceramicModalOpen, isAuthenticated, isConnected, litModalOpen, openCeramicModal, openLitModal, closeStytchModal, litStytchOpen]
       )}
       >
       {children}
       <CeramicModal onClose={closeCeramicModal} open={ceramicModalOpen} />
       <LitModal onClose={closeLitModal} open={litModalOpen} />
+      <StytchModal onClose={closeStytchModal} open={litStytchOpen} />
     </AuthenticationContext.Provider>
   );
 };

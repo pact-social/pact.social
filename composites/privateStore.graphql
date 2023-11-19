@@ -1,7 +1,9 @@
 type EncryptedLitContent {
-  encryptedString: String! @string(maxLength: 10000)
-  encryptedSymmetricKey: String! @string(maxLength: 600)
-  accessControlConditions: String! @string(minLength: 100, maxLength: 3000)
+  dataToEncryptHash: String! @string(maxLength: 100000)
+  ciphertext: String! @string(maxLength: 100000)
+  chain: String @string(maxLength: 100000)
+  accessControlConditions: String @string(maxLength: 100000)
+  accessControlConditionType: String @string(maxLength: 100000)
 }
 
 type PrivateStore @createModel(accountRelation: LIST, description: "Personal encrypted set of jwe") {

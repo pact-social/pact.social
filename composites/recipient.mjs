@@ -5,7 +5,8 @@ export const recipient = function () {
     
     name: String! @string(maxLength: 100)
     isVerified: Boolean!
-    contact: String @string(maxLength: 500) # can be email, or address
+    contact: String @string(maxLength: 1000) # can be email, or address
+    altContact: String @string(maxLength: 1000) # can be email, or address
     profile: DID
   }
   `

@@ -9,7 +9,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
   return (
     <>
     <MediaField />
-    <div className="form-control">
+    {/* <div className="form-control">
       <label htmlFor="sourceUrl" className="label cursor-pointer">
         sourceUrl: 
       </label>
@@ -196,7 +196,7 @@ export default function MetadataFields ({ defaultValues }: { defaultValues?: Pos
         <span className="label-text-alt ">Description is required</span>
       </label>
       }
-    </div>
+    </div> */}
     </>
   )
 }

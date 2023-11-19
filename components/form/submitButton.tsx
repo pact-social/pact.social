@@ -17,7 +17,7 @@ export default function SubmitButton ({
   return (
     <button 
       type={type || "submit"}
-      className={`btn ${className} ${(isLoading || isSubmitting || !isValid) && 'btn-disabled'} ${isSubmitSuccessful ? 'btn-success' : ''}`}>
+      className={`btn ${className} ${(isLoading || isSubmitting /*|| !isValid*/) && 'btn-disabled'} ${isSubmitSuccessful ? 'btn-success' : ''}`}>
       {(isLoading || isSubmitting) && <span className="loading loading-spinner"></span>}
       {isSubmitSuccessful ? <>success</> : (!isValid) ? <>complete to {name}</>: <>{name}</> }
     </button>

@@ -22,7 +22,6 @@ const query = `
           item
           type
         }
-        name
         pactID
         tags
         title

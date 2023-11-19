@@ -1,9 +1,9 @@
 
-    type SocialTemplate @loadModel(id: "kjzl6hvfrbw6c54jn4qk2z350m7k5bs9fzh7009ivgue5k85p9al0hbxtz9372t") {
+    type SocialTemplate @loadModel(id: "kjzl6hvfrbw6c8fd48njkkrk3s7ib6kgbrlko2kid4t31nn80r8b4oo0abzidp6") {
       id: ID!
     }
 
-    type Pact @loadModel(id: "kjzl6hvfrbw6caksay4z3k46tjb2acqxqda5avc0sx8853qejuhpvg2blov8km7") {
+    type Pact @loadModel(id: "kjzl6hvfrbw6c541c89xa4afuvcrd3lkmr9z00lo5urkjx883gxycj18vieyth4") {
       id: ID!
       socialTemplates: [SocialTemplate] @relationFrom(model: "SocialTemplate", property: "pactID")
     }

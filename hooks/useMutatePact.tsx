@@ -3,11 +3,13 @@ import { useCeramicContext } from "../context";
 import { useProfileContext } from "../context/profile";
 import { htmlToMarkdown } from "../lib/mdUtils";
 import type { Mutation, PactInput } from "../src/gql";
+import usePact from "./usePact";
 
-export default function useMutatePact () {
+export default function useMutatePact (pactID?: string) {
   const { push } = useRouter();
   const { add, update } = useProfileContext()
   const { composeClient } = useCeramicContext()
+  const { mutate } = usePact({stream: pactID})
   
   const saveDraft = async (values: PactInput, pactID?: string) => {
     try {
@@ -86,6 +88,8 @@ export default function useMutatePact () {
           return push(`/m/${res?.createPact?.document.id}`)
         }
       } else {
+        data.updatedAt = (new Date()).toISOString()
+        data.content = htmlToMarkdown(data?.content as string)
         const { data: res, errors } = await composeClient.executeQuery<Mutation>(`
         mutation update($input: UpdatePactInput!) {
           updatePact(input: $input) {
@@ -106,12 +110,14 @@ export default function useMutatePact () {
                 topicID: data.topicID,
                 type: data.type,
                 createdAt: data.createdAt,
+                updatedAt: data.updatedAt,
               },
               // type: PactType[data.type]
             }
           }
         })
         if (!errors) {
+          mutate()
           return push(`/m/${res?.updatePact?.document.id}`)
         }
       }
