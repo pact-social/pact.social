@@ -41,7 +41,8 @@ export default function EmojiAvatar({
           <Image 
             src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}/${profile.profilePicture}`}
             alt={address}
-            fill
+            height={120}
+            width={120}
             className={className || 'rounded-full'}
           />
         }

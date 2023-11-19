@@ -203,7 +203,7 @@ const Home: NextPage<HomeProps> = ({
             <div className="grid grid-flow-row grid-rows-3 gap-2 items-stretch ">
               {/* <div className="flex flex-col items-center"> */}
               <Image 
-                src="/opencivics_logo.jpeg"
+                src={`${process.env.NEXT_PUBLIC_APP_DOMAIN}/opencivics_logo.jpeg`}
                 width={48}
                 height={48}
                 alt="OpenCivics"
