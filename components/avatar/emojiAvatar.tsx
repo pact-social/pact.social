@@ -30,11 +30,11 @@ export default function EmojiAvatar({
 
   const { profile } = useProfile(`did:pkh:eip155:1:${address.toLowerCase()}`)
   return (
-    // <div
-    //   className="avatar placeholder"
-    // >
+    <div
+      className="avatar placeholder"
+    >
       <div 
-        className={"avatar placeholder text-neutral-content items-center justify-center ".concat(size ? ` h-[${size.toString()}px] w-[${size.toString()}px] ` : className || ' rounded-full w-8 h-8 ')} style={{backgroundColor}}
+        className={"text-neutral-content items-center justify-center ".concat(size ? ` h-[${size.toString()}px] w-[${size.toString()}px] ` : className || ' rounded-full w-8 h-8 ')} style={{backgroundColor}}
         // className={"text-neutral-content ".concat(size ? ` h-full w-full ` : className || ' rounded-full w-8')} style={{backgroundColor}}
       >
         {profile?.profilePicture &&
@@ -57,11 +57,11 @@ export default function EmojiAvatar({
             />
             }
             {!ensAvatar &&
-            <span className="">{emoji}</span>
+            <span className="block">{emoji}</span>
             }
           </>
         }
       </div>
-    // </div>
+    </div>
   )
 }
