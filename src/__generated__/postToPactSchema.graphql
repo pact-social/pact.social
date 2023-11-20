@@ -1,5 +1,5 @@
 
-  type Post @loadModel(id:  "kjzl6hvfrbw6c82ccld2ei18uwmagk00l0q1hqkxc0xerzptz777rqtb518hc57") {
+  type Post @loadModel(id:  "kjzl6hvfrbw6caoux62p0exnt4uftxcfm4yjg9y9vho6nxwyzz2xhwxr0voonl8") {
     id: ID!
   }
   type Pact @loadModel(id: "kjzl6hvfrbw6c541c89xa4afuvcrd3lkmr9z00lo5urkjx883gxycj18vieyth4"){

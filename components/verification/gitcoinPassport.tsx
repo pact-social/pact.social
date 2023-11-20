@@ -113,7 +113,6 @@ export default function GitcoinPassport () {
 
   return (
     <>
-
     <div className="card card-compact border w-full !rounded-2xl bg-slate-50">
       <div className="card-body !gap-0">
         
@@ -267,11 +266,6 @@ export default function GitcoinPassport () {
         }
       </div>
     </div>
-
-
-
-
-    
     </>
   )
 }

@@ -162,7 +162,8 @@
   /* top: 0; */
   /* line-height: 1; */
   animation: openclose 7s ease-in-out infinite;
-  @apply w-72 border-l-8 border-secondary whitespace-nowrap;
+  will-change: transform;
+  @apply w-72 border-l-8 border-secondary whitespace-nowrap transform-gpu;
   /* @apply h-20; */
 }
 .word-petition, .word-manifesto, .word-openletter {

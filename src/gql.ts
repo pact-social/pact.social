@@ -125,8 +125,15 @@ export type CeramicAccountPactSubscribeListCountArgs = {
 export type CeramicAccountPostListArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<PostFiltersInput>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+  sorting?: InputMaybe<PostSortingInput>;
+};
+
+
+export type CeramicAccountPostListCountArgs = {
+  filters?: InputMaybe<PostFiltersInput>;
 };
 
 
@@ -823,13 +830,16 @@ export type PactPostsArgs = {
   account?: InputMaybe<Scalars['ID']>;
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<PostFiltersInput>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+  sorting?: InputMaybe<PostSortingInput>;
 };
 
 
 export type PactPostsCountArgs = {
   account?: InputMaybe<Scalars['ID']>;
+  filters?: InputMaybe<PostFiltersInput>;
 };
 
 
@@ -1265,6 +1275,7 @@ export type PartialPactSubscribeInput = {
 
 export type PartialPostInput = {
   animation_url?: InputMaybe<Scalars['URI']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
   content?: InputMaybe<Scalars['String']>;
   contentWarning?: InputMaybe<PostPublicationContentWarning>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1312,6 +1323,7 @@ export type PartialTopicInput = {
 export type Post = Node & {
   __typename?: 'Post';
   animation_url?: Maybe<Scalars['URI']>;
+  archived?: Maybe<Scalars['Boolean']>;
   /** Account controlling the document */
   author: CeramicAccount;
   content?: Maybe<Scalars['String']>;
@@ -1352,8 +1364,16 @@ export type PostEdge = {
   node?: Maybe<Post>;
 };
 
+export type PostFiltersInput = {
+  and?: InputMaybe<Array<PostFiltersInput>>;
+  not?: InputMaybe<PostFiltersInput>;
+  or?: InputMaybe<Array<PostFiltersInput>>;
+  where?: InputMaybe<PostObjectFilterInput>;
+};
+
 export type PostInput = {
   animation_url?: InputMaybe<Scalars['URI']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
   content?: InputMaybe<Scalars['String']>;
   contentWarning?: InputMaybe<PostPublicationContentWarning>;
   createdAt: Scalars['DateTime'];
@@ -1370,6 +1390,12 @@ export type PostInput = {
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   title: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PostObjectFilterInput = {
+  archived?: InputMaybe<BooleanValueFilterInput>;
+  createdAt?: InputMaybe<StringValueFilterInput>;
+  pactID?: InputMaybe<StringValueFilterInput>;
 };
 
 export enum PostPublicationContentWarning {
@@ -1403,6 +1429,12 @@ export type PostPublicationMetadataMediaInput = {
   cover?: InputMaybe<Scalars['String']>;
   item?: InputMaybe<Scalars['URI']>;
   type?: InputMaybe<Scalars['String']>;
+};
+
+export type PostSortingInput = {
+  archived?: InputMaybe<SortOrder>;
+  createdAt?: InputMaybe<SortOrder>;
+  pactID?: InputMaybe<SortOrder>;
 };
 
 export type PrivateStore = Node & {
@@ -1572,11 +1604,18 @@ export type QueryPactSubscribeIndexArgs = {
 };
 
 
+export type QueryPostCountArgs = {
+  filters?: InputMaybe<PostFiltersInput>;
+};
+
+
 export type QueryPostIndexArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<PostFiltersInput>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+  sorting?: InputMaybe<PostSortingInput>;
 };
 
 

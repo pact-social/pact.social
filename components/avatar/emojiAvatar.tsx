@@ -31,7 +31,7 @@ export default function EmojiAvatar({
   const { profile } = useProfile(`did:pkh:eip155:1:${address.toLowerCase()}`)
   return (
     <div
-      className="avatar placeholder"
+      className={"avatar placeholder".concat(size ? ` h-full w-full ` : '')}
     >
       <div 
         className={"text-neutral-content items-center justify-center ".concat(size ? ` h-[${size.toString()}px] w-[${size.toString()}px] ` : className || ' rounded-full w-8 h-8 ')} style={{backgroundColor}}

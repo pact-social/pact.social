@@ -1,7 +1,12 @@
+import dynamic from "next/dynamic";
 import { usePactContext } from "../../context/pact";
 import { markdownToHtml } from "../../lib/mdUtils";
 import PactSignatures from "./pactSignatures";
-import ReportButton from "./reportButton";
+
+
+const ReportButton = dynamic(() => import('./reportButton'), {
+  ssr: false,
+})
 
 export default function PactBody () {
   const { pact } = usePactContext()

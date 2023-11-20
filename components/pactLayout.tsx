@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { SWRConfig } from "swr";
 import Layout from "./layout";
 import { PactProvider, usePactContext } from "../context/pact";
@@ -6,9 +7,9 @@ import { ReactElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import analytics from "../context/analytics";
 import SignBox from "./signBox";
-import SignStats from "./sign/stats";
+// import SignStats from "./sign/stats";
 import Portal from "./portal";
-import WalletSign from "./sign/wallet";
+// import WalletSign from "./sign/wallet";
 import ShareView from "./sign/share";
 import Highlights from "./highlights";
 import Link from "next/link";
@@ -16,10 +17,15 @@ import { useProfileContext } from "../context/profile";
 import { PactSignatureVisibilityType } from "../src/gql";
 import { useCeramicContext } from "../context";
 
+
 type Tab = {
   name: string,
   pathname: string,
 }
+
+const SignStats = dynamic(() => import('./sign/stats'), {
+  ssr: false,
+})
 
 export default function PactLayout({ children }: { children: ReactElement }) {
   const router = useRouter()
@@ -103,7 +109,7 @@ export default function PactLayout({ children }: { children: ReactElement }) {
             <div className="hidden md:block right-0 top-28 w-80 lg:w-80 md:sticky">
               <div className="flex justify-end my-16 ">
                 <SignBox className="stats shadow-xl stats-vertical w-full min-h-[18rem]">
-                  <SignStats />  
+                  <SignStats />
                 </SignBox>
               </div>
             </div>

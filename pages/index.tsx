@@ -23,7 +23,7 @@ export async function getStaticProps() {
     
     let featured = null
     let top = null
-    console.log(data)
+
     if (data && data.length > 0) {
       featured = await getPact({streamID: data[0].streamid})
     }

@@ -2,13 +2,15 @@ import * as LitJsSdk from '@lit-protocol/lit-node-client';
 import { AuthMethodType, ProviderType } from '@lit-protocol/constants';
 import type { AuthMethod, AuthSig, ExecuteJsProps, GetSessionSigsProps, IRelayPKP, IRelayRequestData, SessionSigs } from '@lit-protocol/types'
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
-import { BaseProvider, ExternalProvider, JsonRpcFetchFunc, Web3Provider } from "@ethersproject/providers"
+import {  ExternalProvider, JsonRpcFetchFunc, JsonRpcProvider, Web3Provider } from "@ethersproject/providers"
 import { ethConnect } from '@lit-protocol/auth-browser';
 import { Store } from './store';
 import { SESSION_DAYS } from './constants';
 import { LitAuthClient, GoogleProvider, StytchOtpProvider, isSignInRedirect } from '@lit-protocol/lit-auth-client';
 import { LitAbility, LitActionResource } from '@lit-protocol/auth-helpers';
-import { ethers } from 'ethers';
+import { BigNumber } from "@ethersproject/bignumber";
+import { Wallet } from "@ethersproject/wallet";
+import { computeAddress } from "@ethersproject/transactions";
 import { LitContracts } from '@lit-protocol/contracts-sdk';
 
 
@@ -205,7 +207,7 @@ export class Lit {
       permittedAuthMethodTypes: [data.authMethodType],
       permittedAuthMethodIds: [data.authMethodId],
       permittedAuthMethodPubkeys: [pubkey],
-      permittedAuthMethodScopes: [[ethers.BigNumber.from('0')]],
+      permittedAuthMethodScopes: [[BigNumber.from('0')]],
       addPkpEthAddressAsPermittedAddress: true,
       sendPkpToItself: true,
     };
@@ -225,10 +227,10 @@ export class Lit {
     try {
       // 3. connect to lit contracts
       // Create a random wallet
-      const wallet = ethers.Wallet.createRandom();
+      const wallet = Wallet.createRandom();
 
       // Define custom RPC provider information
-      const customRpcProvider = new ethers.providers.JsonRpcProvider(
+      const customRpcProvider = new JsonRpcProvider(
         "https://chain-rpc.litprotocol.com/http",
         175177  // This is the network ID
       );
@@ -258,7 +260,7 @@ export class Lit {
       for (let i = 0; i < tokenIds.length; i++) {
         const pubkey = await permissionsContract.read.getPubkey(tokenIds[i]);
         if (pubkey) {
-          const ethAddress = ethers.utils.computeAddress(pubkey);
+          const ethAddress = computeAddress(pubkey);
 
           // check the permission scopes
           const permissionScopes = await permissionsContract.read.getPermittedAuthMethodScopes(

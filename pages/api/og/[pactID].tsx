@@ -14,92 +14,37 @@ import LogoBrand from '../../../components/svg/logoBrand';
 import VerifiedIcon from '../../../components/svg/verifiedIcon';
 // import ViewIcon from '../../../components/svg/viewIcon';
 import Logo from '../../../components/svg/logo';
+import Image from 'next/image';
 
 export default async function handle (req: NextApiRequest, res: NextApiResponse) {
+  const dir = './.next/cache/og/images'
   const tR = performance.now()
   const pactID = req.query.pactID as string;
   const output = req.query.output as string;
   try {
     const pact = await getPact({streamID: pactID})
-    
-    const roboto = fs.readFileSync('./public/fonts/roboto/Roboto-Bold.ttf')
-    const robotoLight = fs.readFileSync('./public/fonts/roboto/Roboto-Light.ttf')
-    const chillax = fs.readFileSync('./public/fonts/chillax/Fonts/WEB/fonts/Chillax-Bold.ttf')
-    const tT = performance.now()
-    const content = await template(pact)
-    // console.info('✨ Template Done in', performance.now() - tT, 'ms')
 
-    const svg = await satori(
-      content,
-      {
-        width: 1200,
-        height: 630,
-        fonts: [
-          {
-            name: 'Roboto',
-            data: roboto,
-            weight: 700,
-            style: 'normal',
-          },
-          {
-            name: 'Roboto',
-            data: robotoLight,
-            weight: 300,
-            style: 'normal',
-          },
-          {
-            name: 'Chillax',
-            data: chillax,
-            weight: 700,
-            style: 'normal',
-          },
-        ],
-      }
-    );
-    // console.info('✨ SVG Done in', performance.now() - tR, 'ms')
-    
-    if (output === 'svg') {
-      res.setHeader("Content-Type", "image/svg+xml");
-      if (process.env.NODE_ENV === 'production') {
-        res.setHeader(
-          "Cache-Control",
-          "public, no-transform, s-maxage=60, max-age=60"
-        );
-      }
-      return res.end(svg);
+    const cachePicturePath = path.resolve(`${dir}/${pact.id}-${pact.version}.jpeg`)
+    let data
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir, { recursive: true });
     }
-
-    const tResvg = performance.now()
-    const resvg = new Resvg(svg, {
-      fitTo: {
-        mode: 'width',
-        value: 2400,
-      },
-    })
-    const pngData = resvg.render()
-    // console.info('✨ resvg Done in', performance.now() - tResvg, 'ms')
-    const tPng = performance.now()
-    const pngBuffer = pngData.asPng()
-    // console.info('✨ resvg png Done in', performance.now() - tPng, 'ms')
-    const t1 = performance.now()
-    const data = await sharp(pngBuffer)
-    .resize(2400)
-    .jpeg(
-      {
-      quality: 80,
-      chromaSubsampling: '4:4:4'
-      }
-    )
-    .toBuffer();
-    // console.info('✨ PNG to JPEG Done in', performance.now() - t1, 'ms')
+    if (!fs.existsSync(cachePicturePath)) {
+      data = await generateOg(pact)
+      fs.writeFileSync(cachePicturePath, data)
+    } else {
+      data = fs.readFileSync(cachePicturePath)
+    }
+    
+    
     res.statusCode = 200;
     res.setHeader("Content-Type", "image/jpeg");
-    // if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       res.setHeader(
         "Cache-Control",
-        "public, s-maxage=60, max-age=60"
+        "public, s-maxage=3600, max-age=3600, stale-while-revalidate=60"
       );
-    // }
+    }
     // console.info('✨ Done in', performance.now() - tR, 'ms')
     return res.end(data);  
   } catch (error) {
@@ -107,6 +52,80 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
     return res.status(500).end()
   }
   
+}
+
+async function generateOg(pact: Pact) {
+  const roboto = fs.readFileSync('./public/fonts/roboto/Roboto-Bold.ttf')
+  const robotoLight = fs.readFileSync('./public/fonts/roboto/Roboto-Light.ttf')
+  const chillax = fs.readFileSync('./public/fonts/chillax/Fonts/WEB/fonts/Chillax-Bold.ttf')
+  // const tT = performance.now()
+  const content = await template(pact)
+  // console.info('✨ Template Done in', performance.now() - tT, 'ms')
+
+  const svg = await satori(
+    content,
+    {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: 'Roboto',
+          data: roboto,
+          weight: 700,
+          style: 'normal',
+        },
+        {
+          name: 'Roboto',
+          data: robotoLight,
+          weight: 300,
+          style: 'normal',
+        },
+        {
+          name: 'Chillax',
+          data: chillax,
+          weight: 700,
+          style: 'normal',
+        },
+      ],
+    }
+  );
+  // console.info('✨ SVG Done in', performance.now() - tR, 'ms')
+  
+  // if (output === 'svg') {
+  //   res.setHeader("Content-Type", "image/svg+xml");
+  //   if (process.env.NODE_ENV === 'production') {
+  //     res.setHeader(
+  //       "Cache-Control",
+  //       "public, no-transform, s-maxage=3600, max-age=3600"
+  //     );
+  //   }
+  //   return res.end(svg);
+  // }
+
+  const tResvg = performance.now()
+  const resvg = new Resvg(svg, {
+    fitTo: {
+      mode: 'width',
+      value: 1200,
+    },
+  })
+  const pngData = resvg.render()
+  // console.info('✨ resvg Done in', performance.now() - tResvg, 'ms')
+  const tPng = performance.now()
+  const pngBuffer = pngData.asPng()
+  // console.info('✨ resvg png Done in', performance.now() - tPng, 'ms')
+  const t1 = performance.now()
+  const data = await sharp(pngBuffer)
+  .resize(1200)
+  .jpeg(
+    {
+    quality: 85,
+    chromaSubsampling: '4:4:4'
+    }
+  )
+  .toBuffer();
+  // console.info('✨ PNG to JPEG Done in', performance.now() - t1, 'ms')
+  return data
 }
 
 
@@ -175,15 +194,16 @@ const template = async (pact: Pact) => {
     }
   }
   let base64
+
   if (imageURI && imageName) {
-    const cachePicturePath = path.resolve(`${dir}/${imageName}.jpeg`)
+    const cachePicturePath = path.resolve(`${dir}/${imageName}-${pact.version}.jpeg`)
   
     if (!fs.existsSync(dir)){
-        fs.mkdirSync(dir);
+        fs.mkdirSync(dir, { recursive: true });
     }
     if (!fs.existsSync(cachePicturePath)) {
       const resizer = sharp()
-        .resize(1120, 840, {
+        .resize(600, 600, {
           // kernel: sharp.kernel.nearest,
           fit: sharp.fit.cover,
           position: sharp.strategy.entropy
@@ -193,7 +213,7 @@ const template = async (pact: Pact) => {
       const resized = image?.pipe(resizer)
       await resized?.jpeg().toFile(cachePicturePath)
     }
-    base64 = fs.readFileSync(`${dir}/${imageName}.jpeg`).toString('base64');
+    base64 = fs.readFileSync(`${dir}/${imageName}-${pact.version}.jpeg`).toString('base64');
   
     if (!base64) {
       console.log('empty base64')
@@ -298,31 +318,42 @@ const template = async (pact: Pact) => {
           </div> */}
           {base64 &&
             // eslint-disable-next-line @next/next/no-img-element
-            <img 
-              style={{
-                display: 'flex',
-                // objectFit: 'cover',
-                borderRadius: '18px',
-                boxShadow: ' 10px 10px 80px rgba(0,0,0,0.4)',
-                aspectRatio: '1/1',
-                height: '100%',
-                width: '100%',
-                objectFit: 'cover',
-                objectPosition: '50% 50%',
-                // backgroundRepeat: 'no-repeat',
-                // backgroundImage: `url(data:image/jpeg;base64,${base64})`,
-                // backgroundSize: 'cover',
-                // width: '100%',
-              }}
-              alt=''
-              src={`data:image/jpeg;base64,${base64}`} 
-            />
+              // <Image
+              //   src={`data:image/jpeg;base64,${base64}`} 
+              //   alt=''
+              //   height={600}
+              //   width={600}
+              //   objectFit='cover'
+              //   className="flex w-full h-full"
+              // />
+              <img 
+                style={{
+                  display: 'flex',
+                  // objectFit: 'cover',
+                  borderRadius: '18px',
+                  boxShadow: ' 10px 10px 80px rgba(0,0,0,0.4)',
+                  aspectRatio: '1/1',
+                  height: '100%',
+                  width: '100%',
+                  objectFit: 'cover',
+                  objectPosition: '50% 50%',
+                  backgroundPosition: '100%',
+                  // backgroundRepeat: 'no-repeat',
+                  // backgroundImage: `url(data:image/jpeg;base64,${base64})`,
+                  // backgroundSize: 'cover',
+                  // width: '100%',
+                }}
+                alt=''
+                src={`data:image/jpeg;base64,${base64}`} 
+              />
           }
           {!base64 &&
             <div style={{
               display: 'flex',
               alignItems: 'center',
               width: '100%',
+              height: '100%',
+              aspectRatio: '1/1',
               background: 'linear-gradient(125deg, rgba(240,0,184,0.6) 0%, rgba(21,21,236,0.6) 100%)',
               borderRadius: '18px',
               boxShadow: ' 10px 10px 80px rgba(0,0,0,0.4)',

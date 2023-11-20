@@ -9,7 +9,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   if (data) {
     views = data.map((view) => {
       const pactID = view.path.split('/').pop()
-      console.log('pactID', pactID)
       return {
         ...view,
         pactID

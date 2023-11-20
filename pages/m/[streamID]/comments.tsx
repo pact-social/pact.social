@@ -3,9 +3,12 @@ import { ReactElement } from "react"
 import PactLayout from "../../../components/pactLayout"
 import type { GetStaticPaths, GetStaticProps } from "next"
 import { unstable_serialize } from "swr"
-import PactUpdates from "../../../components/pacts/pactUpdates"
-import PactComments from "../../../components/pacts/pactComments"
 import { NextPageWithLayout } from "../../_app"
+import dynamic from "next/dynamic"
+
+const PactComments = dynamic(() => import('../../../components/pacts/pactComments'), {
+  ssr: false,
+})
 
 export const getStaticPaths: GetStaticPaths<{ streamID: string }> = async () => {
   return {

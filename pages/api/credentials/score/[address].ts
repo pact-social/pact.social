@@ -2,25 +2,25 @@ import {type NextApiRequest,type NextApiResponse } from "next";
 import { GPapiEndpoint, GPScorer, ScorerResponse } from "../challenge";
 import { supabase, getDBScore } from '../../../../lib/supabase';
 
+export const sanityzeData = (body: ScorerResponse & { score: string }) => {
+  let stamp_scores: [any?] = []
+  Object.entries(body?.stamp_scores || {}).forEach(([key, value]) => {
+    // console.log(key); // 'one'
+    // console.log(value); // 1
+    stamp_scores.push({ [key]: value })
+  });
+  return {
+    ...body,
+    stamp_scores,
+  }
+}
+
 export default async function getScore(
   req: NextApiRequest,
   res: NextApiResponse<ScorerResponse>
 ) {
   // should it only return value if sig verification is true ?
   const { address, refresh } = req.query
-
-  const sanityzeData = (body: ScorerResponse & { score: string }) => {
-    let stamp_scores: [any?] = []
-      Object.entries(body?.stamp_scores || {}).forEach(([key, value]) => {
-        // console.log(key); // 'one'
-        // console.log(value); // 1
-        stamp_scores.push({ [key]: value })
-      });
-      return {
-        ...body,
-        stamp_scores,
-      }
-  }
 
   const fetchGitcoinPassport = async () => {
     const response = await fetch(`${GPapiEndpoint}/registry/score/${GPScorer}/${address}`,{
@@ -39,7 +39,7 @@ export default async function getScore(
     const data = sanityzeData(body)
     const content = {
       ...data,
-      score: parseFloat(body.score),
+      score: parseFloat(body.score || 0),
     }
     if (body.status === 'DONE' || body.status === 'ERROR') {
       // save result to DB if 

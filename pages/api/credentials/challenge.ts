@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import fetch from 'node-fetch';
 import {supabase, getDBScore} from '../../../lib/supabase';
+import { sanityzeData } from "./score/[address]";
 
 export const GPapiEndpoint = 'https://api.scorer.gitcoin.co'
 export const GPScorer = '139'
@@ -64,18 +65,18 @@ async function validateChallenge(
       })
     });
     if (response.status !== 200) return res.status(response.status).end()
-    const data = await response.json() as ScorerResponse;
+    const data = await response.json() as ScorerResponse & { score: string };
     
     if (!data) {
       console.log('challenge error - no data')
       return res.status(500).end();
     }
-    const score = data
+    const score = sanityzeData(data)
     // set current cache state to requested
     const {data: dbRecord} = await getDBScore(body.address);
 
     if (dbRecord) {
-      await supabase
+      const res = await supabase
         .from('passport_sybil_scorer')
         .update({
           status: data.status,
@@ -83,15 +84,17 @@ async function validateChallenge(
         .eq('address', (body.address as string).toLowerCase())
         .eq('scorer', GPScorer)
       ;
+
     } else {
       const res = await supabase
         .from('passport_sybil_scorer')
         .insert({
           ...score,
-          score: parseFloat(body.score),
+          score: parseFloat(body.score || 0),
           scorer: GPScorer,
         })
       ;
+
     }
 
     return res.send(data);

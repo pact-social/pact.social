@@ -25,19 +25,19 @@ export default function NavBar({ children }: NavbarProps) {
   
   return (
     <ProfileWrapper>
-      <div className="flex flex-col sm:flex-row w-full items-center justify-center p-2 bg-secondary gap-2">
-        <div className="text-white">Support us on Gitcoin GG19 !</div>
+      <div className="flex flex-col sm:flex-row w-full items-center justify-center p-2 bg-manifesto gap-2 sticky top-0">
+        <div className="text-white">🔥 Support us on Gitcoin GG19 🔥</div>
         <div className="flex gap-4 flex-col min-[320px]:flex-row flex-wrap justify-center">
           <a
             href="https://explorer.gitcoin.co/#/round/424/0x98720dd1925d34a2453ebc1f91c9d48e7e89ec29/0x98720dd1925d34a2453ebc1f91c9d48e7e89ec29-169"
-            className="btn btn-xs normal-case"
+            className="underline normal-case text-white"
             target="_blank"
           >
             Web3 Community Round
           </a>
           <a
             href="https://explorer.gitcoin.co/#/round/424/0xe60a569ec8aac2045d9fda306dc2a16cc1e52a90/0xe60a569ec8aac2045d9fda306dc2a16cc1e52a90-11"
-            className="btn btn-xs normal-case"
+            className="underline normal-case text-white"
             target="_blank"
           >
             OpenCivics Round
@@ -47,7 +47,29 @@ export default function NavBar({ children }: NavbarProps) {
       <div className="drawer">
         <input id="main-mobile-drawer" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={toggle} /> 
         <div className="drawer-content flex flex-col">
-          <div className="navbar bg-black text-neutral-content sticky top-0 z-20 min-h-[5rem]">
+          <div className="sticky top-0 z-20">
+            {/* infos bar */}
+            {/* <div className="flex flex-col sm:flex-row w-full items-center justify-center p-2 bg-manifesto gap-2 sticky top-0">
+              <div className="text-white">🔥 Support us on Gitcoin GG19 🔥</div>
+              <div className="flex gap-4 flex-col min-[320px]:flex-row flex-wrap justify-center text-center">
+                <a
+                  href="https://explorer.gitcoin.co/#/round/424/0x98720dd1925d34a2453ebc1f91c9d48e7e89ec29/0x98720dd1925d34a2453ebc1f91c9d48e7e89ec29-169"
+                  className=" underline normal-case text-white"
+                  target="_blank"
+                >
+                  Web3 Community Round
+                </a>
+                <a
+                  href="https://explorer.gitcoin.co/#/round/424/0xe60a569ec8aac2045d9fda306dc2a16cc1e52a90/0xe60a569ec8aac2045d9fda306dc2a16cc1e52a90-11"
+                  className="underline normal-case text-white"
+                  target="_blank"
+                >
+                  OpenCivics Round
+                </a>
+              </div>
+            </div> */}
+            {/* navbar */}
+            <div className="navbar bg-black text-neutral-content min-h-[5rem]">
             <div className="container">
               <div className="navbar-start flex lg:w-auto xl:flex-1">
                 <div className="flex-none lg:hidden">
@@ -74,6 +96,7 @@ export default function NavBar({ children }: NavbarProps) {
                   label="Connect"
                 />
               </div>
+            </div>
             </div>
           </div>
           {/* Page Content */}
