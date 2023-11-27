@@ -80,6 +80,7 @@ async function validateChallenge(
         .from('passport_sybil_scorer')
         .update({
           status: data.status,
+          score: parseFloat(score.score || 0),
         })
         .eq('address', (body.address as string).toLowerCase())
         .eq('scorer', GPScorer)
@@ -90,7 +91,7 @@ async function validateChallenge(
         .from('passport_sybil_scorer')
         .insert({
           ...score,
-          score: parseFloat(body.score || 0),
+          score: parseFloat(score.score || 0),
           scorer: GPScorer,
         })
       ;

@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { Pact, PactProfileEncryptedLitContent, PactSignature, PrivateStore, Query, UpdatePactProfilePayload } from '../src/gql';
+import { Mutation, Pact, PactProfileEncryptedLitContent, PactSignature, PrivateStore, Query, UpdatePactProfilePayload } from '../src/gql';
 import { useCeramicContext } from '../context';
 import { generateAccessControlConditionsForRecipients } from '../lib/litUtils';
 import { useEffect, useState } from 'react';
@@ -66,6 +66,34 @@ export default function usePrivateStore() {
     }
   }, [ready, isConnected])
 
+  useEffect(() => {
+    if(data) {
+      try {
+        const newPactSignatures = data.reduce<PactSignature[]>((acc, current) => {
+          if (current.__typename === 'PactSignature' || current.content?.signedAt) {
+            acc.push(current.content as PactSignature);
+          }
+          return acc
+        }, [])
+        setPactSignatures(newPactSignatures);
+      } catch (error) {
+        console.log('error', error)
+      }
+      
+      const draftsPact = data.reduce<Pact[]>((acc, current) => {
+        if (current.__typename === 'Pact') {
+          acc.push({
+            ...current.content as Pact,
+            id: current.id
+          });
+        }
+        return acc
+      }, [])
+  
+      setDrafts(draftsPact)
+    }
+  }, [data])
+
   async function fetcher (query: string): Promise<PrivateType[] | undefined> {
     const {data: storeData, errors} = await composeClient.executeQuery<Query>(query, {})
     if (!isConnected && !isLitLoading && storeData) {
@@ -130,7 +158,7 @@ export default function usePrivateStore() {
     const newClearStream = {...input, __typename, id}
     const encryptedContent = await lit.encryptString(JSON.stringify(newClearStream), 'ethereum', accessControlConditions)
 
-    const personalStore = await composeClient.executeQuery(`
+    const personalStore = await composeClient.executeQuery<Mutation>(`
     mutation RecordPrivateStore($input: CreatePrivateStoreInput!) {
       createPrivateStore(input: $input) {
         clientMutationId
@@ -150,9 +178,11 @@ export default function usePrivateStore() {
     if (__typename === 'PactSignature') {
       const newSigs = pactSignatures ? [...pactSignatures, input] : [input];
       setPactSignatures(newSigs)
-      if (data) {
-        mutate([...data, { content: input, type: __typename, id:  newClearStream.id} ])
-      }
+    }
+    if (data && personalStore.data?.createPrivateStore) {
+      mutate([...data, { content: input, type: __typename, id: personalStore.data?.createPrivateStore?.document.id} ])
+    } else if (personalStore.data?.createPrivateStore) {
+      mutate([{ content: input, type: __typename, id:  personalStore.data?.createPrivateStore?.document.id }])
     }
 
     return personalStore

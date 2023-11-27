@@ -99,7 +99,7 @@ export default function GitcoinPassport () {
 
 
   // useEffect(() => {
-  //   if (score && score.score !== null && score.score >= 20) {
+  //   if (score && score.score !== null && score.score >= 15) {
 
   //     setView(<ShareView/>)
   //   }
@@ -136,11 +136,11 @@ export default function GitcoinPassport () {
           <span>Score</span>
           <div className="flex font-alt text-2xl gap-2 items-baseline">
             <span>{score?.score || 0}</span>
-            {(!score || (typeof score?.score === 'number' && score.score < 20)) &&
-              <span className="text-xs text-red-500">{'< 20'} </span>
+            {(!score || (typeof score?.score === 'number' && score.score < 15)) &&
+              <span className="text-xs text-red-500">{'< 15'} </span>
             }
-            {(typeof score?.score === 'number' && score.score >= 20) && 
-              <span className="text-xs text-green-500">{'> 20'} </span>
+            {(typeof score?.score === 'number' && score.score >= 15) && 
+              <span className="text-xs text-green-500">{'> 15'} </span>
             }
           </div>
         </div>
@@ -227,7 +227,7 @@ export default function GitcoinPassport () {
         <p className="text-sm font-bold">Get your signature verified.</p>
       </div>
       } */}
-      {(score?.status === 'DONE' && score.score !== null && 20 > score?.score && score?.score >= 0) && 
+      {(score?.status === 'DONE' && score.score !== null && 15 > score?.score && score?.score >= 0) && 
       <div className="join">
         <Link 
           className="btn join-item"
@@ -246,7 +246,7 @@ export default function GitcoinPassport () {
         </div>
       </div>
       }
-      {(score?.status === 'DONE' && score.score !== null && score.score >= 20) && 
+      {(score?.status === 'DONE' && score.score !== null && score.score >= 15) && 
         <div className="btn btn-success">Verified</div>
         // <div className="alert gap-2">
         //   <Image

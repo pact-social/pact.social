@@ -1,14 +1,18 @@
 import { remark } from "remark";
-import remarkHtml from "remark-html";
+import {unified} from 'unified'
 
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import rehypeSanitize from 'rehype-sanitize';
 import remarkStringify from "remark-stringify";
 import rehypeFormat from 'rehype-format';
+import remarkGfm from "remark-gfm";
+import remarkRehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
 
 export function markdownToHtml(markdownText: string) {
-  const file = remark().use(remarkHtml).processSync(markdownText);
+  const file = unified().use(remarkParse).use(remarkGfm).use(remarkRehype).use(rehypeStringify).processSync(markdownText);
   return String(file);
 }
 

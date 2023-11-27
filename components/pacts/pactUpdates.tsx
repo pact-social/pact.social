@@ -131,7 +131,13 @@ export const PactUpdateForm = ({defaultValues}: {defaultValues?: any}) => {
   )
 }
 
-export default function PactUpdates({ posts }: { posts: PostConnection}) {
+export default function PactUpdates({
+  posts,
+  className,
+}: { 
+  posts: PostConnection;
+  className?: string;
+}) {
   const { query } = useRouter()
   const create = query.create as string;
   const { pact } = usePactContext()
@@ -139,7 +145,7 @@ export default function PactUpdates({ posts }: { posts: PostConnection}) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-8">
+      <div className={className || "grid grid-cols-2 gap-8"}>
         {posts.edges?.map((edge, index) => 
           <div key={`post-${edge?.node?.id || index}`}>
           {edge?.node &&

@@ -36,7 +36,7 @@ export default async function getScore(
           return {
             name: 'GitcoinPassport',
             id: scorer.scorer,
-            verified: scorer.score && scorer.score >= 20,
+            verified: scorer.score && scorer.score >= 15,
             score: scorer.score,
           }
           break;

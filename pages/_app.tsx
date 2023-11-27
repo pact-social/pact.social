@@ -11,6 +11,7 @@ import {
   getDefaultWallets,
   darkTheme,
   connectorsForWallets,
+  DisclaimerComponent,
 } from '@rainbow-me/rainbowkit';
 import { walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
@@ -89,6 +90,7 @@ wallets[0].wallets = defaultWallets
 
 const appInfo = {
   appName: 'pact.social',
+  learnMoreUrl: 'https://pact-social.gitbook.io/pact.social/faq/how-to-connect',
 };
 const stytchConnector = new PKPStytchConnector({
   chains,
@@ -205,6 +207,15 @@ const stytch = createStytchUIClient(
   process.env.NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN || ''
 );
 
+const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
+  <Text>
+    By connecting your wallet, you agree to the{' '}
+    <Link href="https://pact.social/privacy">Personal Data Protection Policy</Link> and
+    acknowledge you have read and understand the protocol{' '}
+    <Link href="https://pact-social.gitbook.io/pact.social/legal-stuff/code-of-conduct">Code of Conduct</Link>
+  </Text>
+);
+
 const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   
   const getLayout = Component.getLayout ?? ((page) => page)
@@ -213,7 +224,10 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
     <main className={`${roboto.variable} ${arrayFont.variable} ${chillaxFont.variable} font-sans`}>
         <WagmiConfig config={wagmiConfig}>
           <RainbowKitProvider 
-            appInfo={appInfo}
+            appInfo={{
+              ...appInfo,
+              disclaimer: Disclaimer,
+            }}
             chains={chains}
             theme={darkTheme({
               accentColor: '#f000b8',

@@ -90,6 +90,17 @@ module.exports = {
               DEFAULT: '#0016f0',
             },
           },
+          '.progress-gradient::-webkit-progress-value': {
+            '--tw-bg-opacity': '1',
+            'background-image': 'linear-gradient(to right, #0016f0, #03d391)',
+          },
+          '.progress-gradient::-moz-progress-bar': {
+            '--tw-bg-opacity': '1',
+            'background-image': 'linear-gradient(to bottom, #0016f0, #03d391)',
+          },
+          '.progress-gradient:indeterminate': {
+            '--progress-color': 'linear-gradient(to bottom, #0016f0, #03d391)',
+          },
           table: {
             // 'background-image': 'linear-gradient(to bottom, #c1dfff, #ffac95)',
             ':where(tbody th, tbody td)': {
@@ -98,7 +109,7 @@ module.exports = {
             ':where(thead, tfoot) :where(th, td)': {
               'background-color': 'transparent'
             }
-          }
+          },
         }
       },
       'light',

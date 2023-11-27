@@ -20,7 +20,14 @@ export default function Footer() {
             <Link href="/explore/petition" className="link link-hover">Petitions</Link>
             <Link href="/explore/manifesto" className="link link-hover">Manifestos</Link>
             <Link href="/explore/openletter" className="link link-hover">Open Letters</Link>
-            <Link href="/about-us" className="link link-hover">About Us</Link>
+          </div>
+          <div>
+            <span className="footer-title">Documentation</span>
+            <Link href="https://pact-social.gitbook.io/pact.social/about-us" target="_blank" className="link link-hover">About Us</Link>
+            <Link href="https://pact-social.gitbook.io/pact.social/faq" target="_blank" className="link link-hover">FAQ</Link>
+            <Link href="/privacy" className="link link-hover">Privacy</Link>
+            <Link href="https://pact-social.gitbook.io/pact.social/legal-stuff" target="_blank" className="link link-hover">Legal</Link>
+
           </div>
 
           <div className="">

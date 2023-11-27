@@ -33,10 +33,10 @@ export default function DraftPactPreview({}) {
   
   const publishDraft = async () => {
     if (pact) {
-      await publish({
+      const res = await publish({
         ...pact,
         content: pact?.content as string,
-      }, pact.id)
+      }, pact.id, true)
     }
   }
 

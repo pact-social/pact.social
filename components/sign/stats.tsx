@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useCeramicContext } from "../../context";
 import { usePactContext } from "../../context/pact";
 import { useViewContext } from "../signBox";
-import WalletSign from "./wallet";
 import useStreamStats from "../../hooks/useStreamStats";
 import ShareView from "./share";
 import { useProfileContext } from "../../context/profile";
 import { PactSignatureVisibilityType } from "../../src/gql";
 import Sign from "./sign";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { formatNumber, numberWithCommas } from "../../utils/stats";
 
 enum SignedType {
   none,
@@ -16,7 +18,80 @@ enum SignedType {
   public
 }
 
-
+const ranges = [
+  {
+    min: 0,
+    max: 49,
+    level: 1,
+    description: ''
+  },
+  {
+    min: 50,
+    max: 99,
+    level: 2,
+    description: ''
+  },
+  {
+    min: 100,
+    max: 499,
+    level: 3,
+    description: ''
+  },
+  {
+    min: 500,
+    max: 999,
+    level: 4,
+    description: ''
+  },
+  {
+    min: 1000,
+    max: 4999,
+    level: 5,
+    description: ''
+  },
+  {
+    min: 5000,
+    max: 9999,
+    level: 6,
+    description: ''
+  },
+  {
+    min: 10000,
+    max: 49999,
+    level: 7,
+    description: ''
+  },
+  {
+    min: 50000,
+    max: 99999,
+    level: 8,
+    description: ''
+  },
+  {
+    min: 100000,
+    max: 499999,
+    level: 9,
+    description: ''
+  },
+  {
+    min: 500000,
+    max: 999999,
+    level: 10,
+    description: ''
+  },
+  {
+    min: 1000000,
+    max: 4999999,
+    level: 11,
+    description: ''
+  },
+  {
+    min: 5000000,
+    max: 9999999,
+    level: 12,
+    description: ''
+  },
+]
 
 export default function SignStats({
   disabled = false
@@ -26,16 +101,17 @@ export default function SignStats({
   const { setView, previousView } = useViewContext();
   const { pact } = usePactContext();
   const { state: { isAuthenticated, did } } = useCeramicContext();
-  const [ signedType, setSignedType ] = useState<PactSignatureVisibilityType>()
   const { data: stats, error } = useStreamStats(pact?.id);
   const { hasSigned, signatures, privateStore, isLoading } = useProfileContext()
+  
+  const [ signedType, setSignedType ] = useState<PactSignatureVisibilityType>()
+  const [ displayRange, setRange ] = useState<typeof ranges[0]>(ranges[0])
 
   async function fetchSigningStatus () {
     if (!pact || !did || !hasSigned) {
       setSignedType(undefined)
       return;
     }
-    // check PUBLIC and ANON
 
     const signedType = hasSigned(pact.id);
     setSignedType(signedType)
@@ -45,8 +121,16 @@ export default function SignStats({
     if (isAuthenticated && signatures && signatures.size > 0) {
       fetchSigningStatus()
     }
-    // fetchStats()
   }, [isAuthenticated, pact?.id, signatures])
+
+  useEffect(() => {
+    if (stats) {
+      const [ supportRange ] = ranges.filter(range => {
+        return range.min <= stats.total && range.max >= stats.total
+      })
+      setRange(supportRange)
+    }
+  }, [stats])
 
   return (
     <div className="stats stats-vertical relative w-full">
@@ -55,17 +139,35 @@ export default function SignStats({
     }
       <div className="stat">
         <div className="flex flex-row justify-between">
-          <div>
-            <div className="stat-title">Signatures</div>
-            <div className="stat-value">{stats?.total || 0}</div>
-            <div className="stat-desc">{stats?.verified || 0} Verified</div>
-          </div>
-          {!signedType &&
-            <div>
-              <progress className="progress progress-accent w-full" value={undefined} max="100"></progress>
-              <p className=" text-lg font-semibold text-neutral-700">Sign Now</p>
+          <div className="flex flex-col w-full">
+            {!signedType &&
+            <p className=" text-lg font-semibold text-neutral-700 inline-flex gap-2 items-center my-4">
+              Sign Now
+            <Link
+              href="https://pact-social.gitbook.io/pact.social/faq/how-to-sign"
+              target="_blank"
+            >
+              <span>
+                <InformationCircleIcon height={24} width={24} />
+              </span>
+            </Link>
+            </p>
+            }
+            <progress className="progress progress-gradient w-full" value={stats?.total && ((stats?.total * 100 / displayRange.max)).toFixed(1) || undefined} max={100}></progress>
+            {displayRange &&
+            <div className="flex flex-row justify-between text-xs my-2">
+              <div>
+                <div className="stat-title">Signatures</div>
+                <div className="stat-value text-3xl">{numberWithCommas(stats?.total || 0)}</div>
+                <div className="stat-desc">{numberWithCommas(stats?.verified || 0)} Verified</div>
+              </div>
+              <div>
+                <div className="stat-title text-right">Next Goal !</div>
+                <div className="stat-value text-3xl text-right">{formatNumber(displayRange.max + 1)}</div>
+              </div>
             </div>
-          }
+            }
+          </div>
         </div>
         <div className="stat-actions">
           {!signedType && 
@@ -95,7 +197,7 @@ export default function SignStats({
       <div className="stat">
         <div className="flex flex-row justify-between">
           <div>
-            <div className="stat-title">Influencers</div>
+            <div className="stat-title">Supporters</div>
             <div className="stat-value">{stats?.influencers || 0}</div>
             {/* <div className="stat-desc">↘︎ 90 (14%)</div> */}
           </div>

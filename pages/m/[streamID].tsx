@@ -4,6 +4,7 @@ import PactBody from '../../components/pacts/pactBody';
 import { ReactElement, ReactNode } from 'react';
 import PactLayout from '../../components/pactLayout';
 import { NextPageWithLayout } from '../_app';
+import { PostConnection } from '../../src/gql';
 
 type Tab = {
   name: string,
@@ -27,10 +28,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
   const streamID = params?.streamID as string;
   const { getPact } = await import('../../lib/getPact')
+  const { getPactPosts } = await import('../../lib/getPactPosts')
   
   try {
-
+    
     const data = await getPact({ streamID })
+    const posts = await getPactPosts({id: streamID, last: 3, before: ''})
     
     if (!data) {
       console.log('404', data)
@@ -47,6 +50,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
         title: data.title,
         description: data?.description,
         pactID: data.id,
+        posts,
       }, 
       revalidate: 1000
     }
@@ -58,12 +62,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 }
 
+export type PactPageProps = {
+  fallback?: Object;
+  title?: string;
+  pactID?: string;
+  posts?: PostConnection
+}
 
-
-const PactPage: NextPageWithLayout<{fallback: Object; title: string; pactID: string;}> = ({ fallback, title, pactID }) => {
+const PactPage: NextPageWithLayout<PactPageProps> = (props) => {
 
   return (
-    <PactBody />
+    <PactBody {...props} />
   );
 }
 

@@ -78,10 +78,10 @@ export default function useMutatePact (pactID?: string) {
             }
           }
         })
-  
+
         if(pactID && update) {
-          await update({}, 'Pact', pactID, true)
           // put draft as archive
+          await update({}, 'Pact', pactID, true)
         }
   
         if (!errors) {
