@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ViewBox from "../viewBox";
 import CollectionAdd from "./collectionAdd";
-import { BookmarkIcon } from "@heroicons/react/24/outline";
+import { BookmarkIcon } from "@heroicons/react/24/solid";
 
 export default function CollectionButton ({ pactID } : { pactID: string }) {
   const collectionModal = useRef<HTMLDialogElement>(null);
@@ -25,7 +25,7 @@ export default function CollectionButton ({ pactID } : { pactID: string }) {
     <>
       <div className="tooltip" data-tip="add to collection">
         <button 
-          className="btn btn-xs btn-ghost btn-circle" 
+          className="btn btn-xs btn-ghost btn-circle rounded-full bg-gray-200" 
           onClick={openModal}
         >
           <BookmarkIcon className="w-4 h-4" />

@@ -2,12 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link';
 import type { Pact } from '../../src/gql';
 import useStreamStats from '../../hooks/useStreamStats';
-import IconSig from '../svg/noun-signature';
-import CollectionButton from '../collections/collectionButton';
 import dayjs from 'dayjs';
 import { useProfileContext } from '../../context/profile';
-import { CheckBadgeIcon } from '@heroicons/react/24/outline';
 import DefaultImage from './defaultImage';
+import PactStats from './pactStats';
 
 export default function PactCard({pact}: { pact: Pact }) {
   const { data: stats, error } = useStreamStats(pact?.id);
@@ -50,7 +48,7 @@ export default function PactCard({pact}: { pact: Pact }) {
         </figure>
       }
       </Link>
-      <div className={`card-body bg-${pact.type}-light justify-between`}>
+      <div className={`card-body bg-${pact.type}-light justify-between gap-3`}>
         <Link 
         href={`/m/${pact?.id}`}
         className="flex flex-col gap-2 flex-1"
@@ -62,17 +60,9 @@ export default function PactCard({pact}: { pact: Pact }) {
           <div className="badge badge-outline badge-primary line-clamp-1" title={pact?.topic?.name}>{pact?.topic?.name}</div>
         </div>
         </Link>
-        <div className="card-actions justify-between items-baseline">
-          <div className="flex items-baseline gap-6">
-            <div className="flex gap-3">
-              {hasSigned && hasSigned(pact?.id) ?
-                <CheckBadgeIcon className="w-5 h-5 text-green-600" />
-                : <IconSig className="w-4 h-4" />
-              }
-              <div className="text-sm">{stats?.total}</div>
-            </div>
-            <CollectionButton pactID={pact?.id} />
-          </div>
+        <div className="card-actions justify-between ">
+          <PactStats pact={pact} stats={stats} hasSigned={hasSigned && hasSigned(pact?.id)}/>
+
           <div className="justify-end">
             <Link 
               href={`/m/${pact?.id}`} className="btn btn-primary">

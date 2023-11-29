@@ -2,12 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link';
 import type { Pact } from '../../src/gql';
 import useStreamStats from '../../hooks/useStreamStats';
-import IconSig from '../svg/noun-signature';
-import CollectionButton from '../collections/collectionButton';
 import dayjs from 'dayjs';
 import { useProfileContext } from '../../context/profile';
-import { CheckBadgeIcon } from '@heroicons/react/24/outline';
 import DefaultImage from './defaultImage';
+import PactStats from './pactStats';
 
 export default function PactCardH({pact}: { pact: Pact }) {
   const { data: stats, error } = useStreamStats(pact?.id);
@@ -66,23 +64,15 @@ export default function PactCardH({pact}: { pact: Pact }) {
           </div>
         </Link>
         <div className="card-actions justify-between items-baseline">
-          <div className="flex items-baseline gap-6">
-            <div className="flex gap-3">
-              {hasSigned && hasSigned(pact.id) &&
-                <CheckBadgeIcon className="w-5 h-5 text-green-600" />
-              }
-              {hasSigned && !hasSigned(pact.id) &&
-                <IconSig className="w-4 h-4" />
-              }
-              <div className="text-sm">{stats?.total}</div>
-            </div>
-            <CollectionButton pactID={pact?.id} />
-          </div>
-          <div className="justify-end">
-          <Link href={`/m/${pact.id}`}>
-            read more
-          </Link>
-          </div>
+          <PactStats pact={pact} stats={stats} hasSigned={hasSigned && hasSigned(pact?.id)}/>
+          {/* <div className="justify-end self-end">
+            <Link 
+              className="btn btn-ghost"
+              href={`/m/${pact.id}`}
+            >
+              read more
+            </Link>
+          </div> */}
         </div>
       </div>
     </div>
