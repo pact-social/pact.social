@@ -2,11 +2,13 @@ import Image from 'next/image'
 import { usePactContext } from "../../context/pact";
 import useGetName from '../../hooks/useGetName';
 import { ReactNode } from 'react';
-import CollectionButton from '../collections/collectionButton';
 import { useRouter } from 'next/router';
 import ProfileAvatar from '../profile/profileAvatar';
 import { getAddressFromDid } from '../../utils';
 import DefaultImage from './defaultImage';
+import PactStats from './pactStats';
+import useStreamStats from '../../hooks/useStreamStats';
+import { useProfileContext } from '../../context/profile';
 
 
 export default function PactHero({ 
@@ -18,6 +20,8 @@ export default function PactHero({
 }) {
   const { push } = useRouter()
   const { pact } = usePactContext()
+  const { data: stats, error } = useStreamStats(pact?.id);
+  const { hasSigned } = useProfileContext()
   const name = useGetName(pact?.author, null, pact?.author?.id)
 
   const { address } = getAddressFromDid(pact?.author.id)
@@ -76,9 +80,9 @@ export default function PactHero({
               <ProfileAvatar address={address} name={name} size="sm" />
             </div>
             
-            {pact?.id && !draft && 
-            <div className=" font-sans">
-              <CollectionButton pactID={pact?.id} />
+            {pact?.id && !draft &&
+            <div className="flex font-sans">
+              <PactStats pact={pact} stats={stats} hasSigned={hasSigned && hasSigned(pact.id)} />
             </div>
             }
             {pact?.id && !draft && pact.author.isViewer &&
