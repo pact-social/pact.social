@@ -16,7 +16,7 @@ const CERAMIC_ADDRESS = process.env.NEXT_PUBLIC_CERAMIC || 'http://localhost:700
 
 
 // Set up Ceramic ComposeDB
-const compose = new ComposeClient({ ceramic: CERAMIC_ADDRESS, definition: definition as RuntimeCompositeDefinition})
+const compose = new ComposeClient({ ceramic: CERAMIC_ADDRESS, definition: definition as unknown as RuntimeCompositeDefinition})
 
 
 /**
@@ -42,6 +42,7 @@ export default function web3Analytics(userConfig: { appId: any; loglevel?: strin
 
   // `seed` must be a 32-byte long Uint8Array
   async function authenticateCeramic(seed: Uint8Array) {
+      // This will go in infinit loop if you try to auth on the frontend
       const provider = new Ed25519Provider(seed)
       const did = new DID({ provider, resolver: KeyResolver.getResolver() })
 

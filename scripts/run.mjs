@@ -26,6 +26,7 @@ const bootstrap = async () => {
   //       & do not create the model if it already exists & has not been updated
   try {
     spinner.info("[Composites] bootstrapping composites");
+    // This will break compilation, comment to path through
     await writeComposite(spinner)
     await deployComposites(spinner)
     spinner.succeed("Composites] composites bootstrapped");

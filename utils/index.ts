@@ -50,26 +50,29 @@ export const authenticateCeramic = async (address: any, provider: any, ceramic: 
      *        This is not done here to allow you to add more datamodels to your application.
      */
     // TODO: update resources to only provide access to our composities
-    session = await DIDSession.authorize(authMethod, {
-      resources: [
-        `${process.env.NEXT_PUBLIC_APP_DOMAIN}/*`, 
-        'ceramic://*',
-        // 'lit-accesscontrolcondition://*'
-      ],
-      expiresInSecs: 60*60*24*SESSION_DAYS,
-      // statement: ''
-       
-    })
-    // Set the session in localStorage.
-    if (fromStore) {
-      localStorage.setItem('ceramic-session', session.serialize());
+    try {
+      session = await DIDSession.authorize(authMethod, {
+        resources: [
+          `${process.env.NEXT_PUBLIC_APP_DOMAIN}/*`, 
+          'ceramic://*',
+          // 'lit-accesscontrolcondition://*'
+        ],
+        expiresInSecs: 60*60*24*SESSION_DAYS,
+        // statement: ''
+         
+      })
+      // Set the session in localStorage.
+      if (fromStore) {
+        localStorage.setItem('ceramic-session', session.serialize());
+      }
+      // Set our Ceramic DID to be our session DID.
+      compose.setDID(session.did)
+      ceramic.did = session.did
+      return session.did;
+    } catch (error) {
+      console.log('session creation error', error)
     }
   }
-  
-  // Set our Ceramic DID to be our session DID.
-  compose.setDID(session.did)
-  ceramic.did = session.did
-  return session.did;
 }
 
 export const logoutCeramic = async (ceramic: CeramicApi, compose: ComposeClient) => {
